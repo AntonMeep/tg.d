@@ -11,6 +11,10 @@ import std.typecons;
 import std.exception;
 import std.traits;
 
+import std.meta : AliasSeq, staticIndexOf;
+import std.variant : Algebraic;
+
+
 version(TgD_Verbose) {
 	pragma(msg, "tg.d | Warning! tg.d is compiled in verbose mode where user data can end up in logs");
 	pragma(msg, "tg.d | DISABLE THIS in production builds!");
@@ -33,8 +37,8 @@ struct TelegramBot {
 
 		struct MethodResult(T) {
 			bool ok;
-			T result;
 		@optional:
+			T result;
 			ushort error_code;
 			string description;
 		}
@@ -56,7 +60,7 @@ struct TelegramBot {
 				req.method = method._httpMethod;
 				if(method._httpMethod == HTTPMethod.POST) {
 					version(TgD_Verbose)
-						"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
+						"tg.d | Sending body: %s".logDebug(method.serializeToJson);
 					req.writeJsonBody(method.serializeToJson);
 				}
 			},
@@ -835,218 +839,221 @@ struct TelegramBot {
 /*                    Telegram types and enums                    */
 /******************************************************************/
 
+enum ChatType : string {
+	Private    = "private",
+	Group      = "group",
+	Supergroup = "supergroup",
+	Channel    = "channel"
+}
+
+enum ParseMode : string {
+	None     = "",
+	Markdown = "Markdown",
+	HTML     = "HTML",
+}
+
+struct InputFile {}
+
+struct Update {
+	int update_id;
+@optional:
+	Message message,
+			edited_message,
+			channel_post,
+			edited_channel_post;
+	InlineQuery inline_query;
+	ChosenInlineResult chosen_inline_result;
+	CallbackQuery callback_query;
+	ShippingQuery shopping_query;
+	PreCheckoutQuery pre_checkout_query;
+}
+
 struct User {
 	int id;
 	bool is_bot;
 	string first_name;
 @optional:
-	string last_name;
-	string username;
-	string language_code;
-}
-
-enum ChatType : string {
-	Private = "private",
-	Group = "group",
-	Supergroup = "supergroup",
-	Channel = "channel"
+	string last_name,
+		   username,
+		   language_code;
 }
 
 struct Chat {
+@safe:
 	long id;
-	ChatType type;
+	string type;
 @optional:
-	string title;
-	string first_name;
-	string last_name;
-	string username;
+	string title,
+		   username,
+		   first_name,
+		   last_name;
 	bool all_members_are_administrators;
 	ChatPhoto photo;
-	string description;
-	string invite_link;
-}
+	string description,
+		   invite_link;
 
-struct MessageBase {
-	uint message_id;
-	uint date;
-	Chat chat;
-	Nullable!User from;
-	Nullable!User forward_from;
-	Nullable!Chat forward_from_chat;
-	uint forward_from_message_id;
-	string forward_signature;
-	uint forward_date;
-	uint edit_date;
-	string media_group_id;
-	string author_signature;
-	string text;
-	Nullable!MessageEntity[] entities;
-	Nullable!MessageEntity[] caption_entities;
-	Nullable!Audio audio;
-	Nullable!Document document;
-	Nullable!Game game;
-	Nullable!PhotoSize[] photo;
-	Nullable!Sticker sticker;
-	Nullable!Video video;
-	Nullable!Voice voice;
-	Nullable!VideoNote video_note;
-	string caption;
-	Nullable!Contact contact;
-	Nullable!Location location;
-	Nullable!Venue venue;
-	Nullable!User[] new_chat_members;
-	Nullable!User left_chat_member;
-	string new_chat_title;
-	Nullable!PhotoSize[] new_chat_photo;
-	bool delete_chat_photo;
-	bool group_chat_created;
-	bool supergroup_chat_created;
-	bool channel_chat_created;
-	long migrate_to_chat_id;
-	long migrate_from_chat_id;
-	Nullable!Invoice invoice;
-	Nullable!SuccessfulPayment successful_payment;
-	string connected_website;
+	private @name("pinned_message") Json m_pinned_message;
+	@property Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
+	@property void    pinned_message(Message m) { m_pinned_message = m.serializeToJson;  }
 
-	@property uint id() {
-		return message_id;
-	}
+	string sticker_set_name;
+	bool can_set_sticker_set;
 }
 
 struct Message {
-	MessageBase baseMessage;
-	Nullable!MessageBase reply_to_message;
-	Nullable!MessageBase pinned_message;
+@safe:
+	int message_id;
+	@optional User from;
+	long date;
+	Chat chat;
 
-	alias baseMessage this;
-}
+@optional:
+	User forward_from;
+	Chat forward_from_chat;
+	int forward_from_message_id;
+	string forward_signature;
+	long forward_date;
 
-struct Update {
-	uint update_id;
-	Nullable!Message message;
+	private @name("reply_to_message") Json m_reply_to_message;
+	@property Message reply_to_message() { return m_reply_to_message.deserializeJson!Message; }
+	@property void    reply_to_message(Message m) { m_reply_to_message = m.serializeToJson;  }
 
-	Nullable!Message edited_message;
-	Nullable!Message channel_post;
-	Nullable!Message edited_channel_post;
-	Nullable!InlineQuery inline_query;
-	Nullable!ChosenInlineResult chosen_inline_result;
-	Nullable!CallbackQuery callback_query;
-	Nullable!ShippingQuery shipping_query;
-	Nullable!PreCheckoutQuery pre_checkout_query;
+	long edit_date;
+	string media_group_id,
+		   author_signature,
+		   text;
+	MessageEntity[] entities;
+	MessageEntity[] caption_entities;
+	Audio audio;
+	Document document;
+	Game game;
+	PhotoSize[] photo;
+	Sticker sticker;
+	Video video;
+	Voice voice;
+	VideoNote video_note;
+	string caption;
+	Contact contact;
+	Location location;
+	Venue venue;
+	User[] new_chat_members;
+	User left_chat_member;
+	string new_chat_title;
+	PhotoSize[] new_chat_photo;
+	bool delete_chat_photo,
+		 group_chat_created,
+		 supergroup_chat_created,
+		 channel_chat_created;
+	long migrate_to_chat_id,
+		 migrate_from_chat_id;
+	
+	private @name("pinned_message") Json m_pinned_message;
+	@property Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
+	@property void    pinned_messagee(Message m) { m_pinned_message = m.serializeToJson; }
 
-	@property uint id() {
-		return update_id;
-	}
-}
-
-struct WebhookInfo {
-	string url;
-	bool has_custom_certificate;
-	uint pending_update_count;
-	uint last_error_date;
-	string last_error_message;
-	uint max_connections;
-	string[] allowed_updates;
-}
-
-enum ParseMode : string{
-	Markdown = "Markdown",
-	HTML = "HTML",
-	None = "",
+	Invoice invoice;
+	SuccessfulPayment successful_payment;
+	string connected_website;
 }
 
 struct MessageEntity {
 	string type;
-	uint offset;
-	uint length;
+	int offset;
+	int length;
+@optional:
 	string url;
-	Nullable!User user;
+	User user;
 }
 
 struct PhotoSize {
 	string file_id;
 	int width;
 	int height;
-
-	Nullable!uint file_size;
+@optional:
+	int file_size;
 }
 
 struct Audio {
 	string file_id;
-	uint duration;
-	string performer;
-	string title;
-	string mime_type;
-	uint file_size;
+	int duration;
+@optional:
+	string performer,
+		   title,
+		   mime_type;
+	int file_size;
 }
 
 struct Document {
 	string file_id;
+@optional:
 	PhotoSize thumb;
-	string file_name;
-	string mime_type;
-	uint file_size;
+	string file_name,
+		   mime_type;
+	int file_size;
 }
 
 struct Video {
 	string file_id;
-	uint width;
-	uint height;
-	uint duration;
+	int width,
+		height,
+		duration;
+@optional:
 	PhotoSize thumb;
 	string mime_type;
-	uint file_size;
+	int file_size;
 }
 
 struct Voice {
 	string file_id;
-	uint duration;
+	int duration;
+@optional:
 	string mime_type;
-	uint file_size;
+	int file_size;
 }
 
 struct VideoNote {
 	string file_id;
-	uint length;
-	uint duration;
+	int length,
+		duration;
+@optional:
 	PhotoSize thumb;
-	uint file_size;
+	int file_size;
 }
 
 struct Contact {
-	string phone_number;
-	string first_name;
+	string phone_number,
+		   first_name;
+@optional:
 	string last_name;
-	string user_id;
+	int user_id;
 }
 
 struct Location {
-	float longitude;
-	float latitude;
+	float longitude,
+		  latitude;
 }
 
 struct Venue {
 	Location location;
-	string title;
-	string address;
+	string title,
+		   address;
+@optional:
 	string foursquare_id;
 }
 
 struct UserProfilePhotos {
-	uint total_count;
-	PhotoSize[][] photos;
+	int total_count;
+	PhotoSize[] photos;
 }
 
 struct File {
 	string file_id;
-	uint file_size;
+@optional:
+	int file_size;
 	string file_path;
 }
 
-import std.meta : AliasSeq, staticIndexOf;
-import std.variant : Algebraic;
-
-alias ReplyMarkupStructs = AliasSeq!(ReplyKeyboardMarkup, ReplyKeyboardRemove,
+private alias ReplyMarkupStructs = AliasSeq!(ReplyKeyboardMarkup, ReplyKeyboardRemove,
 		InlineKeyboardMarkup, ForceReply);
 
 /**
@@ -1058,30 +1065,22 @@ enum isReplyMarkup(T) = is(T == ReplyMarkup) || staticIndexOf!(T, ReplyMarkupStr
 
 struct ReplyKeyboardMarkup {
 	KeyboardButton[][] keyboard;
-	bool resize_keyboard;
-	bool one_time_keyboard;
-	bool selective;
-
-	this(string[][] keyboard) {
-		foreach (ref row; keyboard) {
-			KeyboardButton[] buttonRow;
-
-			foreach (ref item; row) {
-				buttonRow ~= KeyboardButton(item);
-			}
-			this.keyboard ~= buttonRow;
-		}
-	}
+@optional:
+	bool resize_keyboard,
+		 one_time_keyboard,
+		 selective;
 }
 
 struct KeyboardButton {
 	string text;
-	bool request_contact;
-	bool request_location;
+@optional:
+	bool request_contact,
+		 request_location;
 }
 
 struct ReplyKeyboardRemove {
 	bool remove_keyboard = true;
+@optional:
 	bool selective;
 }
 
@@ -1091,10 +1090,11 @@ struct InlineKeyboardMarkup {
 
 struct InlineKeyboardButton {
 	string text;
-	string url;
-	string callback_data;
-	string switch_inline_query;
-	string switch_inline_query_current_chat;
+@optional:
+	string url,
+		   callback_data,
+		   switch_inline_query,
+		   switch_inline_query_current_chat;
 	CallbackGame callback_game;
 	bool pay;
 }
@@ -1102,461 +1102,173 @@ struct InlineKeyboardButton {
 struct CallbackQuery {
 	string id;
 	User from;
-	Nullable!Message message;
-	string inline_message_id;
 	string chat_instance;
-	string data;
-	string game_short_name;
+@optional:
+	Message message;
+	string inline_message_id,
+		   data,
+		   game_short_name;
 }
 
 struct ForceReply {
-	bool force_reply = true;
+	bool force_reply;
+@optional:
 	bool selective;
 }
 
 struct ChatPhoto {
-	string small_file_id;
-	string big_file_id;
+	string small_file_id,
+		   big_file_id;
 }
 
 struct ChatMember {
 	User user;
 	string status;
-	uint until_date;
-	bool can_be_edited;
-	bool can_change_info;
-	bool can_post_messages;
-	bool can_edit_messages;
-	bool can_delete_messages;
-	bool can_invite_users;
-	bool can_restrict_members;
-	bool can_pin_messages;
-	bool can_promote_members;
-	bool can_send_messages;
-	bool can_send_media_messages;
-	bool can_send_other_messages;
-	bool can_add_web_page_previews;
+@optional:
+	long until_date;
+	bool can_be_edited,
+		 can_change_info,
+		 can_post_messages,
+		 can_edit_messages,
+		 can_delete_messages,
+		 can_invite_users,
+		 can_restrict_members,
+		 can_pin_messages,
+		 can_promote_members,
+		 can_send_messages,
+		 can_send_media_messages,
+		 can_send_other_messages,
+		 can_add_web_page_previews;
 }
 
 struct ResponseParameters {
+@optional:
 	long migrate_to_chat_id;
-	uint retry_after;
+	int retry_after;
 }
 
-alias InputMediaStructs = AliasSeq!(InputMediaPhoto, InputMediaVideo);
 
+private alias InputMediaStructs = AliasSeq!(InputMediaPhoto, InputMediaVideo);
 alias InputMedia = JsonableAlgebraic!InputMediaStructs;
 
 struct InputMediaPhoto {
-	string type;
+	string type = "photo";
 	string media;
-	string caption;
-	string parse_mode;
+@optional:
+	string caption,
+		   parse_mode;
 }
 
 struct InputMediaVideo {
-	string type;
+	string type = "video";
 	string media;
-	string caption;
-	string parse_mode;
-	uint width;
-	uint height;
-	uint duration;
+@optional:
+	string caption,
+		   parse_mode;
+	int width,
+		height,
+		duration;
 	bool supports_streaming;
-}
-
-struct InputFile {
-	// no fields
 }
 
 struct Sticker {
 	string file_id;
-	uint width;
-	uint height;
+	int width,
+		height;
+@optional:
 	PhotoSize thumb;
-	string emoji;
-	string set_name;
+	string emoji,
+		   set_name;
 	MaskPosition mask_position;
-	uint file_size;
+	int file_size;
 }
 
 struct StickerSet {
-	string name;
-	string title;
+	string name,
+		   title;
 	bool contains_masks;
 	Sticker[] stickers;
 }
 
 struct MaskPosition {
 	string point;
-	float x_shift;
-	float y_shift;
-	float scale;
+	float x_shift,
+		  y_shift,
+		  scale;
 }
 
-/*** Inline mode types ***/
-
-struct InlineQuery {
-	string id;
-	User from;
-	Nullable!Location location;
-	string query;
-	string offset;
+struct Game {
+	string title,
+		   description;
+	PhotoSize[] photo;
+@optional:
+	string text;
+	MessageEntity[] text_entities;
+	Animation animation;
 }
 
-alias InlineQueryResultStructs = AliasSeq!(InlineQueryResultArticle, InlineQueryResultPhoto,
-		InlineQueryResultGif, InlineQueryResultMpeg4Gif, InlineQueryResultVideo,
-		InlineQueryResultAudio, InlineQueryResultVoice, InlineQueryResultDocument,
-		InlineQueryResultLocation,
-		InlineQueryResultVenue,
-		InlineQueryResultContact,
-		InlineQueryResultGame, InlineQueryResultCachedPhoto, InlineQueryResultCachedGif,
-		InlineQueryResultCachedMpeg4Gif, InlineQueryResultCachedSticker, InlineQueryResultCachedDocument,
-		InlineQueryResultCachedVideo, InlineQueryResultCachedVoice, InlineQueryResultCachedAudio);
-
-alias InlineQueryResult = JsonableAlgebraic!InlineQueryResultStructs;
-
-mixin template InlineQueryFields() {
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+struct Animation {
+	string file_id;
+@optional:
+	PhotoSize thumb;
+	string file_name,
+		   mime_type;
+	int file_size;
 }
 
-struct InlineQueryResultArticle {
-	string type = "article";
-	string id;
-	string title;
-	string url;
-	bool hide_url;
-	string description;
-	string thumb_url;
-	uint thumb_width;
-	uint thumb_height;
+struct CallbackGame {}
 
-	mixin InlineQueryFields;
+struct GameHighScore {
+	int position;
+	User user;
+	int score;
 }
 
-struct InlineQueryResultPhoto {
-	string type = "photo";
-	string id;
-	string photo_url;
-	string thumb_url;
-	uint photo_width;
-	uint photo_height;
-	string title;
-	string description;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultGif{
-	string type = "gif";
-	string id;
-	string gif_url;
-	uint gif_width;
-	uint gif_height;
-	uint gif_duration;
-	string thumb_url;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultMpeg4Gif{
-	string type = "mpeg4_gif";
-	string id;
-	string mpeg4_url;
-	uint mpeg4_width;
-	uint mpeg4_height;
-	uint mpeg4_duration;
-	string thumb_url;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultVideo {
-	string type = "video";
-	string id;
-	string video_url;
-	string mime_type;
-	string thumb_url;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-	uint video_width;
-	uint video_height;
-	uint video_duration;
-	string description;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultAudio {
-	string type = "audio";
-	string id;
-	string audio_url;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-	string performer;
-	uint audio_duration;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultVoice {
-	string type = "voice";
-	string id;
-	string voice_url;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-	uint voice_duration;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultDocument {
-	string type = "document";
-	string id;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-	string document_url;
-	string mime_type;
-	string description;
-	string thumb_url;
-	uint thumb_width;
-	uint thumb_height;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultLocation {
-	string type = "location";
-	string id;
-	float latitude;
-	float longitude;
-	string title;
-	uint live_period;
-	string thumb_url;
-	uint thumb_width;
-	uint thumb_height;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultVenue {
-	string type = "venue";
-	string id;
-	float latitude;
-	float longitude;
-	string title;
-	string address;
-	string foursquare_id;
-	string thumb_url;
-	uint thumb_width;
-	uint thumb_height;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultContact {
-	string type = "contact";
-	string id;
-	string phone_number;
-	string first_name;
-	string last_name;
-	string thumb_url;
-	uint thumb_width;
-	uint thumb_height;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultGame {
-	string type = "game";
-	string id;
-	string game_short_name;
-	Nullable!InlineKeyboardMarkup reply_markup;
-}
-
-struct InlineQueryResultCachedPhoto {
-	string type = "photo";
-	string id;
-	string photo_file_id;
-	string title;
-	string description;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultCachedGif{
-	string type = "gif";
-	string id;
-	string gif_file_id;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultCachedMpeg4Gif{
-	string type = "mpeg4_gif";
-	string id;
-	string mpeg4_file_id;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultCachedSticker {
-	string type = "sticker";
-	string id;
-	string sticker_file_id;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultCachedDocument {
-	string type = "document";
-	string id;
-	string title;
-	string document_file_id;
-	string description;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultCachedVideo {
-	string type = "video";
-	string id;
-	string video_file_id;
-	string title;
-	string description;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultCachedVoice {
-	string type = "voice";
-	string id;
-	string voice_file_id;
-	string title;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-struct InlineQueryResultCachedAudio {
-	string type = "audio";
-	string id;
-	string audio_file_id;
-	string caption;
-	ParseMode parse_mode;
-
-	mixin InlineQueryFields;
-}
-
-alias InputMessageContentStructs = AliasSeq!(InputTextMessageContent,
-		InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
-
-alias InputMessageContent = JsonableAlgebraic!InputMessageContentStructs;
-
-struct InputTextMessageContent {
-	string message_text;
-	string parse_mode;
-	bool disable_web_page_preview;
-}
-
-struct InputLocationMessageContent {
-	float latitude;
-	float longitude;
-	uint live_period;
-}
-
-struct InputVenueMessageContent {
-	float latitude;
-	float longitude;
-	string title;
-	string address;
-	string foursquare_id;
-}
-
-struct InputContactMessageContent {
-	string phone_number;
-	string first_name;
-	string last_name;
-}
-
-struct ChosenInlineResult {
-	string result_id;
-	User from;
-	Nullable!Location location;
-	string inline_message_id;
-	string query;
-}
-
-/*** Payments types ***/
 struct LabeledPrice {
 	string label;
-	uint amount;
+	int amount;
 }
 
 struct Invoice {
-	string title;
-	string description;
-	string start_parameter;
-	string currency;
-	uint total_amount;
+	string title,
+		   description,
+		   start_parameter,
+		   currency;
+	int total_amount;
 }
 
 struct ShippingAddress {
-	string country_code;
-	string state;
-	string city;
-	string street_line1;
-	string street_line2;
-	string post_code;
+	string country_code,
+		   state,
+		   city,
+		   street_line1,
+		   street_line2,
+		   post_code;
 }
 
 struct OrderInfo {
-	string name;
-	string phone_number;
-	string email;
-	Nullable!ShippingAddress shipping_address;
+@optional:
+	string name,
+		   phone_number,
+		   email;
+	ShippingAddress shipping_address;
 }
 
 struct ShippingOption {
-	string id;
-	string title;
+	string id,
+		   title;
 	LabeledPrice[] prices;
 }
 
 struct SuccessfulPayment {
 	string currency;
-	uint total_amount;
-	string invoice_payload;
+	int total_amount;
+	string invoice_payload,
+		   telegram_payment_charge_id,
+		   provider_payment_charge_id;
+@optional:
 	string shipping_option_id;
-	Nullable!OrderInfo order_info;
-	string telegram_payment_charge_id;
-	string provider_payment_charge_id;
+	OrderInfo order_info;
 }
 
 struct ShippingQuery {
@@ -1570,39 +1282,358 @@ struct PreCheckoutQuery {
 	string id;
 	User from;
 	string currency;
-	uint total_amount;
+	int total_amount;
 	string invoice_payload;
+@optional:
 	string shipping_option_id;
-	Nullable!OrderInfo order_info;
+	OrderInfo order_info;
 }
 
-/*** Games types ***/
+struct InlineQuery {
+	string id;
+	User from;
+	string query,
+		   offset;
+@optional:
+	Location location;
+}
 
-struct Game {
+private alias InlineQueryResultStructs = AliasSeq!(InlineQueryResultArticle, InlineQueryResultPhoto,
+		InlineQueryResultGif, InlineQueryResultMpeg4Gif, InlineQueryResultVideo,
+		InlineQueryResultAudio, InlineQueryResultVoice, InlineQueryResultDocument,
+		InlineQueryResultLocation,
+		InlineQueryResultVenue,
+		InlineQueryResultContact,
+		InlineQueryResultGame, InlineQueryResultCachedPhoto, InlineQueryResultCachedGif,
+		InlineQueryResultCachedMpeg4Gif, InlineQueryResultCachedSticker, InlineQueryResultCachedDocument,
+		InlineQueryResultCachedVideo, InlineQueryResultCachedVoice, InlineQueryResultCachedAudio);
+
+alias InlineQueryResult = JsonableAlgebraic!InlineQueryResultStructs;
+
+struct InlineQueryResultArticle {
+	string type = "article";
+	string id;
+	string title;
+	InputMessageContent input_message_content;
+@optional:
+	InlineKeyboardMarkup reply_markup;
+	string url;
+	bool hide_url;
+	string description;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
+}
+
+struct InlineQueryResultPhoto {
+	string type = "photo";
+	string id;
+	string photo_url;
+	string thumb_url;
+@optional:
+	uint photo_width;
+	uint photo_height;
 	string title;
 	string description;
-	PhotoSize[] photo;
-	string text;
-	MessageEntity text_entities;
-	Animation animation;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
-struct Animation {
-	string file_id;
-	PhotoSize thumb;
-	string file_name;
+struct InlineQueryResultGif {
+	string type = "gif";
+	string id;
+	string gif_url;
+	string thumb_url;
+@optional:
+	uint gif_width;
+	uint gif_height;
+	uint gif_duration;
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InputMessageContent input_message_content;
+	InlineKeyboardMarkup reply_markup;
+}
+
+struct InlineQueryResultMpeg4Gif{
+	string type = "mpeg4_gif";
+	string id;
+	string mpeg4_url;
+	int mpeg4_width;
+	int mpeg4_height;
+	int mpeg4_duration;
+	string thumb_url;
+@optional:
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultVideo {
+	string type = "video";
+	string id;
+	string video_url;
 	string mime_type;
-	uint file_size;
+	string thumb_url;
+	string title;
+@optional:
+	string caption;
+	ParseMode parse_mode;
+	int video_width;
+	int video_height;
+	int video_duration;
+	string description;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
-struct CallbackGame {
-	// no fields
+struct InlineQueryResultAudio {
+	string type = "audio";
+	string id;
+	string audio_url;
+	string title;
+@optional:
+	string caption;
+	ParseMode parse_mode;
+	string performer;
+	int audio_duration;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
-struct GameHighScore {
-	uint position;
-	User user;
-	uint score;
+struct InlineQueryResultVoice {
+	string type = "voice";
+	string id;
+	string voice_url;
+	string title;
+@optional:
+	string caption;
+	ParseMode parse_mode;
+	int voice_duration;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultDocument {
+	string type = "document";
+	string id;
+	string title;
+	string document_url;
+	string mime_type;
+@optional:
+	string caption;
+	ParseMode parse_mode;
+	string description;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
+}
+
+struct InlineQueryResultLocation {
+	string type = "location";
+	string id;
+	float latitude;
+	float longitude;
+	string title;
+@optional:
+	int live_period;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
+}
+
+struct InlineQueryResultVenue {
+	string type = "venue";
+	string id;
+	float latitude;
+	float longitude;
+	string title;
+	string address;
+@optional:
+	string foursquare_id;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
+}
+
+struct InlineQueryResultContact {
+	string type = "contact";
+	string id;
+	string phone_number;
+	string first_name;
+	string last_name;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
+}
+
+struct InlineQueryResultGame {
+	string type = "game";
+	string id;
+	string game_short_name;
+	@optional InlineKeyboardMarkup reply_markup;
+}
+
+struct InlineQueryResultCachedPhoto {
+	string type = "photo";
+	string id;
+	string photo_file_id;
+@optional:
+	string title;
+	string description;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultCachedGif{
+	string type = "gif";
+	string id;
+	string gif_file_id;
+@optional:
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultCachedMpeg4Gif{
+	string type = "mpeg4_gif";
+	string id;
+	string mpeg4_file_id;
+@optional:
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultCachedSticker {
+	string type = "sticker";
+	string id;
+	string sticker_file_id;
+@optional:
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultCachedDocument {
+	string type = "document";
+	string id;
+	string title;
+	string document_file_id;
+@optional:
+	string description;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;;
+}
+
+struct InlineQueryResultCachedVideo {
+	string type = "video";
+	string id;
+	string video_file_id;
+	string title;
+@optional:
+	string description;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultCachedVoice {
+	string type = "voice";
+	string id;
+	string voice_file_id;
+	string title;
+@optional:
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+struct InlineQueryResultCachedAudio {
+	string type = "audio";
+	string id;
+	string audio_file_id;
+@optional:
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+}
+
+private alias InputMessageContentStructs = AliasSeq!(InputTextMessageContent,
+		InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
+
+alias InputMessageContent = JsonableAlgebraic!InputMessageContentStructs;
+
+struct InputTextMessageContent {
+	string message_text;
+@optional:
+	string parse_mode;
+	bool disable_web_page_preview;
+}
+
+struct InputLocationMessageContent {
+	float latitude;
+	float longitude;
+@optional:
+	int live_period;
+}
+
+struct InputVenueMessageContent {
+	float latitude;
+	float longitude;
+	string title;
+	string address;
+@optional:
+	string foursquare_id;
+}
+
+struct InputContactMessageContent {
+	string phone_number;
+	string first_name;
+@optional:
+	string last_name;
+}
+
+struct ChosenInlineResult {
+	string result_id;
+	User from;
+	string query;
+@optional:
+	Location location;
+	string inline_message_id;
+}
+
+struct WebhookInfo {
+	string url;
+	bool has_custom_certificate;
+	int pending_update_count;
+@optional:
+	long last_error_date;
+	string last_error_message;
+	int max_connections;
+	string[] allowed_updates;
 }
 
 private:
@@ -1622,7 +1653,7 @@ struct JsonableAlgebraic(Typelist...) {
 
 	@safe Json toJson() const {
 		if(!types.hasValue) {
-			return Json(null);
+			return Json.emptyObject;
 		}
 
 		return getJson();
