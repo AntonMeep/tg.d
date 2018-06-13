@@ -11,9 +11,6 @@ dub.json:
 	"license": "MIT",
 	"dependencies": {
 		"tg-d": {"path": "../"}
-	},
-	"subConfigurations": {
-		"tg-d": "verbose_openssl-1.1"
 	}
 }
 +/
@@ -28,9 +25,6 @@ import std.algorithm;
 import std.range;
 
 int main() {
-	(cast(FileLogger) getLoggers[0]).useColors = false;
-	LogLevel.debug_.setLogLevel;
-
 	auto Bot = TelegramBot(
 		"token|t".readRequiredOption!string("Bot token to use. Ask Botfather for it")
 	);
