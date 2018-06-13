@@ -20,7 +20,7 @@ version(TgD_Verbose) {
 	pragma(msg, "tg.d | DISABLE THIS in production builds!");
 }
 
-class TelegramBotApiException : Exception {
+class TelegramBotException : Exception {
 	ushort code;
 
 	this(ushort code, string description, string file = __FILE__,
@@ -74,7 +74,7 @@ struct TelegramBot {
 				auto json = answer.deserializeJson!(MethodResult!T);
 
 				enforce(json.ok == true,
-					new TelegramBotApiException(json.error_code, json.description));
+					new TelegramBotException(json.error_code, json.description));
 
 				result = json.result;
 			}
@@ -91,6 +91,10 @@ struct TelegramBot {
 			allowed_updates: allowed_updates,
 		};
 
+		return callMethod!(Update[], GetUpdatesMethod)(m);
+	}
+
+	Update[] getUpdates(GetUpdatesMethod m) {
 		return callMethod!(Update[], GetUpdatesMethod)(m);
 	}
 
@@ -163,7 +167,7 @@ struct TelegramBot {
 		return sendMessage(m);
 	}
 
-	Message sendMessage(ref SendMessageMethod m) {
+	Message sendMessage(SendMessageMethod m) {
 		return callMethod!(Message, SendMessageMethod)(m);
 	}
 
@@ -177,11 +181,11 @@ struct TelegramBot {
 		return callMethod!(Message, ForwardMessageMethod)(m);
 	}
 
-	Message forwardMessage(ref ForwardMessageMethod m) {
+	Message forwardMessage(ForwardMessageMethod m) {
 		return callMethod!(Message, ForwardMessageMethod)(m);
 	}
 
-	Message sendPhoto(ref SendPhotoMethod m) {
+	Message sendPhoto(SendPhotoMethod m) {
 		return callMethod!(Message, SendPhotoMethod)(m);
 	}
 
@@ -194,7 +198,7 @@ struct TelegramBot {
 		return sendPhoto(m);
 	}
 
-	Message sendAudio(ref SendAudioMethod m) {
+	Message sendAudio(SendAudioMethod m) {
 		return callMethod!(Message, SendAudioMethod)(m);
 	}
 
@@ -207,7 +211,7 @@ struct TelegramBot {
 		return sendAudio(m);
 	}
 
-	Message sendDocument(ref SendDocumentMethod m) {
+	Message sendDocument(SendDocumentMethod m) {
 		return callMethod!(Message, SendDocumentMethod)(m);
 	}
 
@@ -220,7 +224,7 @@ struct TelegramBot {
 		return sendDocument(m);
 	}
 
-	Message sendVideo(ref SendVideoMethod m) {
+	Message sendVideo(SendVideoMethod m) {
 		return callMethod!(Message, SendVideoMethod)(m);
 	}
 
@@ -233,7 +237,7 @@ struct TelegramBot {
 		return sendVideo(m);
 	}
 
-	Message sendVoice(ref SendVoiceMethod m) {
+	Message sendVoice(SendVoiceMethod m) {
 		return callMethod!(Message, SendVoiceMethod)(m);
 	}
 
@@ -246,7 +250,7 @@ struct TelegramBot {
 		return sendVoice(m);
 	}
 
-	Message sendVideoNote(ref SendVideoNoteMethod m) {
+	Message sendVideoNote(SendVideoNoteMethod m) {
 		return callMethod!(Message, SendVideoNoteMethod)(m);
 	}
 
@@ -259,7 +263,7 @@ struct TelegramBot {
 		return sendVideoNote(m);
 	}
 
-	Message sendMediaGroup(ref SendMediaGroupMethod m) {
+	Message sendMediaGroup(SendMediaGroupMethod m) {
 		return callMethod!(Message, SendMediaGroupMethod)(m);
 	}
 
@@ -272,7 +276,7 @@ struct TelegramBot {
 		return sendMediaGroup(m);
 	}
 
-	Message sendLocation(ref SendLocationMethod m) {
+	Message sendLocation(SendLocationMethod m) {
 		return callMethod!(Message, SendLocationMethod)(m);
 	}
 
@@ -286,7 +290,7 @@ struct TelegramBot {
 		return sendLocation(m);
 	}
 
-	Nullable!Message editMessageLiveLocation(ref EditMessageLiveLocationMethod m) {
+	Nullable!Message editMessageLiveLocation(EditMessageLiveLocationMethod m) {
 		return callMethod!(Nullable!Message, EditMessageLiveLocationMethod)(m);
 	}
 
@@ -311,7 +315,7 @@ struct TelegramBot {
 		return editMessageLiveLocation(m);
 	}
 
-	Nullable!Message stopMessageLiveLocation(ref StopMessageLiveLocationMethod m) {
+	Nullable!Message stopMessageLiveLocation(StopMessageLiveLocationMethod m) {
 		return callMethod!(Nullable!Message, StopMessageLiveLocationMethod)(m);
 	}
 
@@ -332,7 +336,7 @@ struct TelegramBot {
 		return stopMessageLiveLocation(m);
 	}
 
-	Message sendVenue(ref SendVenueMethod m) {
+	Message sendVenue(SendVenueMethod m) {
 		return callMethod!(Message, SendVenueMethod)(m);
 	}
 
@@ -348,7 +352,7 @@ struct TelegramBot {
 		return sendVenue(m);
 	}
 
-	Message sendContact(ref SendContactMethod m) {
+	Message sendContact(SendContactMethod m) {
 		return callMethod!(Message, SendContactMethod)(m);
 	}
 
@@ -362,7 +366,7 @@ struct TelegramBot {
 		return sendContact(m);
 	}
 
-	bool sendChatAction(ref SendChatActionMethod m) {
+	bool sendChatAction(SendChatActionMethod m) {
 		return callMethod!(bool, SendChatActionMethod)(m);
 	}
 
@@ -375,7 +379,7 @@ struct TelegramBot {
 		return sendChatAction(m);
 	}
 
-	UserProfilePhotos getUserProfilePhotos(ref GetUserProfilePhotosMethod m) {
+	UserProfilePhotos getUserProfilePhotos(GetUserProfilePhotosMethod m) {
 		return callMethod!(UserProfilePhotos, GetUserProfilePhotosMethod)(m);
 	}
 
@@ -387,7 +391,7 @@ struct TelegramBot {
 		return getUserProfilePhotos(m);
 	}
 
-	File getFile(ref GetFileMethod m) {
+	File getFile(GetFileMethod m) {
 		return callMethod!(File, GetFileMethod)(m);
 	}
 
@@ -399,7 +403,7 @@ struct TelegramBot {
 		return getFile(m);
 	}
 
-	bool kickChatMember(ref KickChatMemberMethod m) {
+	bool kickChatMember(KickChatMemberMethod m) {
 		return callMethod!(bool, KickChatMemberMethod)(m);
 	}
 
@@ -412,7 +416,7 @@ struct TelegramBot {
 		return kickChatMember(m);
 	}
 
-	bool unbanChatMember(ref UnbanChatMemberMethod m) {
+	bool unbanChatMember(UnbanChatMemberMethod m) {
 		return callMethod!(bool, UnbanChatMemberMethod)(m);
 	}
 
@@ -425,7 +429,7 @@ struct TelegramBot {
 		return unbanChatMember(m);
 	}
 
-	bool restrictChatMember(ref RestrictChatMemberMethod m) {
+	bool restrictChatMember(RestrictChatMemberMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -438,7 +442,7 @@ struct TelegramBot {
 		return restrictChatMember(m);
 	}
 
-	bool promoteChatMember(ref PromoteChatMemberMethod m) {
+	bool promoteChatMember(PromoteChatMemberMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -451,7 +455,7 @@ struct TelegramBot {
 		return promoteChatMember(m);
 	}
 
-	string exportChatInviteLink(ref ExportChatInviteLinkMethod m) {
+	string exportChatInviteLink(ExportChatInviteLinkMethod m) {
 		return callMethod!string(m);
 	}
 
@@ -463,7 +467,7 @@ struct TelegramBot {
 		return exportChatInviteLink(m);
 	}
 
-	bool setChatPhoto(ref SetChatPhotoMethod m) {
+	bool setChatPhoto(SetChatPhotoMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -476,7 +480,7 @@ struct TelegramBot {
 		return setChatPhoto(m);
 	}
 
-	bool deleteChatPhoto(ref DeleteChatPhotoMethod m) {
+	bool deleteChatPhoto(DeleteChatPhotoMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -488,7 +492,7 @@ struct TelegramBot {
 		return deleteChatPhoto(m);
 	}
 
-	bool setChatTitle(ref SetChatTitleMethod m) {
+	bool setChatTitle(SetChatTitleMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -501,7 +505,7 @@ struct TelegramBot {
 		return setChatTitle(m);
 	}
 
-	bool setChatDescription(ref SetChatDescriptionMethod m) {
+	bool setChatDescription(SetChatDescriptionMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -514,7 +518,7 @@ struct TelegramBot {
 		return setChatDescription(m);
 	}
 
-	bool pinChatMessage(ref PinChatMessageMethod m) {
+	bool pinChatMessage(PinChatMessageMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -527,7 +531,7 @@ struct TelegramBot {
 		return pinChatMessage(m);
 	}
 
-	bool unpinChatMessage(ref UnpinChatMessageMethod m) {
+	bool unpinChatMessage(UnpinChatMessageMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -539,7 +543,7 @@ struct TelegramBot {
 		return unpinChatMessage(m);
 	}
 
-	bool leaveChat(ref LeaveChatMethod m) {
+	bool leaveChat(LeaveChatMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -551,7 +555,7 @@ struct TelegramBot {
 		return leaveChat(m);
 	}
 
-	Chat getChat(ref GetChatMethod m) {
+	Chat getChat(GetChatMethod m) {
 		return callMethod!Chat(m);
 	}
 
@@ -563,7 +567,21 @@ struct TelegramBot {
 		return getChat(m);
 	}
 
-	ChatMember getChatAdministrators(ref GetChatAdministratorsMethod m) {
+	Chat getChat(string chatId) {
+		struct GetChatStringMethod {
+			mixin TelegramMethod!("/getChat", HTTPMethod.GET);
+			string chat_id;
+		}
+
+		GetChatStringMethod m = {
+			chat_id: chatId,
+		};
+
+		return callMethod!Chat(m);
+	}
+
+
+	ChatMember getChatAdministrators(GetChatAdministratorsMethod m) {
 		return callMethod!ChatMember(m);
 	}
 
@@ -575,11 +593,11 @@ struct TelegramBot {
 		return getChatAdministrators(m);
 	}
 
-	uint getChatMembersCount(ref GetChatMembersCountMethod m) {
-		return callMethod!uint(m);
+	int getChatMembersCount(GetChatMembersCountMethod m) {
+		return callMethod!int(m);
 	}
 
-	uint getChatMembersCount(long chatId) {
+	int getChatMembersCount(long chatId) {
 		GetChatMembersCountMethod m = {
 			chat_id: chatId,
 		};
@@ -587,7 +605,7 @@ struct TelegramBot {
 		return getChatMembersCount(m);
 	}
 
-	ChatMember getChatMember(ref GetChatMemberMethod m) {
+	ChatMember getChatMember(GetChatMemberMethod m) {
 		return callMethod!ChatMember(m);
 	}
 
@@ -600,7 +618,7 @@ struct TelegramBot {
 		return getChatMember(m);
 	}
 
-	bool setChatStickerSet(ref SetChatStickerSetMethod m) {
+	bool setChatStickerSet(SetChatStickerSetMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -613,7 +631,7 @@ struct TelegramBot {
 		return setChatStickerSet(m);
 	}
 
-	bool deleteChatStickerSet(ref DeleteChatStickerSetMethod m) {
+	bool deleteChatStickerSet(DeleteChatStickerSetMethod m) {
 	return callMethod!bool(m);
 	}
 
@@ -625,7 +643,7 @@ struct TelegramBot {
 		return deleteChatStickerSet(m);
 	}
 
-	bool answerCallbackQuery(ref AnswerCallbackQueryMethod m) {
+	bool answerCallbackQuery(AnswerCallbackQueryMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -637,11 +655,11 @@ struct TelegramBot {
 		return answerCallbackQuery(m);
 	}
 
-	bool editMessageText(ref EditMessageTextMethod m) {
+	bool editMessageText(EditMessageTextMethod m) {
 		return callMethod!bool(m);
 	}
 
-	bool editMessageText(long chatId, uint messageId, string text) {
+	bool editMessageText(long chatId, int messageId, string text) {
 		EditMessageTextMethod m = {
 			message_id: messageId,
 			text: text,
@@ -660,11 +678,11 @@ struct TelegramBot {
 		return editMessageText(m);
 	}
 
-	bool editMessageCaption(ref EditMessageCaptionMethod m) {
+	bool editMessageCaption(EditMessageCaptionMethod m) {
 		return callMethod!bool(m);
 	}
 
-	bool editMessageCaption(long chatId, uint messageId, string caption = null) {
+	bool editMessageCaption(long chatId, int messageId, string caption = null) {
 		EditMessageCaptionMethod m = {
 			message_id: messageId,
 			caption: caption,
@@ -683,11 +701,11 @@ struct TelegramBot {
 		return editMessageCaption(m);
 	}
 
-	bool editMessageReplyMarkup(ref EditMessageReplyMarkupMethod m) {
+	bool editMessageReplyMarkup(EditMessageReplyMarkupMethod m) {
 		return callMethod!bool(m);
 	}
 
-	bool editMessageReplyMarkup(T)(long chatId, uint messageId, T replyMarkup)
+	bool editMessageReplyMarkup(T)(long chatId, int messageId, T replyMarkup)
 	if(isReplyMarkup!T) {
 		EditMessageReplyMarkupMethod m = {
 			message_id: messageId,
@@ -708,11 +726,11 @@ struct TelegramBot {
 		return editMessageReplyMarkup(m);
 	}
 
-	bool deleteMessage(ref DeleteMessageMethod m) {
+	bool deleteMessage(DeleteMessageMethod m) {
 		return callMethod!bool(m);
 	}
 
-	bool deleteMessage(long chatId, uint messageId) {
+	bool deleteMessage(long chatId, int messageId) {
 		DeleteMessageMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
@@ -721,7 +739,7 @@ struct TelegramBot {
 		return deleteMessage(m);
 	}
 
-	Message sendSticker(ref SendStickerMethod m) {
+	Message sendSticker(SendStickerMethod m) {
 		return callMethod!Message(m);
 	}
 
@@ -735,7 +753,7 @@ struct TelegramBot {
 		return sendSticker(m);
 	}
 
-	StickerSet getStickerSet(ref GetStickerSetMethod m) {
+	StickerSet getStickerSet(GetStickerSetMethod m) {
 		return callMethod!StickerSet(m);
 	}
 
@@ -747,7 +765,7 @@ struct TelegramBot {
 		return getStickerSet(m);
 	}
 
-	File uploadStickerFile(ref UploadStickerFileMethod m) {
+	File uploadStickerFile(UploadStickerFileMethod m) {
 		return callMethod!File(m);
 	}
 
@@ -760,7 +778,7 @@ struct TelegramBot {
 		return uploadStickerFile(m);
 	}
 
-	bool createNewStickerSet(ref CreateNewStickerSetMethod m) {
+	bool createNewStickerSet(CreateNewStickerSetMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -781,7 +799,7 @@ struct TelegramBot {
 			return createNewStickerSet(m);
 	}
 
-	bool addStickerToSet(ref AddStickerToSetMethod m) {
+	bool addStickerToSet(AddStickerToSetMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -796,11 +814,11 @@ struct TelegramBot {
 		return addStickerToSet(m);
 	}
 
-	bool setStickerPositionInSet(ref SetStickerPositionInSetMethod m) {
+	bool setStickerPositionInSet(SetStickerPositionInSetMethod m) {
 		return callMethod!bool(m);
 	}
 
-	bool setStickerPositionInSet(string sticker, uint position) {
+	bool setStickerPositionInSet(string sticker, int position) {
 		SetStickerPositionInSetMethod m = {
 			sticker: sticker,
 			position: position,
@@ -809,7 +827,7 @@ struct TelegramBot {
 		return setStickerPositionInSet(m);
 	}
 
-	bool deleteStickerFromSet(ref DeleteStickerFromSetMethod m) {
+	bool deleteStickerFromSet(DeleteStickerFromSetMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -821,7 +839,7 @@ struct TelegramBot {
 		return setStickerPositionInSet(m);
 	}
 
-	bool answerInlineQuery(ref AnswerInlineQueryMethod m) {
+	bool answerInlineQuery(AnswerInlineQueryMethod m) {
 		return callMethod!bool(m);
 	}
 
@@ -1331,8 +1349,8 @@ struct InlineQueryResultPhoto {
 	string photo_url;
 	string thumb_url;
 @optional:
-	uint photo_width;
-	uint photo_height;
+	int photo_width;
+	int photo_height;
 	string title;
 	string description;
 	string caption;
@@ -1347,9 +1365,9 @@ struct InlineQueryResultGif {
 	string gif_url;
 	string thumb_url;
 @optional:
-	uint gif_width;
-	uint gif_height;
-	uint gif_duration;
+	int gif_width;
+	int gif_height;
+	int gif_duration;
 	string title;
 	string caption;
 	ParseMode parse_mode;
@@ -1636,9 +1654,497 @@ struct WebhookInfo {
 	string[] allowed_updates;
 }
 
-private:
+/******************************************************************/
+/*                        Telegram methods                        */
+/******************************************************************/
 
-struct JsonableAlgebraic(Typelist...) {
+mixin template TelegramMethod(string path, HTTPMethod method = HTTPMethod.POST) {
+package:
+	immutable string _path = path;
+	HTTPMethod _httpMethod = method;
+}
+
+/// UDA for telegram methods
+struct Method {
+	string path;
+}
+
+struct GetUpdatesMethod {
+	mixin TelegramMethod!"/getUpdates";
+
+	int offset;
+	int limit;
+	int timeout;
+	string[] allowed_updates;
+}
+
+struct SetWebhookMethod {
+	mixin TelegramMethod!"/setWebhook";
+
+	string url;
+	Nullable!InputFile certificate;
+	int max_connections;
+	string[] allowed_updates;
+}
+
+struct DeleteWebhookMethod {
+	mixin TelegramMethod!"/deleteWebhook";
+}
+
+struct GetWebhookInfoMethod {
+	mixin TelegramMethod!("/getWebhookInfo", HTTPMethod.GET);
+}
+
+struct GetMeMethod {
+	mixin TelegramMethod!("/getMe", HTTPMethod.GET);
+}
+
+struct SendMessageMethod {
+	mixin TelegramMethod!"/sendMessage";
+
+	long chat_id;
+	string text;
+	ParseMode parse_mode;
+	bool disable_web_page_preview;
+	bool disable_notification;
+	int reply_to_message_id;
+
+	ReplyMarkup reply_markup;
+}
+
+struct ForwardMessageMethod {
+	mixin TelegramMethod!"/forwardMessage";
+
+	long chat_id;
+	long from_chat_id;
+	bool disable_notification;
+	int message_id;
+}
+
+struct SendPhotoMethod {
+	mixin TelegramMethod!"/sendPhoto";
+
+	long chat_id;
+	string photo;
+	string caption;
+	ParseMode parse_mode;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendAudioMethod {
+	mixin TelegramMethod!"/sendAudio";
+
+	long chat_id;
+	string audio;
+	string caption;
+	ParseMode parse_mode;
+	int duration;
+	string performer;
+	string title;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+
+}
+
+struct SendDocumentMethod {
+	mixin TelegramMethod!"/sendDocument";
+
+	long chat_id;
+	string document;
+	string caption;
+	ParseMode parse_mode;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendVideoMethod {
+	mixin TelegramMethod!"/sendVideo";
+
+	long chat_id;
+	string video;
+	int duration;
+	int width;
+	int height;
+	string caption;
+	ParseMode parse_mode;
+	bool supports_streaming;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendVoiceMethod {
+	mixin TelegramMethod!"/sendVoice";
+
+	long chat_id;
+	string voice;
+	string caption;
+	ParseMode parse_mode;
+	int duration;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendVideoNoteMethod {
+	mixin TelegramMethod!"/sendVideoNote";
+
+	long chat_id;
+	string video_note;
+	int duration;
+	int length;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+
+}
+
+struct SendMediaGroupMethod {
+	mixin TelegramMethod!"/sendMediaGroup";
+
+	long chat_id;
+	InputMedia[] media;
+	bool disable_notification;
+	int reply_to_message_id;
+}
+
+struct SendLocationMethod {
+	mixin TelegramMethod!"/sendLocation";
+
+	long chat_id;
+	float latitude;
+	float longitude;
+	int live_period;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct EditMessageLiveLocationMethod {
+	mixin TelegramMethod!"/editMessageLiveLocation";
+
+	long chat_id;
+	int message_id;
+	string inline_message_id;
+	float latitude;
+	float longitude;
+	ReplyMarkup reply_markup;
+}
+
+struct StopMessageLiveLocationMethod {
+	mixin TelegramMethod!"/stopMessageLiveLocation";
+
+	long chat_id;
+	int message_id;
+	string inline_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendVenueMethod {
+	mixin TelegramMethod!"/sendVenue";
+
+	long chat_id;
+	float latitude;
+	float longitude;
+	string title;
+	string address;
+	string foursquare_id;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendContactMethod {
+	mixin TelegramMethod!"/sendContact";
+
+	long chat_id;
+	string phone_number;
+	string first_name;
+	string last_name;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendChatActionMethod {
+	mixin TelegramMethod!"/sendChatAction";
+
+	long chat_id;
+	string action; // TODO enum
+}
+
+struct GetUserProfilePhotosMethod {
+	mixin TelegramMethod!("/getUserProfilePhotos", HTTPMethod.GET);
+
+	int user_id;
+	int offset;
+	int limit;
+}
+
+struct GetFileMethod {
+	mixin TelegramMethod!("/getFile", HTTPMethod.GET);
+
+	string file_id;
+}
+
+struct KickChatMemberMethod {
+	mixin TelegramMethod!"/kickChatMember";
+
+	long chat_id;
+	int user_id;
+	int until_date;
+}
+
+struct UnbanChatMemberMethod {
+	mixin TelegramMethod!"/unbanChatMember";
+
+	long chat_id;
+	int user_id;
+}
+
+struct RestrictChatMemberMethod {
+	mixin TelegramMethod!"/restrictChatMember";
+
+	long chat_id;
+	int user_id;
+	int until_date;
+	bool can_send_messages;
+	bool can_send_media_messages;
+	bool can_send_other_messages;
+	bool can_add_web_page_previews;
+}
+
+struct PromoteChatMemberMethod {
+	mixin TelegramMethod!"/promoteChatMember";
+
+	long chat_id;
+	int user_id;
+	bool can_change_info;
+	bool can_post_messages;
+	bool can_edit_messages;
+	bool can_delete_messages;
+	bool can_invite_users;
+	bool can_restrict_members;
+	bool can_pin_messages;
+	bool can_promote_members;
+}
+
+struct ExportChatInviteLinkMethod {
+	mixin TelegramMethod!"/exportChatInviteLink";
+
+	long chat_id;
+}
+
+struct SetChatPhotoMethod {
+	mixin TelegramMethod!"/setChatPhoto";
+
+	long chat_id;
+	InputFile photo;
+
+}
+
+struct DeleteChatPhotoMethod {
+	mixin TelegramMethod!"/deleteChatPhoto";
+
+	long chat_id;
+}
+
+struct SetChatTitleMethod {
+	mixin TelegramMethod!"/setChatTitle";
+
+	long chat_id;
+	string title;
+}
+
+struct SetChatDescriptionMethod {
+	mixin TelegramMethod!"/setChatDescription";
+
+	long chat_id;
+	string description;
+}
+
+struct PinChatMessageMethod {
+	mixin TelegramMethod!"/pinChatMessage";
+
+	long chat_id;
+	int message_id;
+	bool disable_notification;
+}
+
+struct UnpinChatMessageMethod {
+	mixin TelegramMethod!"/unpinChatMessage";
+
+	long chat_id;
+}
+
+struct LeaveChatMethod {
+	mixin TelegramMethod!"/leaveChat";
+
+	long chat_id;
+}
+
+struct GetChatMethod {
+	mixin TelegramMethod!("/getChat", HTTPMethod.GET);
+
+	long chat_id;
+}
+
+struct GetChatAdministratorsMethod {
+	mixin TelegramMethod!("/getChatAdministrators", HTTPMethod.GET);
+
+	long chat_id;
+}
+
+struct GetChatMembersCountMethod {
+	mixin TelegramMethod!("/getChatMembersCount", HTTPMethod.GET);
+
+	long chat_id;
+}
+
+struct GetChatMemberMethod {
+	mixin TelegramMethod!("/getChatMember", HTTPMethod.GET);
+
+	long chat_id;
+	int user_id;
+}
+
+struct SetChatStickerSetMethod {
+	mixin TelegramMethod!"/setChatStickerSet";
+
+	long chat_id;
+	string sticker_set_name;
+}
+
+struct DeleteChatStickerSetMethod {
+	mixin TelegramMethod!"/deleteChatStickerSet";
+
+	long chat_id;
+}
+
+struct AnswerCallbackQueryMethod {
+	mixin TelegramMethod!"/answerCallbackQuery";
+
+	string callback_query_id;
+	string text;
+	bool show_alert;
+	string url;
+	int cache_time;
+}
+
+struct EditMessageTextMethod {
+	mixin TelegramMethod!"/editMessageTextMethod";
+
+	long chat_id;
+	int message_id;
+	string inline_message_id;
+	string text;
+	ParseMode parse_mode;
+	bool disable_web_page_preview;
+	ReplyMarkup reply_markup;
+}
+
+struct EditMessageCaptionMethod {
+	mixin TelegramMethod!"/editMessageCaptionMethod";
+
+	long chat_id;
+	int message_id;
+	string inline_message_id;
+	string caption;
+	ParseMode parse_mode;
+	ReplyMarkup reply_markup;
+}
+
+struct EditMessageReplyMarkupMethod {
+	mixin TelegramMethod!"/editMessageReplyMarkupMethod";
+
+	long chat_id;
+	int message_id;
+	string inline_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct DeleteMessageMethod {
+	mixin TelegramMethod!"/deleteMessageMethod";
+
+	long chat_id;
+	int message_id;
+}
+
+struct SendStickerMethod {
+	mixin TelegramMethod!"/sendStickerMethod";
+
+	long chat_id;
+	string sticker; // TODO InputFile|string
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct GetStickerSetMethod {
+	mixin TelegramMethod!("/getStickerSetMethod", HTTPMethod.GET);
+
+	string name;
+}
+
+struct UploadStickerFileMethod {
+	mixin TelegramMethod!"/uploadStickerFileMethod";
+
+	int user_id;
+	InputFile png_sticker;
+}
+
+struct CreateNewStickerSetMethod {
+	mixin TelegramMethod!"/createNewStickerSetMethod";
+
+	int user_id;
+	string name;
+	string title;
+	string png_sticker; // TODO InputFile|string
+	string emojis;
+	bool contains_masks;
+	MaskPosition mask_position;
+}
+
+struct AddStickerToSetMethod {
+	mixin TelegramMethod!"/addStickerToSetMethod";
+
+	int user_id;
+	string name;
+	string png_sticker; // TODO InputFile|string
+	string emojis;
+	MaskPosition mask_position;
+}
+
+struct SetStickerPositionInSetMethod {
+	mixin TelegramMethod!"/setStickerPositionInSetMethod";
+
+	string sticker;
+	int position;
+}
+
+struct DeleteStickerFromSetMethod {
+	mixin TelegramMethod!"/deleteStickerFromSetMethod";
+
+	string sticker;
+}
+
+struct AnswerInlineQueryMethod {
+	mixin TelegramMethod!"/answerInlineQuery";
+
+	string inline_query_id;
+	InlineQueryResult[] results;
+	int cache_time;
+	bool is_personal;
+	string next_offset;
+	string switch_pm_text;
+	string switch_pm_parameter;
+}
+
+private struct JsonableAlgebraic(Typelist...) {
 	import std.meta;
 	import std.variant;
 	import vibe.data.json : Json;
@@ -1705,494 +2211,4 @@ unittest {
 	JsonableAggregate jaggr;
 	jaggr.aggr = jsonable;
 	assert(`{"aggr":{"s2":"s2 value"}}` == jaggr.serializeToJsonString());
-}
-
-/******************************************************************/
-/*                        Telegram methods                        */
-/******************************************************************/
-
-mixin template TelegramMethod(string path, HTTPMethod method = HTTPMethod.POST) {
-package:
-	immutable string _path = path;
-	HTTPMethod _httpMethod = method;
-}
-
-/// UDA for telegram methods
-struct Method {
-	string path;
-}
-
-struct GetUpdatesMethod {
-	mixin TelegramMethod!"/getUpdates";
-
-	int offset;
-	int limit;
-	int timeout;
-	string[] allowed_updates;
-}
-
-struct SetWebhookMethod {
-	mixin TelegramMethod!"/setWebhook";
-
-	string url;
-	Nullable!InputFile certificate;
-	uint max_connections;
-	string[] allowed_updates;
-}
-
-struct DeleteWebhookMethod {
-	mixin TelegramMethod!"/deleteWebhook";
-}
-
-struct GetWebhookInfoMethod {
-	mixin TelegramMethod!("/getWebhookInfo", HTTPMethod.GET);
-}
-
-struct GetMeMethod {
-	mixin TelegramMethod!("/getMe", HTTPMethod.GET);
-}
-
-struct SendMessageMethod {
-	mixin TelegramMethod!"/sendMessage";
-
-	long chat_id;
-	string text;
-	ParseMode parse_mode;
-	bool disable_web_page_preview;
-	bool disable_notification;
-	uint reply_to_message_id;
-
-	ReplyMarkup reply_markup;
-}
-
-struct ForwardMessageMethod {
-	mixin TelegramMethod!"/forwardMessage";
-
-	long chat_id;
-	long from_chat_id;
-	bool disable_notification;
-	uint message_id;
-}
-
-struct SendPhotoMethod {
-	mixin TelegramMethod!"/sendPhoto";
-
-	long chat_id;
-	string photo;
-	string caption;
-	ParseMode parse_mode;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct SendAudioMethod {
-	mixin TelegramMethod!"/sendAudio";
-
-	long chat_id;
-	string audio;
-	string caption;
-	ParseMode parse_mode;
-	uint duration;
-	string performer;
-	string title;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-
-}
-
-struct SendDocumentMethod {
-	mixin TelegramMethod!"/sendDocument";
-
-	long chat_id;
-	string document;
-	string caption;
-	ParseMode parse_mode;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct SendVideoMethod {
-	mixin TelegramMethod!"/sendVideo";
-
-	long chat_id;
-	string video;
-	uint duration;
-	uint width;
-	uint height;
-	string caption;
-	ParseMode parse_mode;
-	bool supports_streaming;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct SendVoiceMethod {
-	mixin TelegramMethod!"/sendVoice";
-
-	long chat_id;
-	string voice;
-	string caption;
-	ParseMode parse_mode;
-	uint duration;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct SendVideoNoteMethod {
-	mixin TelegramMethod!"/sendVideoNote";
-
-	long chat_id;
-	string video_note;
-	uint duration;
-	uint length;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-
-}
-
-struct SendMediaGroupMethod {
-	mixin TelegramMethod!"/sendMediaGroup";
-
-	long chat_id;
-	InputMedia[] media;
-	bool disable_notification;
-	uint reply_to_message_id;
-}
-
-struct SendLocationMethod {
-	mixin TelegramMethod!"/sendLocation";
-
-	long chat_id;
-	float latitude;
-	float longitude;
-	uint live_period;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct EditMessageLiveLocationMethod {
-	mixin TelegramMethod!"/editMessageLiveLocation";
-
-	long chat_id;
-	uint message_id;
-	string inline_message_id;
-	float latitude;
-	float longitude;
-	ReplyMarkup reply_markup;
-}
-
-struct StopMessageLiveLocationMethod {
-	mixin TelegramMethod!"/stopMessageLiveLocation";
-
-	long chat_id;
-	uint message_id;
-	string inline_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct SendVenueMethod {
-	mixin TelegramMethod!"/sendVenue";
-
-	long chat_id;
-	float latitude;
-	float longitude;
-	string title;
-	string address;
-	string foursquare_id;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct SendContactMethod {
-	mixin TelegramMethod!"/sendContact";
-
-	long chat_id;
-	string phone_number;
-	string first_name;
-	string last_name;
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct SendChatActionMethod {
-	mixin TelegramMethod!"/sendChatAction";
-
-	long chat_id;
-	string action; // TODO enum
-}
-
-struct GetUserProfilePhotosMethod {
-	mixin TelegramMethod!("/getUserProfilePhotos", HTTPMethod.GET);
-
-	int user_id;
-	uint offset;
-	uint limit;
-}
-
-struct GetFileMethod {
-	mixin TelegramMethod!("/getFile", HTTPMethod.GET);
-
-	string file_id;
-}
-
-struct KickChatMemberMethod {
-	mixin TelegramMethod!"/kickChatMember";
-
-	long chat_id;
-	uint user_id;
-	uint until_date;
-}
-
-struct UnbanChatMemberMethod {
-	mixin TelegramMethod!"/unbanChatMember";
-
-	long chat_id;
-	uint user_id;
-}
-
-struct RestrictChatMemberMethod {
-	mixin TelegramMethod!"/restrictChatMember";
-
-	long chat_id;
-	uint user_id;
-	uint until_date;
-	bool can_send_messages;
-	bool can_send_media_messages;
-	bool can_send_other_messages;
-	bool can_add_web_page_previews;
-}
-
-struct PromoteChatMemberMethod {
-	mixin TelegramMethod!"/promoteChatMember";
-
-	long chat_id;
-	uint user_id;
-	bool can_change_info;
-	bool can_post_messages;
-	bool can_edit_messages;
-	bool can_delete_messages;
-	bool can_invite_users;
-	bool can_restrict_members;
-	bool can_pin_messages;
-	bool can_promote_members;
-}
-
-struct ExportChatInviteLinkMethod {
-	mixin TelegramMethod!"/exportChatInviteLink";
-
-	long chat_id;
-}
-
-struct SetChatPhotoMethod {
-	mixin TelegramMethod!"/setChatPhoto";
-
-	long chat_id;
-	InputFile photo;
-
-}
-
-struct DeleteChatPhotoMethod {
-	mixin TelegramMethod!"/deleteChatPhoto";
-
-	long chat_id;
-}
-
-struct SetChatTitleMethod {
-	mixin TelegramMethod!"/setChatTitle";
-
-	long chat_id;
-	string title;
-}
-
-struct SetChatDescriptionMethod {
-	mixin TelegramMethod!"/setChatDescription";
-
-	long chat_id;
-	string description;
-}
-
-struct PinChatMessageMethod {
-	mixin TelegramMethod!"/pinChatMessage";
-
-	long chat_id;
-	uint message_id;
-	bool disable_notification;
-}
-
-struct UnpinChatMessageMethod {
-	mixin TelegramMethod!"/unpinChatMessage";
-
-	long chat_id;
-}
-
-struct LeaveChatMethod {
-	mixin TelegramMethod!"/leaveChat";
-
-	long chat_id;
-}
-
-struct GetChatMethod {
-	mixin TelegramMethod!("/getChat", HTTPMethod.GET);
-
-	long chat_id;
-}
-
-struct GetChatAdministratorsMethod {
-	mixin TelegramMethod!("/getChatAdministrators", HTTPMethod.GET);
-
-	long chat_id;
-}
-
-struct GetChatMembersCountMethod {
-	mixin TelegramMethod!("/getChatMembersCount", HTTPMethod.GET);
-
-	long chat_id;
-}
-
-struct GetChatMemberMethod {
-	mixin TelegramMethod!("/getChatMember", HTTPMethod.GET);
-
-	long chat_id;
-	uint user_id;
-}
-
-struct SetChatStickerSetMethod {
-	mixin TelegramMethod!"/setChatStickerSet";
-
-	long chat_id;
-	string sticker_set_name;
-}
-
-struct DeleteChatStickerSetMethod {
-	mixin TelegramMethod!"/deleteChatStickerSet";
-
-	long chat_id;
-}
-
-struct AnswerCallbackQueryMethod {
-	mixin TelegramMethod!"/answerCallbackQuery";
-
-	string callback_query_id;
-	string text;
-	bool show_alert;
-	string url;
-	uint cache_time;
-}
-
-struct EditMessageTextMethod {
-	mixin TelegramMethod!"/editMessageTextMethod";
-
-	long chat_id;
-	uint message_id;
-	string inline_message_id;
-	string text;
-	ParseMode parse_mode;
-	bool disable_web_page_preview;
-	ReplyMarkup reply_markup;
-}
-
-struct EditMessageCaptionMethod {
-	mixin TelegramMethod!"/editMessageCaptionMethod";
-
-	long chat_id;
-	uint message_id;
-	string inline_message_id;
-	string caption;
-	ParseMode parse_mode;
-	ReplyMarkup reply_markup;
-}
-
-struct EditMessageReplyMarkupMethod {
-	mixin TelegramMethod!"/editMessageReplyMarkupMethod";
-
-	long chat_id;
-	uint message_id;
-	string inline_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct DeleteMessageMethod {
-	mixin TelegramMethod!"/deleteMessageMethod";
-
-	long chat_id;
-	uint message_id;
-}
-
-struct SendStickerMethod {
-	mixin TelegramMethod!"/sendStickerMethod";
-
-	long chat_id;
-	string sticker; // TODO InputFile|string
-	bool disable_notification;
-	uint reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
-struct GetStickerSetMethod {
-	mixin TelegramMethod!("/getStickerSetMethod", HTTPMethod.GET);
-
-	string name;
-}
-
-struct UploadStickerFileMethod {
-	mixin TelegramMethod!"/uploadStickerFileMethod";
-
-	int user_id;
-	InputFile png_sticker;
-}
-
-struct CreateNewStickerSetMethod {
-	mixin TelegramMethod!"/createNewStickerSetMethod";
-
-	int user_id;
-	string name;
-	string title;
-	string png_sticker; // TODO InputFile|string
-	string emojis;
-	bool contains_masks;
-	MaskPosition mask_position;
-}
-
-struct AddStickerToSetMethod {
-	mixin TelegramMethod!"/addStickerToSetMethod";
-
-	int user_id;
-	string name;
-	string png_sticker; // TODO InputFile|string
-	string emojis;
-	MaskPosition mask_position;
-}
-
-struct SetStickerPositionInSetMethod {
-	mixin TelegramMethod!"/setStickerPositionInSetMethod";
-
-	string sticker;
-	int position;
-}
-
-struct DeleteStickerFromSetMethod {
-	mixin TelegramMethod!"/deleteStickerFromSetMethod";
-
-	string sticker;
-}
-
-struct AnswerInlineQueryMethod {
-	mixin TelegramMethod!"/answerInlineQuery";
-
-	string inline_query_id;
-	InlineQueryResult[] results;
-	uint cache_time;
-	bool is_personal;
-	string next_offset;
-	string switch_pm_text;
-	string switch_pm_parameter;
 }
