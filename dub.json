@@ -21,6 +21,14 @@
 			"subConfigurations": {
 				"vibe-d:tls": "openssl-1.1"
 			}
+		},
+		{
+			"name": "verbose_openssl-1.1",
+			"targetType": "library",
+			"versions": ["VibeUseOpenSSL11", "DeimosOpenSSLv1_1", "TgD_Verbose"],
+			"subConfigurations": {
+				"vibe-d:tls": "openssl-1.1"
+			}
 		}
 	]
 }
