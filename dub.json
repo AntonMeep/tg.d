@@ -1,0 +1,26 @@
+{
+	"name": "tg-d",
+	"authors": [
+		"Pavel Chebotarev",
+		"Anton Fediushin"
+	],
+	"dependencies": {
+		"vibe-core": "~>1.4.0",
+		"vibe-d:data": "~>0.8.4",
+		"vibe-d:http": "~>0.8.4",
+		"vibe-d:tls": "~>0.8.4"
+	},
+	"description": " ",
+	"copyright": "Copyright © 2018, Pavel Chebotarev, Anton Fediushin",
+	"license": "MIT",
+	"configurations": [
+		{
+			"name": "openssl-1.1",
+			"targetType": "library",
+			"versions": ["VibeUseOpenSSL11", "DeimosOpenSSLv1_1"],
+			"subConfigurations": {
+				"vibe-d:tls": "openssl-1.1"
+			}
+		}
+	]
+}
