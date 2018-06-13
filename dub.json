@@ -11,7 +11,7 @@
 		"vibe-d:tls": "~>0.8.4"
 	},
 	"description": " ",
-	"copyright": "Copyright © 2018, Pavel Chebotarev, Anton Fediushin",
+	"copyright": "Copyright for portions of project tg.d are held by Pavel Chebotarev, 2018 as part of project telega (https://github.com/nexor/telega). All other copyright for project tg.d are held by Anton Fediushin, 2018.",
 	"license": "MIT",
 	"configurations": [
 		{
