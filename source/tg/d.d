@@ -5,14 +5,16 @@ import vibe.stream.operations;
 import vibe.core.core;
 import vibe.core.log;
 import vibe.data.json;
+import vibe.data.serialization : optional;
 import std.conv;
 import std.typecons;
 import std.exception;
 import std.traits;
 
-version(TgD_Verbose)
+version(TgD_Verbose) {
 	pragma(msg, "tg.d | Warning! tg.d is compiled in verbose mode where user data can end up in logs");
 	pragma(msg, "tg.d | DISABLE THIS in production builds!");
+}
 
 class TelegramBotApiException : Exception {
 	ushort code;
@@ -24,75 +26,809 @@ class TelegramBotApiException : Exception {
 	}
 }
 
-enum isTelegramId(T) = isSomeString!T || isIntegral!T;
+struct TelegramBot {
+	private {
+		string baseUrl = "https://api.telegram.org/bot";
+		string apiUrl;
 
-struct JsonableAlgebraic(Typelist...) {
-	import std.meta;
-	import std.variant;
-	import vibe.data.json : Json;
-
-	private Algebraic!Typelist types;
-
-	// TODO implement copy constructor from Typelist types
-
-	void opAssign(T)(T value) if(staticIndexOf!(T, Typelist) >= 0) {
-		types = value;
-	}
-
-	@safe Json toJson() const {
-		if(!types.hasValue) {
-			return Json(null);
+		struct MethodResult(T) {
+			bool ok;
+			T result;
+		@optional:
+			ushort error_code;
+			string description;
 		}
-
-		return getJson();
 	}
 
-	// this method should not be used
-	@safe typeof(this) fromJson(Json src) {
-		return typeof(this).init;
+	this(string token) {
+		this.apiUrl = baseUrl ~ token;
 	}
 
-	@trusted protected Json getJson() const {
+	private T callMethod(T, M)(M method) {
 		import vibe.data.json : serializeToJson;
 
-		static foreach (T; Typelist) {
-			if(types.type == typeid(T)) {
-				T reply = cast(T) types.get!T;
+		T result;
 
-				return reply.serializeToJson();
+		"tg.d | Requesting %s".logDiagnostic(method._path);
+
+		requestHTTP(apiUrl ~ method._path,
+			(scope req) {
+				req.method = method._httpMethod;
+				if(method._httpMethod == HTTPMethod.POST) {
+					version(TgD_Verbose)
+						"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
+					req.writeJsonBody(method.serializeToJson);
+				}
+			},
+			(scope res) {
+				auto answer = res.readJson;
+				version(TgD_Verbose) {
+					"tg.d | Response headers: %s".logDebug(res.headers);
+					"tg.d | Response data: %s".logDiagnostic(answer);
+				}
+
+				auto json = answer.deserializeJson!(MethodResult!T);
+
+				enforce(json.ok == true,
+					new TelegramBotApiException(json.error_code, json.description));
+
+				result = json.result;
+			}
+		);
+
+		return result;
+	}
+
+	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 30, string[] allowed_updates = []) {
+		GetUpdatesMethod m = {
+			offset: offset,
+			limit: limit,
+			timeout: timeout,
+			allowed_updates: allowed_updates,
+		};
+
+		return callMethod!(Update[], GetUpdatesMethod)(m);
+	}
+
+	auto updateGetter() {
+		struct updateGetterImpl {
+			private {
+				TelegramBot m_bot;
+				Update[] m_buffer;
+				size_t m_index;
+				bool m_empty;
+			}
+
+			this(TelegramBot bot) {
+				m_bot = bot;
+				m_buffer.reserve = 100;
+				this.popFront;
+			}
+
+			auto front() { return m_buffer[m_index]; }
+			bool empty() { return m_empty; }
+			void popFront() {
+				if(m_buffer.length > ++m_index) {
+					return;
+				} else {
+					m_buffer = m_bot.getUpdates(m_buffer.length ? m_buffer[$-1].update_id+1 : 0);
+					m_index = 0;
+
+					if(!m_buffer.length)
+						m_empty = true;
+				}
 			}
 		}
 
-		return Json(null);
-	}
-}
 
-unittest {
-	import vibe.data.json;
-
-	struct S1 {
-		int s1;
+		return updateGetterImpl(this);
 	}
 
-	struct S2 {
-		string s2;
+	bool setWebhook(string url) {
+		SetWebhookMethod m = {
+			url: url,
+		};
+
+		return callMethod!(bool, SetWebhookMethod)(m);
 	}
 
-	JsonableAlgebraic!(S1, S2) jsonable;
+	bool deleteWebhook() {
+		DeleteWebhookMethod m = DeleteWebhookMethod();
 
-	struct JsonableAggregate {
-		JsonableAlgebraic!(S1, S2) aggr;
+		return callMethod!(bool, DeleteWebhookMethod)(m);
 	}
 
-	jsonable = S1(42);
-	assert(`{"s1":42}` == jsonable.serializeToJsonString());
+	WebhookInfo getWebhookInfo() {
+		GetWebhookInfoMethod m = GetWebhookInfoMethod();
 
-	jsonable = S2("s2 value");
-	assert(`{"s2":"s2 value"}` == jsonable.serializeToJsonString());
+		return callMethod!(WebhookInfo, GetWebhookInfoMethod)(m);
+	}
 
-	JsonableAggregate jaggr;
-	jaggr.aggr = jsonable;
-	assert(`{"aggr":{"s2":"s2 value"}}` == jaggr.serializeToJsonString());
+	User getMe() {
+		GetMeMethod m;
+
+		return callMethod!(User, GetMeMethod)(m);
+	}
+
+	Message sendMessage(long chatId, string text) {
+		SendMessageMethod m = {
+			text: text,
+			chat_id: chatId,
+		};
+
+		return sendMessage(m);
+	}
+
+	Message sendMessage(ref SendMessageMethod m) {
+		return callMethod!(Message, SendMessageMethod)(m);
+	}
+
+	Message forwardMessage(long chatId, long fromChatId, uint messageId){
+		ForwardMessageMethod m = {
+			message_id: messageId,
+			chat_id: chatId,
+			from_chat_id: fromChatId,
+		};
+
+		return callMethod!(Message, ForwardMessageMethod)(m);
+	}
+
+	Message forwardMessage(ref ForwardMessageMethod m) {
+		return callMethod!(Message, ForwardMessageMethod)(m);
+	}
+
+	Message sendPhoto(ref SendPhotoMethod m) {
+		return callMethod!(Message, SendPhotoMethod)(m);
+	}
+
+	Message sendPhoto(long chatId, string photo) {
+		SendPhotoMethod m = {
+			photo: photo,
+			chat_id: chatId,
+		};
+
+		return sendPhoto(m);
+	}
+
+	Message sendAudio(ref SendAudioMethod m) {
+		return callMethod!(Message, SendAudioMethod)(m);
+	}
+
+	Message sendAudio(long chatId, string audio) {
+		SendAudioMethod m = {
+			audio: audio,
+			chat_id: chatId,
+		};
+
+		return sendAudio(m);
+	}
+
+	Message sendDocument(ref SendDocumentMethod m) {
+		return callMethod!(Message, SendDocumentMethod)(m);
+	}
+
+	Message sendDocument(long chatId, string document) {
+		SendDocumentMethod m = {
+			document: document,
+			chat_id: chatId,
+		};
+
+		return sendDocument(m);
+	}
+
+	Message sendVideo(ref SendVideoMethod m) {
+		return callMethod!(Message, SendVideoMethod)(m);
+	}
+
+	Message sendVideo(long chatId, string video) {
+		SendVideoMethod m = {
+			video: video,
+			chat_id: chatId,
+		};
+
+		return sendVideo(m);
+	}
+
+	Message sendVoice(ref SendVoiceMethod m) {
+		return callMethod!(Message, SendVoiceMethod)(m);
+	}
+
+	Message sendVoice(long chatId, string voice) {
+		SendVoiceMethod m = {
+			voice: voice,
+			chat_id: chatId,
+		};
+
+		return sendVoice(m);
+	}
+
+	Message sendVideoNote(ref SendVideoNoteMethod m) {
+		return callMethod!(Message, SendVideoNoteMethod)(m);
+	}
+
+	Message sendVideoNote(long chatId, string videoNote) {
+		SendVideoNoteMethod m = {
+			video_note: videoNote,
+			chat_id: chatId,
+		};
+
+		return sendVideoNote(m);
+	}
+
+	Message sendMediaGroup(ref SendMediaGroupMethod m) {
+		return callMethod!(Message, SendMediaGroupMethod)(m);
+	}
+
+	Message sendMediaGroup(long chatId, InputMedia[] media) {
+		SendMediaGroupMethod m = {
+			media: media,
+			chat_id: chatId,
+		};
+
+		return sendMediaGroup(m);
+	}
+
+	Message sendLocation(ref SendLocationMethod m) {
+		return callMethod!(Message, SendLocationMethod)(m);
+	}
+
+	Message sendLocation(long chatId, float latitude, float longitude) {
+		SendLocationMethod m = {
+			latitude: latitude,
+			longitude: longitude,
+			chat_id: chatId,
+		};
+
+		return sendLocation(m);
+	}
+
+	Nullable!Message editMessageLiveLocation(ref EditMessageLiveLocationMethod m) {
+		return callMethod!(Nullable!Message, EditMessageLiveLocationMethod)(m);
+	}
+
+	Nullable!Message editMessageLiveLocation(string inlineMessageId, float latitude, float longitude) {
+		EditMessageLiveLocationMethod m = {
+			inline_message_id: inlineMessageId,
+			latitude : latitude,
+			longitude : longitude,
+		};
+
+		return editMessageLiveLocation(m);
+	}
+
+	Nullable!Message editMessageLiveLocation(long chatId, uint messageId, float latitude, float longitude) {
+		EditMessageLiveLocationMethod m = {
+			message_id: messageId,
+			latitude: latitude,
+			longitude: longitude,
+			chat_id: chatId,
+		};
+
+		return editMessageLiveLocation(m);
+	}
+
+	Nullable!Message stopMessageLiveLocation(ref StopMessageLiveLocationMethod m) {
+		return callMethod!(Nullable!Message, StopMessageLiveLocationMethod)(m);
+	}
+
+	Nullable!Message stopMessageLiveLocation(string inlineMessageId) {
+		StopMessageLiveLocationMethod m = {
+			inline_message_id: inlineMessageId,
+		};
+
+		return stopMessageLiveLocation(m);
+	}
+
+	Nullable!Message stopMessageLiveLocation(long chatId, uint messageId) {
+		StopMessageLiveLocationMethod m = {
+			message_id: messageId,
+			chat_id: chatId,
+		};
+
+		return stopMessageLiveLocation(m);
+	}
+
+	Message sendVenue(ref SendVenueMethod m) {
+		return callMethod!(Message, SendVenueMethod)(m);
+	}
+
+	Message sendVenue(long chatId, float latitude, float longitude, string title, string address) {
+		SendVenueMethod m = {
+			latitude: latitude,
+			longitude : longitude,
+			title : title,
+			address : address,
+			chat_id: chatId,
+		};
+
+		return sendVenue(m);
+	}
+
+	Message sendContact(ref SendContactMethod m) {
+		return callMethod!(Message, SendContactMethod)(m);
+	}
+
+	Message sendContact(long chatId, string phone_number, string first_name) {
+		SendContactMethod m = {
+			phone_number: phone_number,
+			first_name : first_name,
+			chat_id: chatId,
+		};
+
+		return sendContact(m);
+	}
+
+	bool sendChatAction(ref SendChatActionMethod m) {
+		return callMethod!(bool, SendChatActionMethod)(m);
+	}
+
+	bool sendChatAction(long chatId, string action) {
+		SendChatActionMethod m = {
+			action: action,
+			chat_id: chatId,
+		};
+
+		return sendChatAction(m);
+	}
+
+	UserProfilePhotos getUserProfilePhotos(ref GetUserProfilePhotosMethod m) {
+		return callMethod!(UserProfilePhotos, GetUserProfilePhotosMethod)(m);
+	}
+
+	UserProfilePhotos getUserProfilePhotos(int userId) {
+		GetUserProfilePhotosMethod m = {
+			user_id: userId,
+		};
+
+		return getUserProfilePhotos(m);
+	}
+
+	File getFile(ref GetFileMethod m) {
+		return callMethod!(File, GetFileMethod)(m);
+	}
+
+	File getFile(string fileId) {
+		GetFileMethod m = {
+			file_id: fileId,
+		};
+
+		return getFile(m);
+	}
+
+	bool kickChatMember(ref KickChatMemberMethod m) {
+		return callMethod!(bool, KickChatMemberMethod)(m);
+	}
+
+	bool kickChatMember(long chatId, int userId) {
+		KickChatMemberMethod m = {
+			user_id: userId,
+			chat_id: chatId,
+		};
+
+		return kickChatMember(m);
+	}
+
+	bool unbanChatMember(ref UnbanChatMemberMethod m) {
+		return callMethod!(bool, UnbanChatMemberMethod)(m);
+	}
+
+	bool unbanChatMember(long chatId, int userId) {
+		UnbanChatMemberMethod m = {
+			user_id: userId,
+			chat_id: chatId,
+		};
+
+		return unbanChatMember(m);
+	}
+
+	bool restrictChatMember(ref RestrictChatMemberMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool restrictChatMember(long chatId, int userId) {
+		RestrictChatMemberMethod m = {
+			user_id: userId,
+			chat_id: chatId,
+		};
+
+		return restrictChatMember(m);
+	}
+
+	bool promoteChatMember(ref PromoteChatMemberMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool promoteChatMember(long chatId, int userId) {
+		PromoteChatMemberMethod m = {
+			user_id: userId,
+			chat_id: chatId,
+		};
+
+		return promoteChatMember(m);
+	}
+
+	string exportChatInviteLink(ref ExportChatInviteLinkMethod m) {
+		return callMethod!string(m);
+	}
+
+	string exportChatInviteLink(long chatId) {
+		ExportChatInviteLinkMethod m = {
+			chat_id: chatId,
+		};
+
+		return exportChatInviteLink(m);
+	}
+
+	bool setChatPhoto(ref SetChatPhotoMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool setChatPhoto(long chatId, InputFile photo) {
+		SetChatPhotoMethod m = {
+			photo: photo,
+			chat_id: chatId,
+		};
+
+		return setChatPhoto(m);
+	}
+
+	bool deleteChatPhoto(ref DeleteChatPhotoMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool deleteChatPhoto(long chatId) {
+		DeleteChatPhotoMethod m = {
+			chat_id: chatId,
+		};
+
+		return deleteChatPhoto(m);
+	}
+
+	bool setChatTitle(ref SetChatTitleMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool setChatTitle(long chatId, string title) {
+		SetChatTitleMethod m = {
+			title: title,
+			chat_id: chatId,
+		};
+
+		return setChatTitle(m);
+	}
+
+	bool setChatDescription(ref SetChatDescriptionMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool setChatDescription(long chatId, string description) {
+		SetChatDescriptionMethod m = {
+			description: description,
+			chat_id: chatId,
+		};
+
+		return setChatDescription(m);
+	}
+
+	bool pinChatMessage(ref PinChatMessageMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool pinChatMessage(long chatId, uint messageId) {
+		PinChatMessageMethod m = {
+			message_id: messageId,
+			chat_id: chatId,
+		};
+
+		return pinChatMessage(m);
+	}
+
+	bool unpinChatMessage(ref UnpinChatMessageMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool unpinChatMessage(long chatId) {
+		UnpinChatMessageMethod m = {
+			chat_id: chatId,
+		};
+
+		return unpinChatMessage(m);
+	}
+
+	bool leaveChat(ref LeaveChatMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool leaveChat(long chatId) {
+		LeaveChatMethod m = {
+			chat_id: chatId,
+		};
+
+		return leaveChat(m);
+	}
+
+	Chat getChat(ref GetChatMethod m) {
+		return callMethod!Chat(m);
+	}
+
+	Chat getChat(long chatId) {
+		GetChatMethod m = {
+			chat_id: chatId,
+		};
+
+		return getChat(m);
+	}
+
+	ChatMember getChatAdministrators(ref GetChatAdministratorsMethod m) {
+		return callMethod!ChatMember(m);
+	}
+
+	ChatMember getChatAdministrators(long chatId) {
+		GetChatAdministratorsMethod m = {
+			chat_id: chatId,
+		};
+
+		return getChatAdministrators(m);
+	}
+
+	uint getChatMembersCount(ref GetChatMembersCountMethod m) {
+		return callMethod!uint(m);
+	}
+
+	uint getChatMembersCount(long chatId) {
+		GetChatMembersCountMethod m = {
+			chat_id: chatId,
+		};
+
+		return getChatMembersCount(m);
+	}
+
+	ChatMember getChatMember(ref GetChatMemberMethod m) {
+		return callMethod!ChatMember(m);
+	}
+
+	ChatMember getChatMember(long chatId, int userId) {
+		GetChatMemberMethod m = {
+			user_id: userId,
+			chat_id: chatId,
+		};
+
+		return getChatMember(m);
+	}
+
+	bool setChatStickerSet(ref SetChatStickerSetMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool setChatStickerSet(long chatId, string stickerSetName) {
+		SetChatStickerSetMethod m = {
+			sticker_set_name: stickerSetName,
+			chat_id: chatId,
+		};
+
+		return setChatStickerSet(m);
+	}
+
+	bool deleteChatStickerSet(ref DeleteChatStickerSetMethod m) {
+	return callMethod!bool(m);
+	}
+
+	bool deleteChatStickerSet(long chatId) {
+		DeleteChatStickerSetMethod m = {
+			chat_id: chatId,
+		};
+
+		return deleteChatStickerSet(m);
+	}
+
+	bool answerCallbackQuery(ref AnswerCallbackQueryMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool answerCallbackQuery(string callbackQueryId) {
+		AnswerCallbackQueryMethod m = {
+			callback_query_id: callbackQueryId,
+		};
+
+		return answerCallbackQuery(m);
+	}
+
+	bool editMessageText(ref EditMessageTextMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool editMessageText(long chatId, uint messageId, string text) {
+		EditMessageTextMethod m = {
+			message_id: messageId,
+			text: text,
+			chat_id: chatId,
+		};
+
+		return editMessageText(m);
+	}
+
+	bool editMessageText(string inlineMessageId, string text) {
+		EditMessageTextMethod m = {
+			inline_message_id: inlineMessageId,
+			text: text,
+		};
+
+		return editMessageText(m);
+	}
+
+	bool editMessageCaption(ref EditMessageCaptionMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool editMessageCaption(long chatId, uint messageId, string caption = null) {
+		EditMessageCaptionMethod m = {
+			message_id: messageId,
+			caption: caption,
+			chat_id: chatId,
+		};
+
+		return editMessageCaption(m);
+	}
+
+	bool editMessageCaption(string inlineMessageId, string caption = null) {
+		EditMessageCaptionMethod m = {
+			inline_message_id: inlineMessageId,
+			caption: caption,
+		};
+
+		return editMessageCaption(m);
+	}
+
+	bool editMessageReplyMarkup(ref EditMessageReplyMarkupMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool editMessageReplyMarkup(T)(long chatId, uint messageId, T replyMarkup)
+	if(isReplyMarkup!T) {
+		EditMessageReplyMarkupMethod m = {
+			message_id: messageId,
+			chat_id: chatId,
+		};
+
+		m.reply_markup = replyMarkup;
+
+		return editMessageReplyMarkup(m);
+	}
+
+	bool editMessageReplyMarkup(string inlineMessageId, Nullable!ReplyMarkup replyMarkup) {
+		EditMessageReplyMarkupMethod m = {
+			inline_message_id: inlineMessageId,
+			reply_markup: replyMarkup,
+		};
+
+		return editMessageReplyMarkup(m);
+	}
+
+	bool deleteMessage(ref DeleteMessageMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool deleteMessage(long chatId, uint messageId) {
+		DeleteMessageMethod m = {
+			message_id: messageId,
+			chat_id: chatId,
+		};
+
+		return deleteMessage(m);
+	}
+
+	Message sendSticker(ref SendStickerMethod m) {
+		return callMethod!Message(m);
+	}
+
+	// TODO sticker is InputFile|string
+	Message sendSticker(long chatId, string sticker) {
+		SendStickerMethod m = {
+			sticker: sticker,
+			chat_id: chatId,
+		};
+
+		return sendSticker(m);
+	}
+
+	StickerSet getStickerSet(ref GetStickerSetMethod m) {
+		return callMethod!StickerSet(m);
+	}
+
+	StickerSet getStickerSet(string name) {
+		GetStickerSetMethod m = {
+			name: name,
+		};
+
+		return getStickerSet(m);
+	}
+
+	File uploadStickerFile(ref UploadStickerFileMethod m) {
+		return callMethod!File(m);
+	}
+
+	File uploadStickerFile(int userId, InputFile pngSticker) {
+		UploadStickerFileMethod m = {
+			user_id: userId,
+			png_sticker: pngSticker,
+		};
+
+		return uploadStickerFile(m);
+	}
+
+	bool createNewStickerSet(ref CreateNewStickerSetMethod m) {
+		return callMethod!bool(m);
+	}
+
+	// TODO pngSticker is InputFile|string
+	bool createNewStickerSet(int userId,
+		string name,
+		string title,
+		string pngSticker,
+		string emojis) {
+			CreateNewStickerSetMethod m = {
+				user_id: userId,
+				name: name,
+				title: title,
+				png_sticker: pngSticker,
+				emojis: emojis,
+			};
+
+			return createNewStickerSet(m);
+	}
+
+	bool addStickerToSet(ref AddStickerToSetMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool addStickerToSet(int userId, string name, string pngSticker, string emojis) {
+		AddStickerToSetMethod m = {
+			user_id: userId,
+			name : name,
+			png_sticker: pngSticker,
+			emojis: emojis,
+		};
+
+		return addStickerToSet(m);
+	}
+
+	bool setStickerPositionInSet(ref SetStickerPositionInSetMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool setStickerPositionInSet(string sticker, uint position) {
+		SetStickerPositionInSetMethod m = {
+			sticker: sticker,
+			position: position,
+		};
+
+		return setStickerPositionInSet(m);
+	}
+
+	bool deleteStickerFromSet(ref DeleteStickerFromSetMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool deleteStickerFromSet(string sticker) {
+		SetStickerPositionInSetMethod m = {
+			sticker: sticker,
+		};
+
+		return setStickerPositionInSet(m);
+	}
+
+	bool answerInlineQuery(ref AnswerInlineQueryMethod m) {
+		return callMethod!bool(m);
+	}
+
+	bool answerInlineQuery(string inlineQueryId, InlineQueryResult[] results) {
+		AnswerInlineQueryMethod m = {
+			inline_query_id: inlineQueryId,
+			results: results,
+		};
+
+		return answerInlineQuery(m);
+	}
 }
 
 /******************************************************************/
@@ -103,6 +839,7 @@ struct User {
 	int id;
 	bool is_bot;
 	string first_name;
+@optional:
 	string last_name;
 	string username;
 	string language_code;
@@ -117,11 +854,16 @@ enum ChatType : string {
 
 struct Chat {
 	long id;
-	string type;
+	ChatType type;
+@optional:
 	string title;
 	string first_name;
 	string last_name;
 	string username;
+	bool all_members_are_administrators;
+	ChatPhoto photo;
+	string description;
+	string invite_link;
 }
 
 struct MessageBase {
@@ -207,7 +949,7 @@ struct WebhookInfo {
 	string[] allowed_updates;
 }
 
-enum ParseMode {
+enum ParseMode : string{
 	Markdown = "Markdown",
 	HTML = "HTML",
 	None = "",
@@ -863,6 +1605,77 @@ struct GameHighScore {
 	uint score;
 }
 
+private:
+
+struct JsonableAlgebraic(Typelist...) {
+	import std.meta;
+	import std.variant;
+	import vibe.data.json : Json;
+
+	private Algebraic!Typelist types;
+
+	// TODO implement copy constructor from Typelist types
+
+	void opAssign(T)(T value) if(staticIndexOf!(T, Typelist) >= 0) {
+		types = value;
+	}
+
+	@safe Json toJson() const {
+		if(!types.hasValue) {
+			return Json(null);
+		}
+
+		return getJson();
+	}
+
+	// this method should not be used
+	@safe typeof(this) fromJson(Json src) {
+		return typeof(this).init;
+	}
+
+	@trusted protected Json getJson() const {
+		import vibe.data.json : serializeToJson;
+
+		static foreach (T; Typelist) {
+			if(types.type == typeid(T)) {
+				T reply = cast(T) types.get!T;
+
+				return reply.serializeToJson();
+			}
+		}
+
+		return Json(null);
+	}
+}
+
+unittest {
+	import vibe.data.json;
+
+	struct S1 {
+		int s1;
+	}
+
+	struct S2 {
+		string s2;
+	}
+
+	JsonableAlgebraic!(S1, S2) jsonable;
+
+	struct JsonableAggregate {
+		JsonableAlgebraic!(S1, S2) aggr;
+	}
+
+	jsonable = S1(42);
+	assert(`{"s1":42}` == jsonable.serializeToJsonString());
+
+	jsonable = S2("s2 value");
+	assert(`{"s2":"s2 value"}` == jsonable.serializeToJsonString());
+
+	JsonableAggregate jaggr;
+	jaggr.aggr = jsonable;
+	assert(`{"aggr":{"s2":"s2 value"}}` == jaggr.serializeToJsonString());
+}
+
 /******************************************************************/
 /*                        Telegram methods                        */
 /******************************************************************/
@@ -911,7 +1724,7 @@ struct GetMeMethod {
 struct SendMessageMethod {
 	mixin TelegramMethod!"/sendMessage";
 
-	string chat_id;
+	long chat_id;
 	string text;
 	ParseMode parse_mode;
 	bool disable_web_page_preview;
@@ -924,8 +1737,8 @@ struct SendMessageMethod {
 struct ForwardMessageMethod {
 	mixin TelegramMethod!"/forwardMessage";
 
-	string chat_id;
-	string from_chat_id;
+	long chat_id;
+	long from_chat_id;
 	bool disable_notification;
 	uint message_id;
 }
@@ -933,7 +1746,7 @@ struct ForwardMessageMethod {
 struct SendPhotoMethod {
 	mixin TelegramMethod!"/sendPhoto";
 
-	string chat_id;
+	long chat_id;
 	string photo;
 	string caption;
 	ParseMode parse_mode;
@@ -945,7 +1758,7 @@ struct SendPhotoMethod {
 struct SendAudioMethod {
 	mixin TelegramMethod!"/sendAudio";
 
-	string chat_id;
+	long chat_id;
 	string audio;
 	string caption;
 	ParseMode parse_mode;
@@ -961,7 +1774,7 @@ struct SendAudioMethod {
 struct SendDocumentMethod {
 	mixin TelegramMethod!"/sendDocument";
 
-	string chat_id;
+	long chat_id;
 	string document;
 	string caption;
 	ParseMode parse_mode;
@@ -973,7 +1786,7 @@ struct SendDocumentMethod {
 struct SendVideoMethod {
 	mixin TelegramMethod!"/sendVideo";
 
-	string chat_id;
+	long chat_id;
 	string video;
 	uint duration;
 	uint width;
@@ -989,7 +1802,7 @@ struct SendVideoMethod {
 struct SendVoiceMethod {
 	mixin TelegramMethod!"/sendVoice";
 
-	string chat_id;
+	long chat_id;
 	string voice;
 	string caption;
 	ParseMode parse_mode;
@@ -1002,7 +1815,7 @@ struct SendVoiceMethod {
 struct SendVideoNoteMethod {
 	mixin TelegramMethod!"/sendVideoNote";
 
-	string chat_id;
+	long chat_id;
 	string video_note;
 	uint duration;
 	uint length;
@@ -1015,7 +1828,7 @@ struct SendVideoNoteMethod {
 struct SendMediaGroupMethod {
 	mixin TelegramMethod!"/sendMediaGroup";
 
-	string chat_id;
+	long chat_id;
 	InputMedia[] media;
 	bool disable_notification;
 	uint reply_to_message_id;
@@ -1024,7 +1837,7 @@ struct SendMediaGroupMethod {
 struct SendLocationMethod {
 	mixin TelegramMethod!"/sendLocation";
 
-	string chat_id;
+	long chat_id;
 	float latitude;
 	float longitude;
 	uint live_period;
@@ -1036,7 +1849,7 @@ struct SendLocationMethod {
 struct EditMessageLiveLocationMethod {
 	mixin TelegramMethod!"/editMessageLiveLocation";
 
-	string chat_id;
+	long chat_id;
 	uint message_id;
 	string inline_message_id;
 	float latitude;
@@ -1047,7 +1860,7 @@ struct EditMessageLiveLocationMethod {
 struct StopMessageLiveLocationMethod {
 	mixin TelegramMethod!"/stopMessageLiveLocation";
 
-	string chat_id;
+	long chat_id;
 	uint message_id;
 	string inline_message_id;
 	ReplyMarkup reply_markup;
@@ -1056,7 +1869,7 @@ struct StopMessageLiveLocationMethod {
 struct SendVenueMethod {
 	mixin TelegramMethod!"/sendVenue";
 
-	string chat_id;
+	long chat_id;
 	float latitude;
 	float longitude;
 	string title;
@@ -1070,7 +1883,7 @@ struct SendVenueMethod {
 struct SendContactMethod {
 	mixin TelegramMethod!"/sendContact";
 
-	string chat_id;
+	long chat_id;
 	string phone_number;
 	string first_name;
 	string last_name;
@@ -1082,7 +1895,7 @@ struct SendContactMethod {
 struct SendChatActionMethod {
 	mixin TelegramMethod!"/sendChatAction";
 
-	string chat_id;
+	long chat_id;
 	string action; // TODO enum
 }
 
@@ -1103,7 +1916,7 @@ struct GetFileMethod {
 struct KickChatMemberMethod {
 	mixin TelegramMethod!"/kickChatMember";
 
-	string chat_id;
+	long chat_id;
 	uint user_id;
 	uint until_date;
 }
@@ -1111,14 +1924,14 @@ struct KickChatMemberMethod {
 struct UnbanChatMemberMethod {
 	mixin TelegramMethod!"/unbanChatMember";
 
-	string chat_id;
+	long chat_id;
 	uint user_id;
 }
 
 struct RestrictChatMemberMethod {
 	mixin TelegramMethod!"/restrictChatMember";
 
-	string chat_id;
+	long chat_id;
 	uint user_id;
 	uint until_date;
 	bool can_send_messages;
@@ -1130,7 +1943,7 @@ struct RestrictChatMemberMethod {
 struct PromoteChatMemberMethod {
 	mixin TelegramMethod!"/promoteChatMember";
 
-	string chat_id;
+	long chat_id;
 	uint user_id;
 	bool can_change_info;
 	bool can_post_messages;
@@ -1145,13 +1958,13 @@ struct PromoteChatMemberMethod {
 struct ExportChatInviteLinkMethod {
 	mixin TelegramMethod!"/exportChatInviteLink";
 
-	string chat_id;
+	long chat_id;
 }
 
 struct SetChatPhotoMethod {
 	mixin TelegramMethod!"/setChatPhoto";
 
-	string chat_id;
+	long chat_id;
 	InputFile photo;
 
 }
@@ -1159,27 +1972,27 @@ struct SetChatPhotoMethod {
 struct DeleteChatPhotoMethod {
 	mixin TelegramMethod!"/deleteChatPhoto";
 
-	string chat_id;
+	long chat_id;
 }
 
 struct SetChatTitleMethod {
 	mixin TelegramMethod!"/setChatTitle";
 
-	string chat_id;
+	long chat_id;
 	string title;
 }
 
 struct SetChatDescriptionMethod {
 	mixin TelegramMethod!"/setChatDescription";
 
-	string chat_id;
+	long chat_id;
 	string description;
 }
 
 struct PinChatMessageMethod {
 	mixin TelegramMethod!"/pinChatMessage";
 
-	string chat_id;
+	long chat_id;
 	uint message_id;
 	bool disable_notification;
 }
@@ -1187,51 +2000,51 @@ struct PinChatMessageMethod {
 struct UnpinChatMessageMethod {
 	mixin TelegramMethod!"/unpinChatMessage";
 
-	string chat_id;
+	long chat_id;
 }
 
 struct LeaveChatMethod {
 	mixin TelegramMethod!"/leaveChat";
 
-	string chat_id;
+	long chat_id;
 }
 
 struct GetChatMethod {
 	mixin TelegramMethod!("/getChat", HTTPMethod.GET);
 
-	string chat_id;
+	long chat_id;
 }
 
 struct GetChatAdministratorsMethod {
 	mixin TelegramMethod!("/getChatAdministrators", HTTPMethod.GET);
 
-	string chat_id;
+	long chat_id;
 }
 
 struct GetChatMembersCountMethod {
 	mixin TelegramMethod!("/getChatMembersCount", HTTPMethod.GET);
 
-	string chat_id;
+	long chat_id;
 }
 
 struct GetChatMemberMethod {
 	mixin TelegramMethod!("/getChatMember", HTTPMethod.GET);
 
-	string chat_id;
+	long chat_id;
 	uint user_id;
 }
 
 struct SetChatStickerSetMethod {
 	mixin TelegramMethod!"/setChatStickerSet";
 
-	string chat_id;
+	long chat_id;
 	string sticker_set_name;
 }
 
 struct DeleteChatStickerSetMethod {
 	mixin TelegramMethod!"/deleteChatStickerSet";
 
-	string chat_id;
+	long chat_id;
 }
 
 struct AnswerCallbackQueryMethod {
@@ -1247,7 +2060,7 @@ struct AnswerCallbackQueryMethod {
 struct EditMessageTextMethod {
 	mixin TelegramMethod!"/editMessageTextMethod";
 
-	string chat_id;
+	long chat_id;
 	uint message_id;
 	string inline_message_id;
 	string text;
@@ -1259,7 +2072,7 @@ struct EditMessageTextMethod {
 struct EditMessageCaptionMethod {
 	mixin TelegramMethod!"/editMessageCaptionMethod";
 
-	string chat_id;
+	long chat_id;
 	uint message_id;
 	string inline_message_id;
 	string caption;
@@ -1270,7 +2083,7 @@ struct EditMessageCaptionMethod {
 struct EditMessageReplyMarkupMethod {
 	mixin TelegramMethod!"/editMessageReplyMarkupMethod";
 
-	string chat_id;
+	long chat_id;
 	uint message_id;
 	string inline_message_id;
 	ReplyMarkup reply_markup;
@@ -1279,14 +2092,14 @@ struct EditMessageReplyMarkupMethod {
 struct DeleteMessageMethod {
 	mixin TelegramMethod!"/deleteMessageMethod";
 
-	string chat_id;
+	long chat_id;
 	uint message_id;
 }
 
 struct SendStickerMethod {
 	mixin TelegramMethod!"/sendStickerMethod";
 
-	string chat_id;
+	long chat_id;
 	string sticker; // TODO InputFile|string
 	bool disable_notification;
 	uint reply_to_message_id;
@@ -1351,994 +2164,4 @@ struct AnswerInlineQueryMethod {
 	string next_offset;
 	string switch_pm_text;
 	string switch_pm_parameter;
-}
-
-/******************************************************************/
-/*                          Telegram API                          */
-/******************************************************************/
-
-struct TelegramBot {
-	private {
-		string baseUrl = "https://api.telegram.org/bot";
-		string apiUrl;
-
-		struct MethodResult(T) {
-			bool ok;
-			T result;
-			ushort error_code;
-			string description;
-		}
-	}
-
-	this(string token) {
-		this.apiUrl = baseUrl ~ token;
-	}
-
-	private T callMethod(T, M)(M method) {
-		import vibe.data.json : serializeToJson;
-
-		T result;
-
-		"tg.d | Requesting %s".logDiagnostic(method._path);
-
-		requestHTTP(apiUrl ~ method._path,
-			(scope req) {
-				req.method = method._httpMethod;
-				if(method._httpMethod == HTTPMethod.POST) {
-					version(TgD_Verbose)
-						"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
-					req.writeJsonBody(method.serializeToJson);
-				}
-			},
-			(scope res) {
-				auto answer = res.readJson;
-				version(TgD_Verbose) {
-					"tg.d | Response headers: %s".logDebug(res.headers);
-					"tg.d | Response data: %s".logDiagnostic(answer);
-				}
-
-				auto json = answer.deserializeJson!(MethodResult!T);
-
-				enforce(json.ok == true,
-					new TelegramBotApiException(json.error_code, json.description));
-
-				result = json.result;
-			}
-		);
-
-		return result;
-	}
-
-	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 30, string[] allowed_updates = []) {
-		GetUpdatesMethod m = {
-			offset: offset,
-			limit: limit,
-			timeout: timeout,
-			allowed_updates: allowed_updates,
-		};
-
-		return callMethod!(Update[], GetUpdatesMethod)(m);
-	}
-
-	bool setWebhook(string url) {
-		SetWebhookMethod m = {
-			url: url,
-		};
-
-		return callMethod!(bool, SetWebhookMethod)(m);
-	}
-
-	bool deleteWebhook() {
-		DeleteWebhookMethod m = DeleteWebhookMethod();
-
-		return callMethod!(bool, DeleteWebhookMethod)(m);
-	}
-
-	WebhookInfo getWebhookInfo() {
-		GetWebhookInfoMethod m = GetWebhookInfoMethod();
-
-		return callMethod!(WebhookInfo, GetWebhookInfoMethod)(m);
-	}
-
-	User getMe() {
-		GetMeMethod m;
-
-		return callMethod!(User, GetMeMethod)(m);
-	}
-
-	Message sendMessage(T)(T chatId, string text)
-	if(isTelegramId!T) {
-		SendMessageMethod m = {
-			text: text,
-		};
-
-		static if(isIntegral!T) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendMessage(m);
-	}
-
-	Message sendMessage(ref SendMessageMethod m) {
-		return callMethod!(Message, SendMessageMethod)(m);
-	}
-
-	Message forwardMessage(T1, T2)(T1 chatId, T2 fromChatId, uint messageId)
-	if(isTelegramId!T1 && isTelegramId!T2) {
-		ForwardMessageMethod m = {
-			message_id: messageId
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		static if(isIntegral!T2) {
-			m.from_chat_id = fromChatId.to!string;
-		} else {
-			m.from_chat_id = fromChatId;
-		}
-
-		return callMethod!(Message, ForwardMessageMethod)(m);
-	}
-
-	Message forwardMessage(ref ForwardMessageMethod m) {
-		return callMethod!(Message, ForwardMessageMethod)(m);
-	}
-
-	Message sendPhoto(ref SendPhotoMethod m) {
-		return callMethod!(Message, SendPhotoMethod)(m);
-	}
-
-	Message sendPhoto(T1)(T1 chatId, string photo) if(isTelegramId!T1) {
-		SendPhotoMethod m = {
-			photo: photo,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendPhoto(m);
-	}
-
-	Message sendAudio(ref SendAudioMethod m) {
-		return callMethod!(Message, SendAudioMethod)(m);
-	}
-
-	Message sendAudio(T1)(T1 chatId, string audio) if(isTelegramId!T1) {
-		SendAudioMethod m = {
-			audio: audio,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendAudio(m);
-	}
-
-	Message sendDocument(ref SendDocumentMethod m) {
-		return callMethod!(Message, SendDocumentMethod)(m);
-	}
-
-	Message sendDocument(T1)(T1 chatId, string document) if(isTelegramId!T1) {
-		SendDocumentMethod m = {
-			document: document,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendDocument(m);
-	}
-
-	Message sendVideo(ref SendVideoMethod m) {
-		return callMethod!(Message, SendVideoMethod)(m);
-	}
-
-	Message sendVideo(T1)(T1 chatId, string video) if(isTelegramId!T1) {
-		SendVideoMethod m = {
-			video: video,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendVideo(m);
-	}
-
-	Message sendVoice(ref SendVoiceMethod m) {
-		return callMethod!(Message, SendVoiceMethod)(m);
-	}
-
-	Message sendVoice(T1)(T1 chatId, string voice) if(isTelegramId!T1) {
-		SendVoiceMethod m = {
-			voice: voice,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendVoice(m);
-	}
-
-	Message sendVideoNote(ref SendVideoNoteMethod m) {
-		return callMethod!(Message, SendVideoNoteMethod)(m);
-	}
-
-	Message sendVideoNote(T1)(T1 chatId, string videoNote) if(isTelegramId!T1) {
-		SendVideoNoteMethod m = {
-			video_note: videoNote,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendVideoNote(m);
-	}
-
-	Message sendMediaGroup(ref SendMediaGroupMethod m) {
-		return callMethod!(Message, SendMediaGroupMethod)(m);
-	}
-
-	Message sendMediaGroup(T1)(T1 chatId, InputMedia[] media)
-	if(isTelegramId!T1) {
-		SendMediaGroupMethod m = {
-			media: media,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendMediaGroup(m);
-	}
-
-	Message sendLocation(ref SendLocationMethod m) {
-		return callMethod!(Message, SendLocationMethod)(m);
-	}
-
-	Message sendLocation(T1)(T1 chatId, float latitude, float longitude)
-	if(isTelegramId!T1) {
-		SendLocationMethod m = {
-			latitude: latitude,
-			longitude: longitude,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendLocation(m);
-	}
-
-	Nullable!Message editMessageLiveLocation(ref EditMessageLiveLocationMethod m) {
-		return callMethod!(Nullable!Message, EditMessageLiveLocationMethod)(m);
-	}
-
-	Nullable!Message editMessageLiveLocation(string inlineMessageId, float latitude, float longitude) {
-		EditMessageLiveLocationMethod m = {
-			inline_message_id: inlineMessageId,
-			latitude : latitude,
-			longitude : longitude,
-		};
-
-		return editMessageLiveLocation(m);
-	}
-
-	Nullable!Message editMessageLiveLocation(T1)(T1 chatId, uint messageId, float latitude, float longitude)
-	if(isTelegramId!T1) {
-		EditMessageLiveLocationMethod m = {
-			message_id: messageId,
-			latitude: latitude,
-			longitude: longitude,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return editMessageLiveLocation(m);
-	}
-
-	Nullable!Message stopMessageLiveLocation(ref StopMessageLiveLocationMethod m) {
-		return callMethod!(Nullable!Message, StopMessageLiveLocationMethod)(m);
-	}
-
-	Nullable!Message stopMessageLiveLocation(string inlineMessageId) {
-		StopMessageLiveLocationMethod m = {
-			inline_message_id: inlineMessageId,
-		};
-
-		return stopMessageLiveLocation(m);
-	}
-
-	Nullable!Message stopMessageLiveLocation(T1)(T1 chatId, uint messageId)
-	if(isTelegramId!T1) {
-		StopMessageLiveLocationMethod m = {
-			message_id: messageId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return stopMessageLiveLocation(m);
-	}
-
-	Message sendVenue(ref SendVenueMethod m) {
-		return callMethod!(Message, SendVenueMethod)(m);
-	}
-
-	Message sendVenue(T1)(T1 chatId, float latitude, float longitude, string title, string address)
-	if(isTelegramId!T1) {
-		SendVenueMethod m = {
-			latitude: latitude,
-			ongitude : longitude,
-			title : title,
-			address : address,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendVenue(m);
-	}
-
-	Message sendContact(ref SendContactMethod m) {
-		return callMethod!(Message, SendContactMethod)(m);
-	}
-
-	Message sendContact(T1)(T1 chatId, string phone_number, string first_name)
-	if(isTelegramId!T1) {
-		SendContactMethod m = {
-			phone_number: phone_number,
-			first_name : first_name,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendContact(m);
-	}
-
-	bool sendChatAction(ref SendChatActionMethod m) {
-		return callMethod!(bool, SendChatActionMethod)(m);
-	}
-
-	bool sendChatAction(T1)(T1 chatId, string action)
-	if(isTelegramId!T1) {
-		SendChatActionMethod m = {
-			action: action,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendChatAction(m);
-	}
-
-	UserProfilePhotos getUserProfilePhotos(ref GetUserProfilePhotosMethod m) {
-		return callMethod!(UserProfilePhotos, GetUserProfilePhotosMethod)(m);
-	}
-
-	UserProfilePhotos getUserProfilePhotos(int userId) {
-		GetUserProfilePhotosMethod m = {
-			user_id: userId,
-		};
-
-		return getUserProfilePhotos(m);
-	}
-
-	File getFile(ref GetFileMethod m) {
-		return callMethod!(File, GetFileMethod)(m);
-	}
-
-	File getFile(string fileId) {
-		GetFileMethod m = {
-			file_id: fileId,
-		};
-
-		return getFile(m);
-	}
-
-	bool kickChatMember(ref KickChatMemberMethod m) {
-		return callMethod!(bool, KickChatMemberMethod)(m);
-	}
-
-	bool kickChatMember(T1)(T1 chatId, int userId)
-	if(isTelegramId!T1) {
-		KickChatMemberMethod m = {
-			user_id: userId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return kickChatMember(m);
-	}
-
-	bool unbanChatMember(ref UnbanChatMemberMethod m) {
-		return callMethod!(bool, UnbanChatMemberMethod)(m);
-	}
-
-	bool unbanChatMember(T1)(T1 chatId, int userId)
-	if(isTelegramId!T1) {
-		UnbanChatMemberMethod m = {
-			user_id: userId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return unbanChatMember(m);
-	}
-
-	bool restrictChatMember(ref RestrictChatMemberMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool restrictChatMember(T1)(T1 chatId, int userId)
-	if(isTelegramId!T1) {
-		RestrictChatMemberMethod m = {
-			user_id: userId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return restrictChatMember(m);
-	}
-
-	bool promoteChatMember(ref PromoteChatMemberMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool promoteChatMember(T1)(T1 chatId, int userId)
-	if(isTelegramId!T1) {
-		PromoteChatMemberMethod m = {
-			user_id: userId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return promoteChatMember(m);
-	}
-
-	string exportChatInviteLink(ref ExportChatInviteLinkMethod m) {
-		return callMethod!string(m);
-	}
-
-	string exportChatInviteLink(T1)(T1 chatId)
-	if(isTelegramId!T1) {
-		ExportChatInviteLinkMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return exportChatInviteLink(m);
-	}
-
-	bool setChatPhoto(ref SetChatPhotoMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool setChatPhoto(T1)(T1 chatId, InputFile photo)
-	if(isTelegramId!T1) {
-		SetChatPhotoMethod m = {
-			photo: photo,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return setChatPhoto(m);
-	}
-
-	bool deleteChatPhoto(ref DeleteChatPhotoMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool deleteChatPhoto(T1)(T1 chatId) if(isTelegramId!T1) {
-		DeleteChatPhotoMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return deleteChatPhoto(m);
-	}
-
-	bool setChatTitle(ref SetChatTitleMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool setChatTitle(T1)(T1 chatId, string title)
-	if(isTelegramId!T1) {
-		SetChatTitleMethod m = {
-			title: title,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return setChatTitle(m);
-	}
-
-	bool setChatDescription(ref SetChatDescriptionMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool setChatDescription(T1)(T1 chatId, string description)
-	if(isTelegramId!T1) {
-		SetChatDescriptionMethod m = {
-			description: description,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return setChatDescription(m);
-	}
-
-	bool pinChatMessage(ref PinChatMessageMethod m) {
-	return callMethod!bool(m);
-	}
-
-	bool pinChatMessage(T1)(T1 chatId, uint messageId)
-	if(isTelegramId!T1) {
-		PinChatMessageMethod m = {
-			message_id: messageId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return pinChatMessage(m);
-	}
-
-	bool unpinChatMessage(ref UnpinChatMessageMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool unpinChatMessage(T1)(T1 chatId)
-	if(isTelegramId!T1) {
-		UnpinChatMessageMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return unpinChatMessage(m);
-	}
-
-	bool leaveChat(ref LeaveChatMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool leaveChat(T1)(T1 chatId)
-	if(isTelegramId!T1) {
-		LeaveChatMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return leaveChat(m);
-	}
-
-	Chat getChat(ref GetChatMethod m) {
-		return callMethod!Chat(m);
-	}
-
-	Chat getChat(T1)(T1 chatId) if(isTelegramId!T1) {
-		GetChatMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return getChat(m);
-	}
-
-	ChatMember getChatAdministrators(ref GetChatAdministratorsMethod m) {
-		return callMethod!ChatMember(m);
-	}
-
-	ChatMember getChatAdministrators(T1)(T1 chatId)
-	if(isTelegramId!T1) {
-		GetChatAdministratorsMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return getChatAdministrators(m);
-	}
-
-	uint getChatMembersCount(ref GetChatMembersCountMethod m) {
-		return callMethod!uint(m);
-	}
-
-	uint getChatMembersCount(T1)(T1 chatId)
-	if(isTelegramId!T1) {
-		GetChatMembersCountMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return getChatMembersCount(m);
-	}
-
-	ChatMember getChatMember(ref GetChatMemberMethod m) {
-		return callMethod!ChatMember(m);
-	}
-
-	ChatMember getChatMember(T1)(T1 chatId, int userId)
-	if(isTelegramId!T1) {
-		GetChatMemberMethod m = {
-			user_id: userId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return getChatMember(m);
-	}
-
-	bool setChatStickerSet(ref SetChatStickerSetMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool setChatStickerSet(T1)(T1 chatId, string stickerSetName)
-	if(isTelegramId!T1) {
-		SetChatStickerSetMethod m = {
-			sticker_set_name: stickerSetName,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return setChatStickerSet(m);
-	}
-
-	bool deleteChatStickerSet(ref DeleteChatStickerSetMethod m) {
-	return callMethod!bool(m);
-	}
-
-	bool deleteChatStickerSet(T1)(T1 chatId)
-	if(isTelegramId!T1) {
-		DeleteChatStickerSetMethod m;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return deleteChatStickerSet(m);
-	}
-
-	bool answerCallbackQuery(ref AnswerCallbackQueryMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool answerCallbackQuery(string callbackQueryId) {
-		AnswerCallbackQueryMethod m = {
-			callback_query_id: callbackQueryId,
-		};
-
-		return answerCallbackQuery(m);
-	}
-
-	bool editMessageText(ref EditMessageTextMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool editMessageText(T1)(T1 chatId, uint messageId, string text)
-	if(isTelegramId!T1) {
-		EditMessageTextMethod m = {
-			message_id: messageId,
-			text: text,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return editMessageText(m);
-	}
-
-	bool editMessageText(string inlineMessageId, string text) {
-		EditMessageTextMethod m = {
-			inline_message_id: inlineMessageId,
-			text: text,
-		};
-
-		return editMessageText(m);
-	}
-
-	bool editMessageCaption(ref EditMessageCaptionMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool editMessageCaption(T1)(T1 chatId, uint messageId, string caption = null)
-	if(isTelegramId!T1) {
-		EditMessageCaptionMethod m = {
-			message_id: messageId,
-			caption: caption,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return editMessageCaption(m);
-	}
-
-	bool editMessageCaption(string inlineMessageId, string caption = null) {
-		EditMessageCaptionMethod m = {
-			inline_message_id: inlineMessageId,
-			caption: caption,
-		};
-
-		return editMessageCaption(m);
-	}
-
-	bool editMessageReplyMarkup(ref EditMessageReplyMarkupMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool editMessageReplyMarkup(T1, T2)(T1 chatId, uint messageId, T2 replyMarkup)
-	if(isTelegramId!T1 && isReplyMarkup!T2) {
-		EditMessageReplyMarkupMethod m = {
-			message_id: messageId,
-		};
-
-		m.reply_markup = replyMarkup;
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return editMessageReplyMarkup(m);
-	}
-
-	bool editMessageReplyMarkup(string inlineMessageId, Nullable!ReplyMarkup replyMarkup) {
-		EditMessageReplyMarkupMethod m = {
-			inline_message_id: inlineMessageId,
-			reply_markup: replyMarkup,
-		};
-
-		return editMessageReplyMarkup(m);
-	}
-
-	bool deleteMessage(ref DeleteMessageMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool deleteMessage(T1)(T1 chatId, uint messageId)
-	if(isTelegramId!T1) {
-		DeleteMessageMethod m = {
-			message_id: messageId,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return deleteMessage(m);
-	}
-
-	Message sendSticker(ref SendStickerMethod m) {
-		return callMethod!Message(m);
-	}
-
-	// TODO sticker is InputFile|string
-	Message sendSticker(T1)(T1 chatId, string sticker)
-	if(isTelegramId!T1) {
-		SendStickerMethod m = {
-			sticker: sticker,
-		};
-
-		static if(isIntegral!T1) {
-			m.chat_id = chatId.to!string;
-		} else {
-			m.chat_id = chatId;
-		}
-
-		return sendSticker(m);
-	}
-
-	StickerSet getStickerSet(ref GetStickerSetMethod m) {
-		return callMethod!StickerSet(m);
-	}
-
-	StickerSet getStickerSet(string name) {
-		GetStickerSetMethod m = {
-			name: name,
-		};
-
-		return getStickerSet(m);
-	}
-
-	File uploadStickerFile(ref UploadStickerFileMethod m) {
-		return callMethod!File(m);
-	}
-
-	File uploadStickerFile(int userId, InputFile pngSticker) {
-		UploadStickerFileMethod m = {
-			user_id: userId,
-			png_sticker: pngSticker,
-		};
-
-		return uploadStickerFile(m);
-	}
-
-	bool createNewStickerSet(ref CreateNewStickerSetMethod m) {
-		return callMethod!bool(m);
-	}
-
-	// TODO pngSticker is InputFile|string
-	bool createNewStickerSet(int userId,
-		string name,
-		string title,
-		string pngSticker,
-		string emojis) {
-			CreateNewStickerSetMethod m = {
-				user_id: userId,
-				name: name,
-				title: title,
-				png_sticker: pngSticker,
-				emojis: emojis,
-			};
-
-			return createNewStickerSet(m);
-	}
-
-	bool addStickerToSet(ref AddStickerToSetMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool addStickerToSet(int userId, string name, string pngSticker, string emojis) {
-		AddStickerToSetMethod m = {
-			user_id: userId,
-			name : name,
-			png_sticker: pngSticker,
-			emojis: emojis,
-		};
-
-		return addStickerToSet(m);
-	}
-
-	bool setStickerPositionInSet(ref SetStickerPositionInSetMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool setStickerPositionInSet(string sticker, uint position) {
-		SetStickerPositionInSetMethod m = {
-			sticker: sticker,
-			position: position,
-		};
-
-		return setStickerPositionInSet(m);
-	}
-
-	bool deleteStickerFromSet(ref DeleteStickerFromSetMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool deleteStickerFromSet(string sticker) {
-		SetStickerPositionInSetMethod m = {
-			sticker: sticker,
-		};
-
-		return setStickerPositionInSet(m);
-	}
-
-	bool answerInlineQuery(ref AnswerInlineQueryMethod m) {
-		return callMethod!bool(m);
-	}
-
-	bool answerInlineQuery(string inlineQueryId, InlineQueryResult[] results) {
-		AnswerInlineQueryMethod m = {
-			inline_query_id: inlineQueryId,
-			results: results,
-		};
-
-		return answerInlineQuery(m);
-	}
 }
