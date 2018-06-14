@@ -899,7 +899,7 @@ struct User {
 struct Chat {
 @safe:
 	long id;
-	string type;
+	ChatType type;
 @optional:
 	string title,
 		   username,
@@ -911,8 +911,10 @@ struct Chat {
 		   invite_link;
 
 	private @name("pinned_message") Json m_pinned_message;
-	@property Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
-	@property void    pinned_message(Message m) { m_pinned_message = m.serializeToJson;  }
+	@property @ignore {
+		Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
+		void    pinned_message(Message m) { m_pinned_message = m.serializeToJson;  }
+	}
 
 	string sticker_set_name;
 	bool can_set_sticker_set;
@@ -921,6 +923,12 @@ struct Chat {
 struct Message {
 @safe:
 	int message_id;
+
+	@property @ignore {
+		int  id()      { return message_id; }
+		void id(int i) { message_id = i;    }
+	}
+
 	@optional User from;
 	long date;
 	Chat chat;
@@ -933,8 +941,10 @@ struct Message {
 	long forward_date;
 
 	private @name("reply_to_message") Json m_reply_to_message;
-	@property Message reply_to_message() { return m_reply_to_message.deserializeJson!Message; }
-	@property void    reply_to_message(Message m) { m_reply_to_message = m.serializeToJson;  }
+	@property @ignore {
+		Message reply_to_message() { return m_reply_to_message.deserializeJson!Message; }
+		void    reply_to_message(Message m) { m_reply_to_message = m.serializeToJson;  }
+	}
 
 	long edit_date;
 	string media_group_id,
@@ -964,10 +974,12 @@ struct Message {
 		 channel_chat_created;
 	long migrate_to_chat_id,
 		 migrate_from_chat_id;
-	
+
 	private @name("pinned_message") Json m_pinned_message;
-	@property Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
-	@property void    pinned_messagee(Message m) { m_pinned_message = m.serializeToJson; }
+	@property @ignore {
+		Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
+		void    pinned_messagee(Message m) { m_pinned_message = m.serializeToJson; }
+	}
 
 	Invoice invoice;
 	SuccessfulPayment successful_payment;
