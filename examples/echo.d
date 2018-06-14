@@ -15,14 +15,13 @@ dub.json:
 }
 +/
 
-import core.time : seconds;
-
-import tg.d;
-import vibe.core.args;
-import vibe.core.core;
-import vibe.core.log;
-import std.algorithm;
-import std.range;
+import core.time      : seconds;
+import std.algorithm  : each;
+import std.range      : tee;
+import tg.d           : TelegramBot;
+import vibe.core.args : readRequiredOption;
+import vibe.core.core : runApplication, setTimer;
+import vibe.core.log  : logInfo;
 
 int main() {
 	auto Bot = TelegramBot(
@@ -33,14 +32,15 @@ int main() {
 
 	"Setting up the timer".logInfo;
 	1.seconds.setTimer(
-		() => Bot.updateGetter
-				 // First, print the info about what user sent to the bot
-				 .tee!( a => "User %s sent `%s`".logInfo(a.message.from.first_name, a.message.text))
-				 // Second, reply to the user
-				 .tee!( a => Bot.sendMessage(a.message.chat.id, a.message.text))
-				 .each!(a => "Message sent back to user".logInfo),
+		() {
+			Bot.updateGetter
+				.tee!( a => Bot.sendMessage(a.message.chat.id, a.message.text))
+				.each!(a =>
+					"Message sent back to user %s: `%s`".logInfo(a.message.from.first_name, a.message.text));
+		},
 		true); // To run this timer not just once, but every second
 
 	"Running the bot".logInfo;
 	return runApplication();
 }
+
