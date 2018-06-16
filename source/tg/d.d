@@ -158,20 +158,22 @@ struct TelegramBot {
 		return callMethod!(User, GetMeMethod)(m);
 	}
 
-	Message sendMessage(long chatId, string text) {
+	Message sendMessage(long chatId, string text, ParseMode pm = ParseMode.markdown) {
 		SendMessageMethod m = {
 			text: text,
 			chat_id: chatId,
+			parse_mode: pm,
 		};
 
 		return sendMessage(m);
 	}
 
-	Message sendMessage(long chatId, int reply_to, string text) {
+	Message sendMessage(long chatId, int reply_to, string text, ParseMode pm = ParseMode.markdown) {
 		SendMessageMethod m = {
 			text: text,
 			chat_id: chatId,
-			reply_to_message: reply_to,
+			reply_to_message_id: reply_to,
+			parse_mode: pm,
 		};
 
 		return sendMessage(m);
@@ -868,16 +870,16 @@ struct TelegramBot {
 /******************************************************************/
 
 enum ChatType : string {
-	Private    = "private",
-	Group      = "group",
-	Supergroup = "supergroup",
-	Channel    = "channel"
+	private_   = "private",
+	group      = "group",
+	supergroup = "supergroup",
+	channel    = "channel"
 }
 
 enum ParseMode : string {
-	None     = "",
-	Markdown = "Markdown",
-	HTML     = "HTML",
+	none     = "",
+	markdown = "Markdown",
+	html     = "HTML",
 }
 
 struct InputFile {}
