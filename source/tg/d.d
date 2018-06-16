@@ -171,7 +171,7 @@ struct TelegramBot {
 		SendMessageMethod m = {
 			text: text,
 			chat_id: chatId,
-			reply_to_message_id: reply_to,
+			reply_to_message: reply_to,
 		};
 
 		return sendMessage(m);
