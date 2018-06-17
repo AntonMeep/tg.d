@@ -948,7 +948,7 @@ struct Message {
 		void id(int i) { message_id = i;    }
 	}
 
-	@optional User from;
+	@optional Nullable!User from;
 	long date;
 	Chat chat;
 
