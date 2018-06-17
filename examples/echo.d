@@ -28,7 +28,6 @@ int main() {
 		"token|t".readRequiredOption!string("Bot token to use. Ask Botfather for it")
 	);
 
-
 	auto me = Bot.getMe;
 	"This bot info:"     .logInfo;
 	"\tID: %d"           .logInfo(me.id);
