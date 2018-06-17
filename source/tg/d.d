@@ -928,7 +928,7 @@ struct Chat {
 					username,
 					first_name,
 					last_name;
-	Nullable!bool all_members_are_administrators;
+	bool all_members_are_administrators;
 	Nullable!ChatPhoto photo;
 	Nullable!string description,
 					invite_link;
@@ -947,7 +947,7 @@ struct Chat {
 	}
 
 	Nullable!string sticker_set_name;
-	Nullable!bool can_set_sticker_set;
+	bool can_set_sticker_set;
 }
 
 struct Message {
@@ -1005,7 +1005,7 @@ struct Message {
 	Nullable!User left_chat_member;
 	Nullable!string new_chat_title;
 	PhotoSize[] new_chat_photo;
-	Nullable!bool delete_chat_photo,
+	bool delete_chat_photo,
 				  group_chat_created,
 				  supergroup_chat_created,
 				  channel_chat_created;
@@ -1145,7 +1145,7 @@ enum isReplyMarkup(T) = is(T == ReplyMarkup) || staticIndexOf!(T, ReplyMarkupStr
 struct ReplyKeyboardMarkup {
 	KeyboardButton[][] keyboard;
 @optional:
-	Nullable!bool resize_keyboard,
+	bool resize_keyboard,
 				  one_time_keyboard,
 				  selective;
 }
@@ -1153,14 +1153,14 @@ struct ReplyKeyboardMarkup {
 struct KeyboardButton {
 	string text;
 @optional:
-	Nullable!bool request_contact,
+	bool request_contact,
 				  request_location;
 }
 
 struct ReplyKeyboardRemove {
 	bool remove_keyboard = true;
 @optional:
-	Nullable!bool selective;
+	bool selective;
 }
 
 struct InlineKeyboardMarkup {
@@ -1175,7 +1175,7 @@ struct InlineKeyboardButton {
 					switch_inline_query,
 					switch_inline_query_current_chat;
 	Nullable!CallbackGame callback_game;
-	Nullable!bool pay;
+	bool pay;
 }
 
 struct CallbackQuery {
@@ -1192,7 +1192,7 @@ struct CallbackQuery {
 struct ForceReply {
 	bool force_reply;
 @optional:
-	Nullable!bool selective;
+	bool selective;
 }
 
 struct ChatPhoto {
@@ -1205,7 +1205,7 @@ struct ChatMember {
 	string status;
 @optional:
 	Nullable!long until_date;
-	Nullable!bool can_be_edited,
+	bool can_be_edited,
 				  can_change_info,
 				  can_post_messages,
 				  can_edit_messages,
@@ -1247,7 +1247,7 @@ struct InputMediaVideo {
 	Nullable!int width,
 				 height,
 				 duration;
-	Nullable!bool supports_streaming;
+	bool supports_streaming;
 }
 
 struct Sticker {
@@ -1397,7 +1397,7 @@ struct InlineQueryResultArticle {
 @optional:
 	Nullable!InlineKeyboardMarkup reply_markup;
 	Nullable!string url;
-	Nullable!bool hide_url;
+	bool hide_url;
 	Nullable!string description;
 	Nullable!string thumb_url;
 	Nullable!int thumb_width;
@@ -1670,7 +1670,7 @@ struct InputTextMessageContent {
 	string message_text;
 @optional:
 	Nullable!string parse_mode;
-	Nullable!bool disable_web_page_preview;
+	bool disable_web_page_preview;
 }
 
 struct InputLocationMessageContent {
