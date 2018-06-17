@@ -2215,6 +2215,10 @@ private struct JsonableAlgebraic(Typelist...) {
 
 	// TODO implement copy constructor from Typelist types
 
+	this(T)(T value) if(staticIndexOf!(T, Typelist) >= 0) {
+		types = value;
+	}
+
 	void opAssign(T)(T value) if(staticIndexOf!(T, Typelist) >= 0) {
 		types = value;
 	}
