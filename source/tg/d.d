@@ -83,7 +83,7 @@ struct TelegramBot {
 		return result;
 	}
 
-	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 30, string[] allowed_updates = []) {
+	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 3, string[] allowed_updates = []) {
 		GetUpdatesMethod m = {
 			offset: offset,
 			limit: limit,
@@ -98,18 +98,24 @@ struct TelegramBot {
 		return callMethod!(Update[], GetUpdatesMethod)(m);
 	}
 
-	auto updateGetter() {
+	auto updateGetter(int timeout = 3, string[] allowed_updates = []) {
 		struct updateGetterImpl {
 			private {
 				TelegramBot m_bot;
 				Update[] m_buffer;
 				size_t m_index;
 				bool m_empty;
+
+				int m_timeout;
+				string[] m_allowed_updates;
 			}
 
-			this(TelegramBot bot) {
+			this(TelegramBot bot, int timeout, string[] allowed_updates) {
 				m_bot = bot;
 				m_buffer.reserve = 100;
+
+				m_timeout = timeout;
+				m_allowed_updates = allowed_updates;
 				this.popFront;
 			}
 
@@ -119,7 +125,12 @@ struct TelegramBot {
 				if(m_buffer.length > ++m_index) {
 					return;
 				} else {
-					m_buffer = m_bot.getUpdates(m_buffer.length ? m_buffer[$-1].update_id+1 : 0);
+					m_buffer = m_bot.getUpdates(
+						m_buffer.length ? m_buffer[$-1].update_id+1 : 0,
+						100, // Limit
+						m_timeout,
+						m_allowed_updates,
+					);
 					m_index = 0;
 
 					if(!m_buffer.length)
@@ -129,7 +140,7 @@ struct TelegramBot {
 		}
 
 
-		return updateGetterImpl(this);
+		return updateGetterImpl(this, timeout, allowed_updates);
 	}
 
 	bool setWebhook(string url) {
