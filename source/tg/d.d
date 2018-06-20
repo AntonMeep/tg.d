@@ -680,11 +680,11 @@ struct TelegramBot {
 		return answerCallbackQuery(m);
 	}
 
-	bool editMessageText(EditMessageTextMethod m) {
-		return callMethod!bool(m);
+	auto editMessageText(EditMessageTextMethod m) {
+		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
-	bool editMessageText(long chatId, int messageId, string text) {
+	auto editMessageText(long chatId, int messageId, string text) {
 		EditMessageTextMethod m = {
 			message_id: messageId,
 			text: text,
@@ -694,7 +694,7 @@ struct TelegramBot {
 		return editMessageText(m);
 	}
 
-	bool editMessageText(string inlineMessageId, string text) {
+	auto editMessageText(string inlineMessageId, string text) {
 		EditMessageTextMethod m = {
 			inline_message_id: inlineMessageId,
 			text: text,
@@ -703,11 +703,11 @@ struct TelegramBot {
 		return editMessageText(m);
 	}
 
-	bool editMessageCaption(EditMessageCaptionMethod m) {
-		return callMethod!bool(m);
+	auto editMessageCaption(EditMessageCaptionMethod m) {
+		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
-	bool editMessageCaption(long chatId, int messageId, string caption = null) {
+	auto editMessageCaption(long chatId, int messageId, string caption = null) {
 		EditMessageCaptionMethod m = {
 			message_id: messageId,
 			caption: caption,
@@ -717,7 +717,7 @@ struct TelegramBot {
 		return editMessageCaption(m);
 	}
 
-	bool editMessageCaption(string inlineMessageId, string caption = null) {
+	auto editMessageCaption(string inlineMessageId, string caption = null) {
 		EditMessageCaptionMethod m = {
 			inline_message_id: inlineMessageId,
 			caption: caption,
@@ -726,11 +726,11 @@ struct TelegramBot {
 		return editMessageCaption(m);
 	}
 
-	bool editMessageReplyMarkup(EditMessageReplyMarkupMethod m) {
-		return callMethod!bool(m);
+	auto editMessageReplyMarkup(EditMessageReplyMarkupMethod m) {
+		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
-	bool editMessageReplyMarkup(T)(long chatId, int messageId, T replyMarkup)
+	auto editMessageReplyMarkup(T)(long chatId, int messageId, T replyMarkup)
 	if(isReplyMarkup!T) {
 		EditMessageReplyMarkupMethod m = {
 			message_id: messageId,
@@ -742,7 +742,7 @@ struct TelegramBot {
 		return editMessageReplyMarkup(m);
 	}
 
-	bool editMessageReplyMarkup(string inlineMessageId, Nullable!ReplyMarkup replyMarkup) {
+	auto editMessageReplyMarkup(string inlineMessageId, Nullable!ReplyMarkup replyMarkup) {
 		EditMessageReplyMarkupMethod m = {
 			inline_message_id: inlineMessageId,
 			reply_markup: replyMarkup,
