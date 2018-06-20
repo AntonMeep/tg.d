@@ -1,35 +1,6 @@
-# Telega
-Telegram bot API implementation.
+tg.d [![pipeline status](https://gitlab.com/ohboi/tg.d/badges/master/pipeline.svg)](https://gitlab.com/ohboi/tg.d/pipelines)[![coverage report](https://gitlab.com/ohboi/tg.d/badges/master/coverage.svg)](https://gitlab.com/ohboi/tg.d/pipelines)
+========
 
-[![Build Status](https://travis-ci.org/nexor/telega.svg?branch=master)](https://travis-ci.org/nexor/telega)
+**tg.d** is a Telegram Bot API client implementation built to make fast and safe bots with the help of the D programming language.
 
-## Implemented features
-
-### Methods
-
-setWebhook, deleteWebhook, getWebhookInfo,
-getUpdates, getMe, sendMessage, forwardMessage, sendPhoto, sendAudio
-sendDocument, sendVideo, sendVoice, sendVideoNote, sendMediaGroup,
-sendLocation, editMessageLiveLocation, stopMessageLiveLocation, sendVenue, sendContact, sendChatAction, getUserProfilePhotos, getFile, kickChatMember,
-unbanChatMember, restrictChatMember, promoteChatMember, exportChatInviteLink,
-setChatPhoto, deleteChatPhoto, setChatTitle, setChatDescription,
-pinChatMessage, unpinChatMessage, leaveChat, getChat,
-getChatAdministrators, getChatMembersCount, getChatMember,
-setChatStickerSet, deleteChatStickerSet, answerCallbackQuery,
-editMessageText, editMessageCaption, editMessageReplyMarkup,
-deleteMessage, sendSticker, getStickerSet, uploadStickerFile,
-createNewStickerSet, addStickerToSet, setStickerPositionInSet, deleteStickerFromSet
-
-**TBD additional:** sending files, inline mode, payments, games, webhook mode
-
-### Types
-
-Webhook, Update, User, Chat, Message, PhotoSize, MessageEntity, Audio,
-Document, Video, Voice,
-VideoNote, Contact, Location, Venue, UserProfilePhotos, File,
-ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove,
-InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery,
-ForceReply, ChatPhoto, ChatMember, ResponseParameters, InputMedia,
-InputMediaPhoto, InputMediaVideo, InputFile, ChosenInlineResult
-Sticker, StickerSet, MaskPosition InlineQuery,
-all InlineQueryResult* types, all InputMessageContent types
+Project is still in it's early development stage, bugs get as fast as new ones are added and API changes frequently, introducing breaking changes all of the time. Until this project reaches first tagged version, it's highly recommended to *not* use it for real-world applications. Feel free to use it for toying around!
