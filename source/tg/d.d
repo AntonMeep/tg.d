@@ -2222,6 +2222,10 @@ private struct JsonableAlgebraic(Types...) {
 		Algebraic!Types m_algebraic;
 	}
 
+	@property const auto algebraicOf() { return m_algebraic; }
+
+	alias algebraicOf this;
+
 	this(T)(T t) if(m_algebraic.allowed!T) {
 		m_algebraic = typeof(m_algebraic)(t);
 	}
@@ -2302,4 +2306,11 @@ unittest {
 		.should.be.equal(JsonableAlgebraic!(S1, bool)(S1(42)));
 	`false`.deserializeJson!(JsonableAlgebraic!(S1, bool))
 		.should.be.equal(JsonableAlgebraic!(S1, bool)(false));
+}
+
+@("JsonableAlgebraic supports useful methods of Algebraic type")
+unittest {
+	JsonableAlgebraic!(int, bool)(true).type.should.be.equal(typeid(bool));
+	JsonableAlgebraic!(int, bool, float)(0.0f).type.should.be.equal(typeid(float));
+	JsonableAlgebraic!(int, string)("hello").get!string.should.be.equal("hello");
 }
