@@ -2100,7 +2100,7 @@ struct AnswerCallbackQueryMethod {
 }
 
 struct EditMessageTextMethod {
-	mixin TelegramMethod!"/editMessageTextMethod";
+	mixin TelegramMethod!"/editMessageText";
 
 	long chat_id;
 	int message_id;
@@ -2112,7 +2112,7 @@ struct EditMessageTextMethod {
 }
 
 struct EditMessageCaptionMethod {
-	mixin TelegramMethod!"/editMessageCaptionMethod";
+	mixin TelegramMethod!"/editMessageCaption";
 
 	long chat_id;
 	int message_id;
@@ -2123,7 +2123,7 @@ struct EditMessageCaptionMethod {
 }
 
 struct EditMessageReplyMarkupMethod {
-	mixin TelegramMethod!"/editMessageReplyMarkupMethod";
+	mixin TelegramMethod!"/editMessageReplyMarkup";
 
 	long chat_id;
 	int message_id;
@@ -2132,14 +2132,14 @@ struct EditMessageReplyMarkupMethod {
 }
 
 struct DeleteMessageMethod {
-	mixin TelegramMethod!"/deleteMessageMethod";
+	mixin TelegramMethod!"/deleteMessage";
 
 	long chat_id;
 	int message_id;
 }
 
 struct SendStickerMethod {
-	mixin TelegramMethod!"/sendStickerMethod";
+	mixin TelegramMethod!"/sendSticker";
 
 	long chat_id;
 	string sticker; // TODO InputFile|string
@@ -2149,20 +2149,20 @@ struct SendStickerMethod {
 }
 
 struct GetStickerSetMethod {
-	mixin TelegramMethod!("/getStickerSetMethod", HTTPMethod.GET);
+	mixin TelegramMethod!("/getStickerSet", HTTPMethod.GET);
 
 	string name;
 }
 
 struct UploadStickerFileMethod {
-	mixin TelegramMethod!"/uploadStickerFileMethod";
+	mixin TelegramMethod!"/uploadStickerFile";
 
 	int user_id;
 	InputFile png_sticker;
 }
 
 struct CreateNewStickerSetMethod {
-	mixin TelegramMethod!"/createNewStickerSetMethod";
+	mixin TelegramMethod!"/createNewStickerSet";
 
 	int user_id;
 	string name;
@@ -2174,7 +2174,7 @@ struct CreateNewStickerSetMethod {
 }
 
 struct AddStickerToSetMethod {
-	mixin TelegramMethod!"/addStickerToSetMethod";
+	mixin TelegramMethod!"/addStickerToSet";
 
 	int user_id;
 	string name;
@@ -2184,14 +2184,14 @@ struct AddStickerToSetMethod {
 }
 
 struct SetStickerPositionInSetMethod {
-	mixin TelegramMethod!"/setStickerPositionInSetMethod";
+	mixin TelegramMethod!"/setStickerPositionInSet";
 
 	string sticker;
 	int position;
 }
 
 struct DeleteStickerFromSetMethod {
-	mixin TelegramMethod!"/deleteStickerFromSetMethod";
+	mixin TelegramMethod!"/deleteStickerFromSet";
 
 	string sticker;
 }
