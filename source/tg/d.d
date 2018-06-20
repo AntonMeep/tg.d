@@ -171,22 +171,20 @@ struct TelegramBot {
 		return callMethod!(User, GetMeMethod)(m);
 	}
 
-	Message sendMessage(long chatId, string text, ParseMode pm = ParseMode.markdown) {
+	Message sendMessage(long chatId, string text) {
 		SendMessageMethod m = {
 			text: text,
 			chat_id: chatId,
-			parse_mode: pm,
 		};
 
 		return sendMessage(m);
 	}
 
-	Message sendMessage(long chatId, int reply_to, string text, ParseMode pm = ParseMode.markdown) {
+	Message sendMessage(long chatId, int reply_to, string text) {
 		SendMessageMethod m = {
 			text: text,
 			chat_id: chatId,
 			reply_to_message_id: reply_to,
-			parse_mode: pm,
 		};
 
 		return sendMessage(m);
@@ -1768,7 +1766,7 @@ struct SendMessageMethod {
 
 	long chat_id;
 	string text;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	bool disable_web_page_preview;
 	bool disable_notification;
 	int reply_to_message_id;
@@ -1791,7 +1789,7 @@ struct SendPhotoMethod {
 	long chat_id;
 	string photo;
 	string caption;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
@@ -1803,7 +1801,7 @@ struct SendAudioMethod {
 	long chat_id;
 	string audio;
 	string caption;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	int duration;
 	string performer;
 	string title;
@@ -1819,7 +1817,7 @@ struct SendDocumentMethod {
 	long chat_id;
 	string document;
 	string caption;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
@@ -1834,7 +1832,7 @@ struct SendVideoMethod {
 	int width;
 	int height;
 	string caption;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	bool supports_streaming;
 	bool disable_notification;
 	int reply_to_message_id;
@@ -1847,7 +1845,7 @@ struct SendVoiceMethod {
 	long chat_id;
 	string voice;
 	string caption;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	int duration;
 	bool disable_notification;
 	int reply_to_message_id;
@@ -2106,7 +2104,7 @@ struct EditMessageTextMethod {
 	int message_id;
 	string inline_message_id;
 	string text;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	bool disable_web_page_preview;
 	ReplyMarkup reply_markup;
 }
@@ -2118,7 +2116,7 @@ struct EditMessageCaptionMethod {
 	int message_id;
 	string inline_message_id;
 	string caption;
-	ParseMode parse_mode;
+	ParseMode parse_mode = ParseMode.markdown;
 	ReplyMarkup reply_markup;
 }
 
