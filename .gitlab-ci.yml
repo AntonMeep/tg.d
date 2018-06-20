@@ -7,6 +7,7 @@ stages:
 - Build test environment
 - Build testing
 - Unit-testing
+- Code coverage
 
 variables:
   IMAGE_TAG_DMD: $CI_REGISTRY_IMAGE/dmd
@@ -77,3 +78,9 @@ ldc | Execute unittests:
     - docker pull $IMAGE_TAG_LDC
     - docker run -v$(pwd):/source $IMAGE_TAG_LDC dub test
   allow_failure: true
+
+Code coverage analysis:
+  stage: Code coverage
+  script:
+    - docker pull $IMAGE_TAG_DMD
+    - docker run -v$(pwd):/source $IMAGE_TAG_DMD bash ci/coverage.sh
