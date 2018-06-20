@@ -14,6 +14,8 @@ import std.traits;
 import std.meta : AliasSeq, staticIndexOf;
 import std.variant : Algebraic;
 
+version(unittest) import fluent.asserts;
+
 
 version(TgD_Verbose) {
 	pragma(msg, "tg.d | Warning! tg.d is compiled in verbose mode where user data can end up in logs");
@@ -2206,54 +2208,56 @@ struct AnswerInlineQueryMethod {
 	string switch_pm_parameter;
 }
 
-private struct JsonableAlgebraic(Typelist...) {
+// In short, this is an Algebraic type which can be Json serialized/deserialized
+// While serialization works for any `Types`, deserialization is a bit tricky
+// It will work *only* if there's only one struct in the list
+// i.e. JsonableAlgebraic!(S1, bool, int) will work and JsonableAlgebraic!(S1, S2) won't
+// This is more than enough for the Telegram's bot API though
+private struct JsonableAlgebraic(Types...) {
+@trusted:
 	import std.meta;
-	import std.variant;
-	import vibe.data.json : Json;
+	import std.variant : Algebraic;
 
-	private Algebraic!Typelist types;
-
-	// TODO implement copy constructor from Typelist types
-
-	this(T)(T value) if(staticIndexOf!(T, Typelist) >= 0) {
-		types = value;
+	private {
+		Algebraic!Types m_algebraic;
 	}
 
-	void opAssign(T)(T value) if(staticIndexOf!(T, Typelist) >= 0) {
-		types = value;
+	this(T)(T t) if(m_algebraic.allowed!T) {
+		m_algebraic = typeof(m_algebraic)(t);
 	}
 
-	@safe Json toJson() const {
-		if(!types.hasValue) {
+	void opAssign(T)(T rhs) if(m_algebraic.allowed!T) {
+		m_algebraic = rhs;
+	}
+
+	const Json toJson() {
+		if(!m_algebraic.hasValue)
 			return Json.emptyObject;
-		}
 
-		return getJson();
-	}
-
-	// this method should not be used
-	@safe typeof(this) fromJson(Json src) {
-		return typeof(this).init;
-	}
-
-	@trusted protected Json getJson() const {
-		import vibe.data.json : serializeToJson;
-
-		static foreach (T; Typelist) {
-			if(types.type == typeid(T)) {
-				T reply = cast(T) types.get!T;
-
-				return reply.serializeToJson();
-			}
-		}
+		static foreach(T; Types)
+			if(m_algebraic.type == typeid(T))
+				return m_algebraic.get!T.serializeToJson;
 
 		return Json(null);
 	}
+
+	static typeof(this) fromJson(Json src) {
+		import std.traits : isAggregateType;
+		static foreach(T; Types) {
+			static if(isAggregateType!T) {
+				if(src.type == Json.Type.object)
+					return typeof(this)(src.deserializeJson!T);
+			} else {
+				if(src.type == Json.typeId!T)
+					return typeof(this)(src.deserializeJson!T);
+			}
+		}
+		return typeof(this).init;
+	}
 }
 
+@("JsonableAlgebraic works for multiple structs")
 unittest {
-	import vibe.data.json;
-
 	struct S1 {
 		int s1;
 	}
@@ -2262,19 +2266,40 @@ unittest {
 		string s2;
 	}
 
-	JsonableAlgebraic!(S1, S2) jsonable;
+	JsonableAlgebraic!(S1, S2)(S1(42)).serializeToJsonString
+		.should.be.equal(`{"s1":42}`);
+	JsonableAlgebraic!(S1, S2)(S2("hello")).serializeToJsonString
+		.should.be.equal(`{"s2":"hello"}`);
+}
 
-	struct JsonableAggregate {
-		JsonableAlgebraic!(S1, S2) aggr;
+@("JsonableAlgebraic works as a field in another struct")
+unittest {
+	struct S1 {
+		int s1;
 	}
 
-	jsonable = S1(42);
-	assert(`{"s1":42}` == jsonable.serializeToJsonString());
+	struct S2 {
+		string s2;
+	}
 
-	jsonable = S2("s2 value");
-	assert(`{"s2":"s2 value"}` == jsonable.serializeToJsonString());
+	struct Aggregate {
+		JsonableAlgebraic!(S1, S2) aggregate;
+	}
 
-	JsonableAggregate jaggr;
-	jaggr.aggr = jsonable;
-	assert(`{"aggr":{"s2":"s2 value"}}` == jaggr.serializeToJsonString());
+	Aggregate(JsonableAlgebraic!(S1, S2)(S1(42))).serializeToJsonString
+		.should.be.equal(`{"aggregate":{"s1":42}}`);
+	Aggregate(JsonableAlgebraic!(S1, S2)(S2("hello"))).serializeToJsonString
+		.should.be.equal(`{"aggregate":{"s2":"hello"}}`);
+}
+
+@("JsonableAlgebraic can be used for simple deserialization")
+unittest {
+	struct S1 {
+		int s1;
+	}
+
+	`{"s1":42}`.deserializeJson!(JsonableAlgebraic!(S1, bool))
+		.should.be.equal(JsonableAlgebraic!(S1, bool)(S1(42)));
+	`false`.deserializeJson!(JsonableAlgebraic!(S1, bool))
+		.should.be.equal(JsonableAlgebraic!(S1, bool)(false));
 }

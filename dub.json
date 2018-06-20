@@ -29,6 +29,16 @@
 			"subConfigurations": {
 				"vibe-d:tls": "openssl-1.1"
 			}
+		},
+		{
+			"name": "unittest",
+			"versions": ["VibeUseOpenSSL11", "DeimosOpenSSLv1_1"],
+			"subConfigurations": {
+				"vibe-d:tls": "openssl-1.1"
+			},
+			"dependencies": {
+				"fluent-asserts": "~>0.11.4"
+			}
 		}
 	]
 }
