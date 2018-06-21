@@ -728,11 +728,11 @@ struct TelegramBot {
 		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
-	auto editMessageReplyMarkup(T)(long chatId, int messageId, T replyMarkup)
-	if(isReplyMarkup!T) {
+	auto editMessageReplyMarkup(long chatId, int messageId, InlineKeyboardMarkup replyMarkup) {
 		EditMessageReplyMarkupMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
+			reply_markup: replyMarkup,
 		};
 
 		m.reply_markup = replyMarkup;
@@ -1170,11 +1170,11 @@ struct InlineKeyboardMarkup {
 struct InlineKeyboardButton {
 	string text;
 @optional:
-	Nullable!string url,
-					callback_data,
-					switch_inline_query,
-					switch_inline_query_current_chat;
-	Nullable!CallbackGame callback_game;
+	string url,
+		   callback_data,
+		   switch_inline_query,
+		   switch_inline_query_current_chat;
+	CallbackGame callback_game;
 	bool pay;
 }
 
