@@ -63,7 +63,7 @@ struct TelegramBot {
 				if(method._httpMethod == HTTPMethod.POST) {
 					version(TgD_Verbose)
 						"tg.d | Sending body: %s".logDebug(method.serializeToJson);
-					req.writeJsonBody(method.serialize!(JsonNullIgnoringSerializer));
+					req.writeJsonBody(method.serializeToJson);
 				}
 			},
 			(scope res) {
@@ -1170,11 +1170,11 @@ struct InlineKeyboardMarkup {
 struct InlineKeyboardButton {
 	string text;
 @optional:
-	Nullable!string url,
-					callback_data,
-					switch_inline_query,
-					switch_inline_query_current_chat;
-	Nullable!CallbackGame callback_game;
+	string url,
+		   callback_data,
+		   switch_inline_query,
+		   switch_inline_query_current_chat;
+	CallbackGame callback_game;
 	bool pay;
 }
 
@@ -2311,35 +2311,4 @@ unittest {
 	JsonableAlgebraic!(int, bool)(true).type.should.be.equal(typeid(bool));
 	JsonableAlgebraic!(int, bool, float)(0.0f).type.should.be.equal(typeid(float));
 	JsonableAlgebraic!(int, string)("hello").get!string.should.be.equal("hello");
-}
-
-private struct JsonNullIgnoringSerializer {
-	JsonSerializer m_serializer;
-
-	void writeValue(Traits, T)(in T value)
-	if(!is(T == Json)) {
-		static if(!is(T == typeof(null)))
-			m_serializer.writeValue!(Traits, T)(value);
-	}
-
-	alias m_serializer this;
-}
-
-@("JsonNullIgnoringSerializer serializes simple values")
-unittest {
-	import vibe.data.serialization;
-
-	"Hello".serialize!JsonNullIgnoringSerializer.should.be.equal(Json("Hello"));
-	42.serialize!JsonNullIgnoringSerializer.should.be.equal(Json(42));
-}
-
-@("JsonNullIgnoringSerializer ignores Nullables which are null")
-unittest {
-	struct S1 {
-	@optional:
-		Nullable!int i;
-	}
-
-	S1(Nullable!int.init).serialize!JsonNullIgnoringSerializer.toString.should.be.equal(Json.emptyObject.toString);
-	S1(Nullable!int(42)).serialize!JsonNullIgnoringSerializer.should.be.equal(Json(["i": Json(42)]));
 }
