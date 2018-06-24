@@ -55,21 +55,19 @@ struct TelegramBot {
 
 		T result;
 
-		"tg.d | Requesting %s".logDiagnostic(method._path);
+		debug "tg.d | Requesting %s".logDebugV(method._path);
 
 		requestHTTP(apiUrl ~ method._path,
 			(scope req) {
 				req.method = HTTPMethod.POST;
-				version(TgD_Verbose)
-					"tg.d | Sending body: %s".logDebug(method.serializeToJson);
+				debug version(TgD_Verbose)
+					"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
 				req.writeJsonBody(method.serializeToJson);
 			},
 			(scope res) {
 				auto answer = res.readJson;
-				version(TgD_Verbose) {
-					"tg.d | Response headers: %s".logDebug(res.headers);
-					"tg.d | Response data: %s".logDiagnostic(answer);
-				}
+				debug version(TgD_Verbose)
+					"tg.d | Response data: %s".logDebugV(answer);
 
 				auto json = answer.deserializeJson!(MethodResult!T);
 
