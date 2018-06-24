@@ -59,12 +59,10 @@ struct TelegramBot {
 
 		requestHTTP(apiUrl ~ method._path,
 			(scope req) {
-				req.method = method._httpMethod;
-				if(method._httpMethod == HTTPMethod.POST) {
-					version(TgD_Verbose)
-						"tg.d | Sending body: %s".logDebug(method.serializeToJson);
-					req.writeJsonBody(method.serializeToJson);
-				}
+				req.method = HTTPMethod.POST;
+				version(TgD_Verbose)
+					"tg.d | Sending body: %s".logDebug(method.serializeToJson);
+				req.writeJsonBody(method.serializeToJson);
 			},
 			(scope res) {
 				auto answer = res.readJson;
@@ -1720,10 +1718,9 @@ struct WebhookInfo {
 /*                        Telegram methods                        */
 /******************************************************************/
 
-mixin template TelegramMethod(string path, HTTPMethod method = HTTPMethod.POST) {
+mixin template TelegramMethod(string path) {
 package:
 	immutable string _path = path;
-	HTTPMethod _httpMethod = method;
 }
 
 /// UDA for telegram methods
@@ -1754,11 +1751,11 @@ struct DeleteWebhookMethod {
 }
 
 struct GetWebhookInfoMethod {
-	mixin TelegramMethod!("/getWebhookInfo", HTTPMethod.GET);
+	mixin TelegramMethod!"/getWebhookInfo";
 }
 
 struct GetMeMethod {
-	mixin TelegramMethod!("/getMe", HTTPMethod.GET);
+	mixin TelegramMethod!"/getMe";
 }
 
 struct SendMessageMethod {
@@ -1940,7 +1937,7 @@ struct SendChatActionMethod {
 }
 
 struct GetUserProfilePhotosMethod {
-	mixin TelegramMethod!("/getUserProfilePhotos", HTTPMethod.GET);
+	mixin TelegramMethod!"/getUserProfilePhotos";
 
 	int user_id;
 	int offset;
@@ -1948,7 +1945,7 @@ struct GetUserProfilePhotosMethod {
 }
 
 struct GetFileMethod {
-	mixin TelegramMethod!("/getFile", HTTPMethod.GET);
+	mixin TelegramMethod!"/getFile";
 
 	string file_id;
 }
@@ -2050,25 +2047,25 @@ struct LeaveChatMethod {
 }
 
 struct GetChatMethod {
-	mixin TelegramMethod!("/getChat", HTTPMethod.GET);
+	mixin TelegramMethod!"/getChat";
 
 	long chat_id;
 }
 
 struct GetChatAdministratorsMethod {
-	mixin TelegramMethod!("/getChatAdministrators", HTTPMethod.GET);
+	mixin TelegramMethod!"/getChatAdministrators";
 
 	long chat_id;
 }
 
 struct GetChatMembersCountMethod {
-	mixin TelegramMethod!("/getChatMembersCount", HTTPMethod.GET);
+	mixin TelegramMethod!"/getChatMembersCount";
 
 	long chat_id;
 }
 
 struct GetChatMemberMethod {
-	mixin TelegramMethod!("/getChatMember", HTTPMethod.GET);
+	mixin TelegramMethod!"/getChatMember";
 
 	long chat_id;
 	int user_id;
@@ -2147,7 +2144,7 @@ struct SendStickerMethod {
 }
 
 struct GetStickerSetMethod {
-	mixin TelegramMethod!("/getStickerSet", HTTPMethod.GET);
+	mixin TelegramMethod!"/getStickerSet";
 
 	string name;
 }
