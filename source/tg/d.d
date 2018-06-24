@@ -2223,6 +2223,10 @@ private struct JsonableAlgebraic(Types...) {
 		m_algebraic = rhs;
 	}
 
+	void opAssign(typeof(this) rhs) {
+		m_algebraic = rhs.m_algebraic;
+	}
+
 	const Json toJson() {
 		if(!m_algebraic.hasValue)
 			return Json.emptyObject;
@@ -2263,6 +2267,18 @@ unittest {
 		.should.be.equal(`{"s1":42}`);
 	JsonableAlgebraic!(S1, S2)(S2("hello")).serializeToJsonString
 		.should.be.equal(`{"s2":"hello"}`);
+}
+
+@("JsonableAlgebraic is @safe")
+@safe unittest {
+	struct S1 {
+		JsonableAlgebraic!(int, bool) a;
+	}
+
+	S1 s1;
+
+	static assert(__traits(compiles, () @safe { s1.a = JsonableAlgebraic!(int, bool)(42); }));
+	static assert(__traits(compiles, () @safe { JsonableAlgebraic!(int, bool) b = 42; }));
 }
 
 @("JsonableAlgebraic works as a field in another struct")
