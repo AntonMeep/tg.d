@@ -31,6 +31,15 @@
 			}
 		},
 		{
+			"name": "openssl-1.0",
+			"targetType": "library"
+		},
+		{
+			"name": "verbose_openssl-1.0",
+			"targetType": "library",
+			"versions": ["TgD_Verbose"]
+		},
+		{
 			"name": "unittest",
 			"targetType": "executable",
 			"versions": ["VibeUseOpenSSL11", "DeimosOpenSSLv1_1"],
