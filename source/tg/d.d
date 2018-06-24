@@ -169,7 +169,7 @@ struct TelegramBot {
 		return callMethod!(User, GetMeMethod)(m);
 	}
 
-	Message sendMessage(long chatId, string text) {
+	Message sendMessage(T)(T chatId, string text) if(isTelegramID!T) {
 		SendMessageMethod m = {
 			text: text,
 			chat_id: chatId,
@@ -178,7 +178,7 @@ struct TelegramBot {
 		return sendMessage(m);
 	}
 
-	Message sendMessage(long chatId, int reply_to, string text) {
+	Message sendMessage(T)(T chatId, int reply_to, string text) if(isTelegramID!T) {
 		SendMessageMethod m = {
 			text: text,
 			chat_id: chatId,
@@ -192,7 +192,8 @@ struct TelegramBot {
 		return callMethod!(Message, SendMessageMethod)(m);
 	}
 
-	Message forwardMessage(long chatId, long fromChatId, uint messageId){
+	Message forwardMessage(T1, T2)(T1 chatId, T2 fromChatId, uint messageId)
+	if(isTelegramID!T1 && isTelegramID!T2){
 		ForwardMessageMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
@@ -210,7 +211,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendPhotoMethod)(m);
 	}
 
-	Message sendPhoto(long chatId, string photo) {
+	Message sendPhoto(T)(T chatId, string photo) if(isTelegramID!T) {
 		SendPhotoMethod m = {
 			photo: photo,
 			chat_id: chatId,
@@ -223,7 +224,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendAudioMethod)(m);
 	}
 
-	Message sendAudio(long chatId, string audio) {
+	Message sendAudio(T)(T chatId, string audio) if(isTelegramID!T) {
 		SendAudioMethod m = {
 			audio: audio,
 			chat_id: chatId,
@@ -236,7 +237,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendDocumentMethod)(m);
 	}
 
-	Message sendDocument(long chatId, string document) {
+	Message sendDocument(T)(T chatId, string document) if(isTelegramID!T) {
 		SendDocumentMethod m = {
 			document: document,
 			chat_id: chatId,
@@ -249,7 +250,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendVideoMethod)(m);
 	}
 
-	Message sendVideo(long chatId, string video) {
+	Message sendVideo(T)(T chatId, string video) if(isTelegramID!T) {
 		SendVideoMethod m = {
 			video: video,
 			chat_id: chatId,
@@ -262,7 +263,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendVoiceMethod)(m);
 	}
 
-	Message sendVoice(long chatId, string voice) {
+	Message sendVoice(T)(T chatId, string voice) if(isTelegramID!T) {
 		SendVoiceMethod m = {
 			voice: voice,
 			chat_id: chatId,
@@ -275,7 +276,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendVideoNoteMethod)(m);
 	}
 
-	Message sendVideoNote(long chatId, string videoNote) {
+	Message sendVideoNote(T)(T chatId, string videoNote) if(isTelegramID!T) {
 		SendVideoNoteMethod m = {
 			video_note: videoNote,
 			chat_id: chatId,
@@ -288,7 +289,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendMediaGroupMethod)(m);
 	}
 
-	Message sendMediaGroup(long chatId, InputMedia[] media) {
+	Message sendMediaGroup(T)(T chatId, InputMedia[] media) if(isTelegramID!T) {
 		SendMediaGroupMethod m = {
 			media: media,
 			chat_id: chatId,
@@ -301,7 +302,7 @@ struct TelegramBot {
 		return callMethod!(Message, SendLocationMethod)(m);
 	}
 
-	Message sendLocation(long chatId, float latitude, float longitude) {
+	Message sendLocation(T)(T chatId, float latitude, float longitude) if(isTelegramID!T) {
 		SendLocationMethod m = {
 			latitude: latitude,
 			longitude: longitude,
@@ -325,7 +326,8 @@ struct TelegramBot {
 		return editMessageLiveLocation(m);
 	}
 
-	Nullable!Message editMessageLiveLocation(long chatId, uint messageId, float latitude, float longitude) {
+	Nullable!Message editMessageLiveLocation(T)(T chatId, uint messageId, float latitude, float longitude)
+	if(isTelegramID!T) {
 		EditMessageLiveLocationMethod m = {
 			message_id: messageId,
 			latitude: latitude,
@@ -348,7 +350,7 @@ struct TelegramBot {
 		return stopMessageLiveLocation(m);
 	}
 
-	Nullable!Message stopMessageLiveLocation(long chatId, uint messageId) {
+	Nullable!Message stopMessageLiveLocation(T)(T chatId, uint messageId) if(isTelegramID!T) {
 		StopMessageLiveLocationMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
@@ -361,7 +363,8 @@ struct TelegramBot {
 		return callMethod!(Message, SendVenueMethod)(m);
 	}
 
-	Message sendVenue(long chatId, float latitude, float longitude, string title, string address) {
+	Message sendVenue(T)(T chatId, float latitude, float longitude, string title, string address)
+	if(isTelegramID!T) {
 		SendVenueMethod m = {
 			latitude: latitude,
 			longitude : longitude,
@@ -377,7 +380,8 @@ struct TelegramBot {
 		return callMethod!(Message, SendContactMethod)(m);
 	}
 
-	Message sendContact(long chatId, string phone_number, string first_name) {
+	Message sendContact(T)(T chatId, string phone_number, string first_name)
+	if(isTelegramID!T) {
 		SendContactMethod m = {
 			phone_number: phone_number,
 			first_name : first_name,
@@ -391,7 +395,7 @@ struct TelegramBot {
 		return callMethod!(bool, SendChatActionMethod)(m);
 	}
 
-	bool sendChatAction(long chatId, string action) {
+	bool sendChatAction(T)(T chatId, string action) if(isTelegramID!T) {
 		SendChatActionMethod m = {
 			action: action,
 			chat_id: chatId,
@@ -428,7 +432,7 @@ struct TelegramBot {
 		return callMethod!(bool, KickChatMemberMethod)(m);
 	}
 
-	bool kickChatMember(long chatId, int userId) {
+	bool kickChatMember(T)(T chatId, int userId) if(isTelegramID!T) {
 		KickChatMemberMethod m = {
 			user_id: userId,
 			chat_id: chatId,
@@ -441,7 +445,7 @@ struct TelegramBot {
 		return callMethod!(bool, UnbanChatMemberMethod)(m);
 	}
 
-	bool unbanChatMember(long chatId, int userId) {
+	bool unbanChatMember(T)(T chatId, int userId) if(isTelegramID!T) {
 		UnbanChatMemberMethod m = {
 			user_id: userId,
 			chat_id: chatId,
@@ -454,7 +458,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool restrictChatMember(long chatId, int userId) {
+	bool restrictChatMember(T)(T chatId, int userId) if(isTelegramID!T) {
 		RestrictChatMemberMethod m = {
 			user_id: userId,
 			chat_id: chatId,
@@ -467,7 +471,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool promoteChatMember(long chatId, int userId) {
+	bool promoteChatMember(T)(T chatId, int userId) if(isTelegramID!T) {
 		PromoteChatMemberMethod m = {
 			user_id: userId,
 			chat_id: chatId,
@@ -480,7 +484,7 @@ struct TelegramBot {
 		return callMethod!string(m);
 	}
 
-	string exportChatInviteLink(long chatId) {
+	string exportChatInviteLink(T)(T chatId) if(isTelegramID!T) {
 		ExportChatInviteLinkMethod m = {
 			chat_id: chatId,
 		};
@@ -492,7 +496,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool setChatPhoto(long chatId, InputFile photo) {
+	bool setChatPhoto(T)(T chatId, InputFile photo) if(isTelegramID!T) {
 		SetChatPhotoMethod m = {
 			photo: photo,
 			chat_id: chatId,
@@ -505,7 +509,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool deleteChatPhoto(long chatId) {
+	bool deleteChatPhoto(T)(T chatId) if(isTelegramID!T) {
 		DeleteChatPhotoMethod m = {
 			chat_id: chatId,
 		};
@@ -517,7 +521,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool setChatTitle(long chatId, string title) {
+	bool setChatTitle(T)(T chatId, string title) if(isTelegramID!T) {
 		SetChatTitleMethod m = {
 			title: title,
 			chat_id: chatId,
@@ -530,7 +534,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool setChatDescription(long chatId, string description) {
+	bool setChatDescription(T)(T chatId, string description) if(isTelegramID!T) {
 		SetChatDescriptionMethod m = {
 			description: description,
 			chat_id: chatId,
@@ -543,7 +547,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool pinChatMessage(long chatId, uint messageId) {
+	bool pinChatMessage(T)(T chatId, uint messageId) if(isTelegramID!T) {
 		PinChatMessageMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
@@ -556,7 +560,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool unpinChatMessage(long chatId) {
+	bool unpinChatMessage(T)(T chatId) if(isTelegramID!T) {
 		UnpinChatMessageMethod m = {
 			chat_id: chatId,
 		};
@@ -568,7 +572,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool leaveChat(long chatId) {
+	bool leaveChat(T)(T chatId) if(isTelegramID!T) {
 		LeaveChatMethod m = {
 			chat_id: chatId,
 		};
@@ -580,7 +584,7 @@ struct TelegramBot {
 		return callMethod!Chat(m);
 	}
 
-	Chat getChat(long chatId) {
+	Chat getChat(T)(T chatId) if(isTelegramID!T) {
 		GetChatMethod m = {
 			chat_id: chatId,
 		};
@@ -588,25 +592,11 @@ struct TelegramBot {
 		return getChat(m);
 	}
 
-	Chat getChat(string chatId) {
-		struct GetChatStringMethod {
-			mixin TelegramMethod!("/getChat", HTTPMethod.GET);
-			string chat_id;
-		}
-
-		GetChatStringMethod m = {
-			chat_id: chatId,
-		};
-
-		return callMethod!Chat(m);
-	}
-
-
 	ChatMember getChatAdministrators(GetChatAdministratorsMethod m) {
 		return callMethod!ChatMember(m);
 	}
 
-	ChatMember getChatAdministrators(long chatId) {
+	ChatMember getChatAdministrators(T)(T chatId) if(isTelegramID!T) {
 		GetChatAdministratorsMethod m = {
 			chat_id: chatId,
 		};
@@ -618,7 +608,7 @@ struct TelegramBot {
 		return callMethod!int(m);
 	}
 
-	int getChatMembersCount(long chatId) {
+	int getChatMembersCount(T)(T chatId) if(isTelegramID!T) {
 		GetChatMembersCountMethod m = {
 			chat_id: chatId,
 		};
@@ -630,7 +620,7 @@ struct TelegramBot {
 		return callMethod!ChatMember(m);
 	}
 
-	ChatMember getChatMember(long chatId, int userId) {
+	ChatMember getChatMember(T)(T chatId, int userId) if(isTelegramID!T) {
 		GetChatMemberMethod m = {
 			user_id: userId,
 			chat_id: chatId,
@@ -643,7 +633,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool setChatStickerSet(long chatId, string stickerSetName) {
+	bool setChatStickerSet(T)(T chatId, string stickerSetName) if(isTelegramID!T) {
 		SetChatStickerSetMethod m = {
 			sticker_set_name: stickerSetName,
 			chat_id: chatId,
@@ -653,10 +643,10 @@ struct TelegramBot {
 	}
 
 	bool deleteChatStickerSet(DeleteChatStickerSetMethod m) {
-	return callMethod!bool(m);
+		return callMethod!bool(m);
 	}
 
-	bool deleteChatStickerSet(long chatId) {
+	bool deleteChatStickerSet(T)(T chatId) if(isTelegramID!T) {
 		DeleteChatStickerSetMethod m = {
 			chat_id: chatId,
 		};
@@ -680,7 +670,7 @@ struct TelegramBot {
 		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
-	auto editMessageText(long chatId, int messageId, string text) {
+	auto editMessageText(T)(T chatId, int messageId, string text) if(isTelegramID!T) {
 		EditMessageTextMethod m = {
 			message_id: messageId,
 			text: text,
@@ -703,7 +693,7 @@ struct TelegramBot {
 		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
-	auto editMessageCaption(long chatId, int messageId, string caption = null) {
+	auto editMessageCaption(T)(T chatId, int messageId, string caption = null) if(isTelegramID!T) {
 		EditMessageCaptionMethod m = {
 			message_id: messageId,
 			caption: caption,
@@ -726,7 +716,8 @@ struct TelegramBot {
 		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
-	auto editMessageReplyMarkup(long chatId, int messageId, InlineKeyboardMarkup replyMarkup) {
+	auto editMessageReplyMarkup(T)(T chatId, int messageId, InlineKeyboardMarkup replyMarkup)
+	if(isTelegramID!T) {
 		EditMessageReplyMarkupMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
@@ -751,7 +742,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool deleteMessage(long chatId, int messageId) {
+	bool deleteMessage(T)(T chatId, int messageId) if(isTelegramID!T) {
 		DeleteMessageMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
@@ -765,7 +756,7 @@ struct TelegramBot {
 	}
 
 	// TODO sticker is InputFile|string
-	Message sendSticker(long chatId, string sticker) {
+	Message sendSticker(T)(T chatId, string sticker) if(isTelegramID!T) {
 		SendStickerMethod m = {
 			sticker: sticker,
 			chat_id: chatId,
@@ -1723,6 +1714,9 @@ package:
 	immutable string _path = path;
 }
 
+alias TelegramID = JsonableAlgebraic!(long, string);
+enum isTelegramID(T) = is(T == long) || is(T == string);
+
 /// UDA for telegram methods
 struct Method {
 	string path;
@@ -1761,7 +1755,7 @@ struct GetMeMethod {
 struct SendMessageMethod {
 	mixin TelegramMethod!"/sendMessage";
 
-	long chat_id;
+	TelegramID chat_id;
 	string text;
 	ParseMode parse_mode = ParseMode.markdown;
 	bool disable_web_page_preview;
@@ -1774,8 +1768,8 @@ struct SendMessageMethod {
 struct ForwardMessageMethod {
 	mixin TelegramMethod!"/forwardMessage";
 
-	long chat_id;
-	long from_chat_id;
+	TelegramID chat_id;
+	TelegramID from_chat_id;
 	bool disable_notification;
 	int message_id;
 }
@@ -1783,7 +1777,7 @@ struct ForwardMessageMethod {
 struct SendPhotoMethod {
 	mixin TelegramMethod!"/sendPhoto";
 
-	long chat_id;
+	TelegramID chat_id;
 	string photo;
 	string caption;
 	ParseMode parse_mode = ParseMode.markdown;
@@ -1795,7 +1789,7 @@ struct SendPhotoMethod {
 struct SendAudioMethod {
 	mixin TelegramMethod!"/sendAudio";
 
-	long chat_id;
+	TelegramID chat_id;
 	string audio;
 	string caption;
 	ParseMode parse_mode = ParseMode.markdown;
@@ -1811,7 +1805,7 @@ struct SendAudioMethod {
 struct SendDocumentMethod {
 	mixin TelegramMethod!"/sendDocument";
 
-	long chat_id;
+	TelegramID chat_id;
 	string document;
 	string caption;
 	ParseMode parse_mode = ParseMode.markdown;
@@ -1823,7 +1817,7 @@ struct SendDocumentMethod {
 struct SendVideoMethod {
 	mixin TelegramMethod!"/sendVideo";
 
-	long chat_id;
+	TelegramID chat_id;
 	string video;
 	int duration;
 	int width;
@@ -1839,7 +1833,7 @@ struct SendVideoMethod {
 struct SendVoiceMethod {
 	mixin TelegramMethod!"/sendVoice";
 
-	long chat_id;
+	TelegramID chat_id;
 	string voice;
 	string caption;
 	ParseMode parse_mode = ParseMode.markdown;
@@ -1852,7 +1846,7 @@ struct SendVoiceMethod {
 struct SendVideoNoteMethod {
 	mixin TelegramMethod!"/sendVideoNote";
 
-	long chat_id;
+	TelegramID chat_id;
 	string video_note;
 	int duration;
 	int length;
@@ -1865,7 +1859,7 @@ struct SendVideoNoteMethod {
 struct SendMediaGroupMethod {
 	mixin TelegramMethod!"/sendMediaGroup";
 
-	long chat_id;
+	TelegramID chat_id;
 	InputMedia[] media;
 	bool disable_notification;
 	int reply_to_message_id;
@@ -1874,7 +1868,7 @@ struct SendMediaGroupMethod {
 struct SendLocationMethod {
 	mixin TelegramMethod!"/sendLocation";
 
-	long chat_id;
+	TelegramID chat_id;
 	float latitude;
 	float longitude;
 	int live_period;
@@ -1886,7 +1880,7 @@ struct SendLocationMethod {
 struct EditMessageLiveLocationMethod {
 	mixin TelegramMethod!"/editMessageLiveLocation";
 
-	long chat_id;
+	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
 	float latitude;
@@ -1897,7 +1891,7 @@ struct EditMessageLiveLocationMethod {
 struct StopMessageLiveLocationMethod {
 	mixin TelegramMethod!"/stopMessageLiveLocation";
 
-	long chat_id;
+	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
 	ReplyMarkup reply_markup;
@@ -1906,7 +1900,7 @@ struct StopMessageLiveLocationMethod {
 struct SendVenueMethod {
 	mixin TelegramMethod!"/sendVenue";
 
-	long chat_id;
+	TelegramID chat_id;
 	float latitude;
 	float longitude;
 	string title;
@@ -1920,7 +1914,7 @@ struct SendVenueMethod {
 struct SendContactMethod {
 	mixin TelegramMethod!"/sendContact";
 
-	long chat_id;
+	TelegramID chat_id;
 	string phone_number;
 	string first_name;
 	string last_name;
@@ -1932,7 +1926,7 @@ struct SendContactMethod {
 struct SendChatActionMethod {
 	mixin TelegramMethod!"/sendChatAction";
 
-	long chat_id;
+	TelegramID chat_id;
 	string action; // TODO enum
 }
 
@@ -1953,7 +1947,7 @@ struct GetFileMethod {
 struct KickChatMemberMethod {
 	mixin TelegramMethod!"/kickChatMember";
 
-	long chat_id;
+	TelegramID chat_id;
 	int user_id;
 	int until_date;
 }
@@ -1961,14 +1955,14 @@ struct KickChatMemberMethod {
 struct UnbanChatMemberMethod {
 	mixin TelegramMethod!"/unbanChatMember";
 
-	long chat_id;
+	TelegramID chat_id;
 	int user_id;
 }
 
 struct RestrictChatMemberMethod {
 	mixin TelegramMethod!"/restrictChatMember";
 
-	long chat_id;
+	TelegramID chat_id;
 	int user_id;
 	int until_date;
 	bool can_send_messages;
@@ -1980,7 +1974,7 @@ struct RestrictChatMemberMethod {
 struct PromoteChatMemberMethod {
 	mixin TelegramMethod!"/promoteChatMember";
 
-	long chat_id;
+	TelegramID chat_id;
 	int user_id;
 	bool can_change_info;
 	bool can_post_messages;
@@ -1995,13 +1989,13 @@ struct PromoteChatMemberMethod {
 struct ExportChatInviteLinkMethod {
 	mixin TelegramMethod!"/exportChatInviteLink";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct SetChatPhotoMethod {
 	mixin TelegramMethod!"/setChatPhoto";
 
-	long chat_id;
+	TelegramID chat_id;
 	InputFile photo;
 
 }
@@ -2009,27 +2003,27 @@ struct SetChatPhotoMethod {
 struct DeleteChatPhotoMethod {
 	mixin TelegramMethod!"/deleteChatPhoto";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct SetChatTitleMethod {
 	mixin TelegramMethod!"/setChatTitle";
 
-	long chat_id;
+	TelegramID chat_id;
 	string title;
 }
 
 struct SetChatDescriptionMethod {
 	mixin TelegramMethod!"/setChatDescription";
 
-	long chat_id;
+	TelegramID chat_id;
 	string description;
 }
 
 struct PinChatMessageMethod {
 	mixin TelegramMethod!"/pinChatMessage";
 
-	long chat_id;
+	TelegramID chat_id;
 	int message_id;
 	bool disable_notification;
 }
@@ -2037,51 +2031,51 @@ struct PinChatMessageMethod {
 struct UnpinChatMessageMethod {
 	mixin TelegramMethod!"/unpinChatMessage";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct LeaveChatMethod {
 	mixin TelegramMethod!"/leaveChat";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct GetChatMethod {
 	mixin TelegramMethod!"/getChat";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct GetChatAdministratorsMethod {
 	mixin TelegramMethod!"/getChatAdministrators";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct GetChatMembersCountMethod {
 	mixin TelegramMethod!"/getChatMembersCount";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct GetChatMemberMethod {
 	mixin TelegramMethod!"/getChatMember";
 
-	long chat_id;
+	TelegramID chat_id;
 	int user_id;
 }
 
 struct SetChatStickerSetMethod {
 	mixin TelegramMethod!"/setChatStickerSet";
 
-	long chat_id;
+	TelegramID chat_id;
 	string sticker_set_name;
 }
 
 struct DeleteChatStickerSetMethod {
 	mixin TelegramMethod!"/deleteChatStickerSet";
 
-	long chat_id;
+	TelegramID chat_id;
 }
 
 struct AnswerCallbackQueryMethod {
@@ -2097,7 +2091,7 @@ struct AnswerCallbackQueryMethod {
 struct EditMessageTextMethod {
 	mixin TelegramMethod!"/editMessageText";
 
-	long chat_id;
+	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
 	string text;
@@ -2109,7 +2103,7 @@ struct EditMessageTextMethod {
 struct EditMessageCaptionMethod {
 	mixin TelegramMethod!"/editMessageCaption";
 
-	long chat_id;
+	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
 	string caption;
@@ -2120,7 +2114,7 @@ struct EditMessageCaptionMethod {
 struct EditMessageReplyMarkupMethod {
 	mixin TelegramMethod!"/editMessageReplyMarkup";
 
-	long chat_id;
+	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
 	ReplyMarkup reply_markup;
@@ -2129,14 +2123,14 @@ struct EditMessageReplyMarkupMethod {
 struct DeleteMessageMethod {
 	mixin TelegramMethod!"/deleteMessage";
 
-	long chat_id;
+	TelegramID chat_id;
 	int message_id;
 }
 
 struct SendStickerMethod {
 	mixin TelegramMethod!"/sendSticker";
 
-	long chat_id;
+	TelegramID chat_id;
 	string sticker; // TODO InputFile|string
 	bool disable_notification;
 	int reply_to_message_id;
