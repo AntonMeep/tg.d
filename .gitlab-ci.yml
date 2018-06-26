@@ -4,83 +4,37 @@ services:
 - docker:dind
 
 stages:
-- Build test environment
-- Build testing
-- Unit-testing
-- Code coverage
+  - Build testing
+  - Unit-testing
+  - Code coverage
 
-variables:
-  IMAGE_TAG_DMD: $CI_REGISTRY_IMAGE/dmd
-  IMAGE_TAG_LDC: $CI_REGISTRY_IMAGE/ldc
-
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-
-dmd | Build test environment:
-  stage: Build test environment
-  script:
-    - apk add --no-cache curl
-    - VER=$(curl -fsSL http://downloads.dlang.org/releases/LATEST)
-    - echo "Using latest dmd v$VER"
-    - sed -i "s/COMPILER_VERSION=.*/COMPILER_VERSION=$VER/" ci/Dockerfile.dmd
-
-    - docker pull $IMAGE_TAG_DMD:latest || true
-    - docker build --cache-from $IMAGE_TAG_DMD:latest -t $IMAGE_TAG_DMD:$VER -t $IMAGE_TAG_DMD:latest -f ci/Dockerfile.dmd .
-    - docker push $IMAGE_TAG_DMD:$VER
-    - docker push $IMAGE_TAG_DMD:latest
-
-ldc | Build test environment:
-  stage: Build test environment
-  script:
-    - apk add --no-cache curl
-    - VER=$(curl -fsSL https://ldc-developers.github.io/LATEST)
-    - echo "Using latest ldc v$VER"
-    - sed -i "s/COMPILER_VERSION=.*/COMPILER_VERSION=$VER/" ci/Dockerfile.ldc
-    
-    - docker pull $IMAGE_TAG_LDC:latest || true
-    - docker build --cache-from $IMAGE_TAG_LDC:latest -t $IMAGE_TAG_LDC:$VER -t $IMAGE_TAG_LDC:latest -f ci/Dockerfile.ldc .
-    - docker push $IMAGE_TAG_LDC:$VER
-    - docker push $IMAGE_TAG_LDC:latest
 
 dmd | Debug build:
   stage: Build testing
-  script:
-    - docker pull $IMAGE_TAG_DMD
-    - docker run -v$(pwd):/source $IMAGE_TAG_DMD dub build -b debug
+  script: docker run -v$(pwd):/source ohboi/minidmd dub build -b debug
   
 ldc | Debug build:
   stage: Build testing
-  script:
-    - docker pull $IMAGE_TAG_LDC
-    - docker run -v$(pwd):/source $IMAGE_TAG_LDC dub build -b debug
+  script: docker run -v$(pwd):/source ohboi/minildc dub build -b debug
 
 dmd | Release build:
   stage: Build testing
   script:
-    - docker pull $IMAGE_TAG_DMD
-    - docker run -v$(pwd):/source $IMAGE_TAG_DMD dub build -b release
+    - docker run -v$(pwd):/source ohboi/minidmd dub build -b release
   
 ldc | Release build:
   stage: Build testing
-  script:
-    - docker pull $IMAGE_TAG_LDC
-    - docker run -v$(pwd):/source $IMAGE_TAG_LDC dub build -b release
+  script: docker run -v$(pwd):/source ohboi/minildc dub build -b release
 
 dmd | Execute unittests:
   stage: Unit-testing
-  script:
-    - docker pull $IMAGE_TAG_DMD
-    - docker run -v$(pwd):/source $IMAGE_TAG_DMD dub test
+  script: docker run -v$(pwd):/source ohboi/minidmd dub test
 
 ldc | Execute unittests:
   stage: Unit-testing
-  script:
-    - docker pull $IMAGE_TAG_LDC
-    - docker run -v$(pwd):/source $IMAGE_TAG_LDC dub test
+  script: docker run -v$(pwd):/source ohboi/minildc dub test
   allow_failure: true
 
 Code coverage analysis:
   stage: Code coverage
-  script:
-    - docker pull $IMAGE_TAG_DMD
-    - docker run -v$(pwd):/source $IMAGE_TAG_DMD bash ci/coverage.sh
+  script: docker run -v$(pwd):/source ohboi/minidmd bash ci/coverage.sh
