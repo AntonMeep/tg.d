@@ -8,7 +8,6 @@ stages:
   - Unit-testing
   - Code coverage
 
-
 dmd | Debug build:
   stage: Build testing
   script: docker run -v$(pwd):/source ohboi/minidmd dub build -b debug
@@ -37,4 +36,8 @@ ldc | Execute unittests:
 
 Code coverage analysis:
   stage: Code coverage
-  script: docker run -v$(pwd):/source ohboi/minidmd bash ci/coverage.sh
+  script: >
+   docker run -v$(pwd):/source ohboi/minidmd bash -c "
+    dub fetch covered
+    dub -b unittest-cov -c unittest
+    dub run covered -- -a"
