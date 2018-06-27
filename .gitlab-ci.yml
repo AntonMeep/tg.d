@@ -11,28 +11,28 @@ stages:
 dmd | Debug build:
   stage: Build testing
   script: docker run -v$(pwd):/source ohboi/minidmd dub build -b debug
-  
-ldc | Debug build:
-  stage: Build testing
-  script: docker run -v$(pwd):/source ohboi/minildc dub build -b debug
+
+# ldc | Debug build:
+#   stage: Build testing
+#   script: docker run -v$(pwd):/source ohboi/minildc dub build -b debug
 
 dmd | Release build:
   stage: Build testing
   script:
     - docker run -v$(pwd):/source ohboi/minidmd dub build -b release
-  
-ldc | Release build:
-  stage: Build testing
-  script: docker run -v$(pwd):/source ohboi/minildc dub build -b release
+
+# ldc | Release build:
+#   stage: Build testing
+#   script: docker run -v$(pwd):/source ohboi/minildc dub build -b release
 
 dmd | Execute unittests:
   stage: Unit-testing
   script: docker run -v$(pwd):/source ohboi/minidmd dub test
 
-ldc | Execute unittests:
-  stage: Unit-testing
-  script: docker run -v$(pwd):/source ohboi/minildc dub test
-  allow_failure: true
+# ldc | Execute unittests:
+#   stage: Unit-testing
+#   script: docker run -v$(pwd):/source ohboi/minildc dub test
+#   allow_failure: true
 
 Code coverage analysis:
   stage: Code coverage
