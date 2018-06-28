@@ -44,41 +44,57 @@ struct TelegramBot {
 			ushort error_code;
 			string description;
 		}
+
+		version(unittest) Json delegate(string, Json) m_fakecall;
 	}
 
 	this(string token) {
 		this.apiUrl = baseUrl ~ token;
 	}
 
-	private T callMethod(T, M)(M method) {
-		import vibe.data.json : serializeToJson;
+	version(unittest) {
+		this(string token, Json delegate(string, Json) fakecall) {
+			this.apiUrl = baseUrl ~ token;
+			m_fakecall = fakecall;
+		}
 
-		T result;
+		private T callMethod(T, M)(M method) {
+			auto json = m_fakecall(apiUrl ~ method._path, method.serializeToJson).deserializeJson!(MethodResult!T);
 
-		debug "tg.d | Requesting %s".logDebugV(method._path);
-
-		requestHTTP(apiUrl ~ method._path,
-			(scope req) {
-				req.method = HTTPMethod.POST;
-				debug version(TgD_Verbose)
-					"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
-				req.writeJsonBody(method.serializeToJson);
-			},
-			(scope res) {
-				auto answer = res.readJson;
-				debug version(TgD_Verbose)
-					"tg.d | Response data: %s".logDebugV(answer);
-
-				auto json = answer.deserializeJson!(MethodResult!T);
-
-				enforce(json.ok == true,
+			enforce(json.ok == true,
 					new TelegramBotException(json.error_code, json.description));
 
-				result = json.result;
-			}
-		);
+			return json.result;
+		}
+	} else {
+		private T callMethod(T, M)(M method) {
+			T result;
 
-		return result;
+			debug "tg.d | Requesting %s".logDebugV(method._path);
+
+			requestHTTP(apiUrl ~ method._path,
+				(scope req) {
+					req.method = HTTPMethod.POST;
+					debug version(TgD_Verbose)
+						"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
+					req.writeJsonBody(method.serializeToJson);
+				},
+				(scope res) {
+					auto answer = res.readJson;
+					debug version(TgD_Verbose)
+						"tg.d | Response data: %s".logDebugV(answer);
+
+					auto json = answer.deserializeJson!(MethodResult!T);
+
+					enforce(json.ok == true,
+						new TelegramBotException(json.error_code, json.description));
+
+					result = json.result;
+				}
+			);
+
+			return result;
+		}
 	}
 
 	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 3, string[] allowed_updates = []) {
@@ -165,6 +181,50 @@ struct TelegramBot {
 		GetMeMethod m;
 
 		return callMethod!(User, GetMeMethod)(m);
+	}
+
+	@("getMe()")
+	unittest {
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/getMe");
+				data.should.be.equal(Json.emptyObject);
+
+				return Json([
+					"ok": Json(true),
+					"result": Json([
+						"id": Json(42),
+						"is_bot": Json(true),
+						"first_name": Json("John"),
+					])
+				]);
+			}
+		).getMe.serializeToJsonString.should.be.equal(
+			`{"id":42,"is_bot":true,"first_name":"John","last_name":null,"username":null,"language_code":null}`
+		);
+
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/getMe");
+				data.should.be.equal(Json.emptyObject);
+
+				return Json([
+					"ok": Json(true),
+					"result": Json([
+						"id": Json(42),
+						"is_bot": Json(false),
+						"first_name": Json("John"),
+						"last_name": Json("Smith"),
+						"username": Json("js"),
+						"language_code": Json("en-GB")
+					])
+				]);
+			}
+		).getMe.serializeToJsonString.should.be.equal(
+			`{"id":42,"is_bot":false,"first_name":"John","last_name":"Smith","username":"js","language_code":"en-GB"}`
+		);
 	}
 
 	Message sendMessage(T)(T chatId, string text) if(isTelegramID!T) {
