@@ -40,7 +40,7 @@
 			"versions": ["TgD_Verbose"]
 		},
 		{
-			"name": "unittest",
+			"name": "trial",
 			"targetType": "executable",
 			"versions": ["VibeUseOpenSSL11", "DeimosOpenSSLv1_1"],
 			"subConfigurations": {
