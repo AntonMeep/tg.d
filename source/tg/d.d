@@ -318,6 +318,56 @@ struct TelegramBot {
 		return callMethod!(Message, SendMessageMethod)(m);
 	}
 
+	@("TelegramBot.sendMessage()")
+	unittest {
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/sendMessage");
+				data.should.be.equal(
+					Json([
+						"chat_id": Json(42),
+						"text": Json("text"),
+						"parse_mode": Json("Markdown"),
+						"disable_web_page_preview": Json(false),
+						"disable_notification": Json(false),
+						"reply_to_message_id": Json(0),
+						"reply_markup": Json.emptyObject,
+					])
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Message().serializeToJson,
+				]);
+			}
+		).sendMessage(42L, "text").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/sendMessage");
+				data.should.be.equal(
+					Json([
+						"chat_id": Json("@superchat"),
+						"text": Json("text"),
+						"parse_mode": Json("Markdown"),
+						"disable_web_page_preview": Json(false),
+						"disable_notification": Json(false),
+						"reply_to_message_id": Json(123),
+						"reply_markup": Json.emptyObject,
+					])
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Message().serializeToJson,
+				]);
+			}
+		).sendMessage("@superchat", 123, "text").serializeToJsonString
+			.should.be.equal(Message().serializeToJsonString);
+	}
+
 	Message forwardMessage(T1, T2)(T1 chatId, T2 fromChatId, uint messageId)
 	if(isTelegramID!T1 && isTelegramID!T2){
 		ForwardMessageMethod m = {
