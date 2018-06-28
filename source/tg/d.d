@@ -105,7 +105,11 @@ struct TelegramBot {
 			allowed_updates: allowed_updates,
 		};
 
-		return callMethod!(Update[], GetUpdatesMethod)(m);
+		return getUpdates(m);
+	}
+
+	Update[] getUpdates(GetUpdatesMethod m) {
+		return callMethod!(Update[])(m);
 	}
 
 	@("TelegramBot.getUpdate()")
@@ -129,10 +133,6 @@ struct TelegramBot {
 				]);
 			}
 		).getUpdates.serializeToJsonString.should.be.equal(`[]`);
-	}
-
-	Update[] getUpdates(GetUpdatesMethod m) {
-		return callMethod!(Update[], GetUpdatesMethod)(m);
 	}
 
 	auto updateGetter(int timeout = 3, string[] allowed_updates = []) {
