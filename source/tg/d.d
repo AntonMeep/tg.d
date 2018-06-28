@@ -108,6 +108,29 @@ struct TelegramBot {
 		return callMethod!(Update[], GetUpdatesMethod)(m);
 	}
 
+	@("TelegramBot.getUpdate()")
+	unittest {
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/getUpdates");
+				data.should.be.equal(
+					Json([
+						"offset": Json(0),
+						"limit": Json(100),
+						"timeout": Json(3),
+						"allowed_updates": Json.emptyArray,
+					])
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Json.emptyArray,
+				]);
+			}
+		).getUpdates.serializeToJsonString.should.be.equal(`[]`);
+	}
+
 	Update[] getUpdates(GetUpdatesMethod m) {
 		return callMethod!(Update[], GetUpdatesMethod)(m);
 	}
@@ -157,6 +180,51 @@ struct TelegramBot {
 		return updateGetterImpl(this, timeout, allowed_updates);
 	}
 
+	@("TelegramBot.updateGetter() returns valid input range")
+	unittest {
+		import std.range : ElementType, isInputRange;
+		import std.traits: ReturnType;
+		static assert(isInputRange!(ReturnType!(TelegramBot.updateGetter)) == true);
+		static assert(is(ElementType!(ReturnType!(TelegramBot.updateGetter)) == Update));
+	}
+
+	@("TelegramBot.updateGetter()")
+	unittest {
+		import std.range : generate, take, drop;
+		import std.array : array;
+		import std.algorithm : map;
+		int requestNo;
+
+		int updateNo;
+		auto updates = generate!(() => Update(++updateNo)).take(400).array;
+
+		auto fake = (string url, Json data) {
+			url.should.be.equal("https://api.telegram.org/botTOKEN/getUpdates");
+			data.should.be.equal(
+				Json([
+					"offset": Json(requestNo ? (requestNo * 100) + 1 : requestNo * 100),
+					"limit": Json(100),
+					"timeout": Json(3),
+					"allowed_updates": Json.emptyArray,
+				])
+			);
+
+			if(requestNo++ > 3)
+				return Json([
+					"ok": Json(true),
+					"result": Json.emptyArray,
+				]);
+
+			return Json([
+				"ok": Json(true),
+				"result": updates.drop((requestNo - 1) * 100).take(100).serializeToJson
+			]);
+		};
+
+		TelegramBot("TOKEN", fake).updateGetter()
+			.map!(a => a.update_id).array.should.be.equal(updates.map!(a => a.update_id).array);
+	}
+
 	bool setWebhook(string url) {
 		SetWebhookMethod m = {
 			url: url,
@@ -183,7 +251,7 @@ struct TelegramBot {
 		return callMethod!(User, GetMeMethod)(m);
 	}
 
-	@("getMe()")
+	@("TelegramBot.getMe()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
