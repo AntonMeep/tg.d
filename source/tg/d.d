@@ -225,9 +225,11 @@ struct TelegramBot {
 			.map!(a => a.update_id).array.should.be.equal(updates.map!(a => a.update_id).array);
 	}
 
-	bool setWebhook(string url) {
+	bool setWebhook(string url, string[] allowed_updates = [], int max_connections = 40) {
 		SetWebhookMethod m = {
 			url: url,
+			allowed_updates: allowed_updates,
+			max_connections: max_connections,
 		};
 
 		return callMethod!(bool, SetWebhookMethod)(m);
