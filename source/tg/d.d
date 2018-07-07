@@ -47,6 +47,7 @@ struct TelegramBot {
 
 		version(unittest) Json delegate(string, Json) m_fakecall;
 	}
+@safe:
 
 	this(string token) {
 		this.apiUrl = baseUrl ~ token;
@@ -147,6 +148,7 @@ struct TelegramBot {
 				string[] m_allowed_updates;
 			}
 
+		@safe:
 			this(TelegramBot bot, int timeout, string[] allowed_updates) {
 				m_bot = bot;
 				m_buffer.reserve = 100;
