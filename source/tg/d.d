@@ -45,7 +45,7 @@ struct TelegramBot {
 			string description;
 		}
 
-		version(unittest) Json delegate(string, Json) m_fakecall;
+		version(unittest) Json delegate(string, Json) @safe m_fakecall;
 	}
 @safe:
 
@@ -54,7 +54,7 @@ struct TelegramBot {
 	}
 
 	version(unittest) {
-		this(string token, Json delegate(string, Json) fakecall) {
+		this(string token, Json delegate(string, Json) @safe fakecall) {
 			this.apiUrl = baseUrl ~ token;
 			m_fakecall = fakecall;
 		}
@@ -117,7 +117,7 @@ struct TelegramBot {
 	unittest {
 		TelegramBot(
 			"TOKEN",
-			(string url, Json data) {
+			(string url, Json data) @trusted {
 				url.should.be.equal("https://api.telegram.org/botTOKEN/getUpdates");
 				data.should.be.equal(
 					Json([
@@ -200,7 +200,7 @@ struct TelegramBot {
 		int updateNo;
 		auto updates = generate!(() => Update(++updateNo)).take(400).array;
 
-		auto fake = (string url, Json data) {
+		auto fake = (string url, Json data) @trusted {
 			url.should.be.equal("https://api.telegram.org/botTOKEN/getUpdates");
 			data.should.be.equal(
 				Json([
@@ -259,7 +259,7 @@ struct TelegramBot {
 	unittest {
 		TelegramBot(
 			"TOKEN",
-			(string url, Json data) {
+			(string url, Json data) @trusted {
 				url.should.be.equal("https://api.telegram.org/botTOKEN/getMe");
 				data.should.be.equal(Json.emptyObject);
 
@@ -278,7 +278,7 @@ struct TelegramBot {
 
 		TelegramBot(
 			"TOKEN",
-			(string url, Json data) {
+			(string url, Json data) @trusted {
 				url.should.be.equal("https://api.telegram.org/botTOKEN/getMe");
 				data.should.be.equal(Json.emptyObject);
 
@@ -326,7 +326,7 @@ struct TelegramBot {
 	unittest {
 		TelegramBot(
 			"TOKEN",
-			(string url, Json data) {
+			(string url, Json data) @trusted {
 				url.should.be.equal("https://api.telegram.org/botTOKEN/sendMessage");
 				data.should.be.equal(
 					Json([
@@ -349,7 +349,7 @@ struct TelegramBot {
 
 		TelegramBot(
 			"TOKEN",
-			(string url, Json data) {
+			(string url, Json data) @trusted {
 				url.should.be.equal("https://api.telegram.org/botTOKEN/sendMessage");
 				data.should.be.equal(
 					Json([
