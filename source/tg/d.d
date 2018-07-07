@@ -328,7 +328,7 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"text": Json("text"),
-						"parse_mode": Json("none"),
+						"parse_mode": Json(""),
 						"disable_web_page_preview": Json(false),
 						"disable_notification": Json(false),
 						"reply_to_message_id": Json(0),
@@ -351,7 +351,7 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json("@superchat"),
 						"text": Json("text"),
-						"parse_mode": Json("none"),
+						"parse_mode": Json(""),
 						"disable_web_page_preview": Json(false),
 						"disable_notification": Json(false),
 						"reply_to_message_id": Json(123),
