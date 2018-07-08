@@ -33,4 +33,4 @@ Code coverage:
     - docker run -v$(pwd):/source ohboi/minidmd:beta bash -c "
         dub fetch covered               &&
         dub -b unittest-cov -c unittest &&
-        dub run covered -- -a"
+        dub run covered && dub run covered -- -a"
