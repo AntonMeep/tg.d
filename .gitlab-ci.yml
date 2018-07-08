@@ -17,15 +17,17 @@ ldc | Check if library builds in debug and release modes:
 
 dmd | Unit-testing:
   script:
-    - docker run -v$(pwd):/source -v/root:/root ohboi/minidmd:beta bash -c "
-        dub fetch trial     &&
-        dub run trial:runner"
+    - docker run -v$(pwd):/source -v/root:/root ohboi/minidmd:beta dub test
+    # - docker run -v$(pwd):/source -v/root:/root ohboi/minidmd:beta bash -c "
+    #     dub fetch trial     &&
+    #     dub run trial:runner"
 
 ldc | Unit-testing:
   script:
-    - docker run -v$(pwd):/source -v/root:/root ohboi/minildc bash -c "
-        dub fetch trial     &&
-        dub run trial:runner"
+    - docker run -v$(pwd):/source -v/root:/root ohboi/minildc dub test
+    # - docker run -v$(pwd):/source -v/root:/root ohboi/minildc bash -c "
+    #     dub fetch trial     &&
+    #     dub run trial:runner"
 
 Code coverage:
   coverage: '/Average: \d+\.\d+%/'
