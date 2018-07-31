@@ -24,7 +24,7 @@ dmd-test: &test
   variables:
     COMPILER: dmd
   script:
-    - docker run -v$(pwd):/source ohboi/mini$COMPILER bash -c "dub fetch trial && dub run trial:runner"
+    - docker run -v$(pwd):/source ohboi/mini$COMPILER bash -c "dub test"
 
 ldc-test:
   <<: *test
