@@ -224,6 +224,7 @@ struct TelegramBot {
 			.map!(a => a.update_id).array.should.be.equal(updates.map!(a => a.update_id).array);
 	}
 
+	deprecated("Webhooks aren't fully implemented yet")
 	bool setWebhook(string url, string[] allowed_updates = [], int max_connections = 40) {
 		SetWebhookMethod m = {
 			url: url,
@@ -234,12 +235,14 @@ struct TelegramBot {
 		return callMethod!(bool, SetWebhookMethod)(m);
 	}
 
+	deprecated("Webhooks aren't fully implemented yet")
 	bool deleteWebhook() {
 		DeleteWebhookMethod m = DeleteWebhookMethod();
 
 		return callMethod!(bool, DeleteWebhookMethod)(m);
 	}
 
+	deprecated("Webhooks aren't fully implemented yet")
 	WebhookInfo getWebhookInfo() {
 		GetWebhookInfoMethod m = GetWebhookInfoMethod();
 
