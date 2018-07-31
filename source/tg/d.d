@@ -16,11 +16,8 @@ import std.variant : Algebraic;
 
 version(unittest) import fluent.asserts;
 
-
-version(TgD_Verbose) {
-	pragma(msg, "tg.d | Warning! tg.d is compiled in verbose mode where user data can end up in logs");
-	pragma(msg, "tg.d | DISABLE THIS in production builds!");
-}
+version(TgD_Verbose)
+	pragma(msg, "tg.d | Warning! tg.d is compiled in verbose mode, user data can end up in logs. DISABLE THIS IN PRODUCTION BUILDS");
 
 class TelegramBotException : Exception {
 	ushort code;
