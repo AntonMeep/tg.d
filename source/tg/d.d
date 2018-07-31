@@ -387,6 +387,53 @@ struct TelegramBot {
 		return callMethod!(Message, ForwardMessageMethod)(m);
 	}
 
+	@("TelegramBot.sendMessage()")
+	unittest {
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) @trusted {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/forwardMessage");
+				data.should.be.equal(
+					Json([
+						"chat_id": Json(42),
+						"from_chat_id": Json(43),
+						"disable_notification": Json(false),
+						"message_id": Json(1337),
+					])
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Message().serializeToJson,
+				]);
+			}
+		).forwardMessage(42L, 43L, 1337).serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) @trusted {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/sendMessage");
+				data.should.be.equal(
+					Json([
+						"chat_id": Json("@superchat"),
+						"text": Json("text"),
+						"parse_mode": Json(""),
+						"disable_web_page_preview": Json(false),
+						"disable_notification": Json(false),
+						"reply_to_message_id": Json(123),
+						"reply_markup": Json.emptyObject,
+					])
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Message().serializeToJson,
+				]);
+			}
+		).sendMessage("@superchat", 123, "text").serializeToJsonString
+			.should.be.equal(Message().serializeToJsonString);
+	}
+
 	Message sendPhoto(SendPhotoMethod m) {
 		return callMethod!(Message, SendPhotoMethod)(m);
 	}
