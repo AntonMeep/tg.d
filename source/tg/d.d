@@ -372,7 +372,7 @@ struct TelegramBot {
 			.should.be.equal(Message().serializeToJsonString);
 	}
 
-	Message forwardMessage(T1, T2)(T1 chatId, T2 fromChatId, uint messageId)
+	Message forwardMessage(T1, T2)(T1 chatId, T2 fromChatId, int messageId)
 	if(isTelegramID!T1 && isTelegramID!T2){
 		ForwardMessageMethod m = {
 			message_id: messageId,
@@ -506,7 +506,7 @@ struct TelegramBot {
 		return editMessageLiveLocation(m);
 	}
 
-	Nullable!Message editMessageLiveLocation(T)(T chatId, uint messageId, float latitude, float longitude)
+	Nullable!Message editMessageLiveLocation(T)(T chatId, int messageId, float latitude, float longitude)
 	if(isTelegramID!T) {
 		EditMessageLiveLocationMethod m = {
 			message_id: messageId,
@@ -530,7 +530,7 @@ struct TelegramBot {
 		return stopMessageLiveLocation(m);
 	}
 
-	Nullable!Message stopMessageLiveLocation(T)(T chatId, uint messageId) if(isTelegramID!T) {
+	Nullable!Message stopMessageLiveLocation(T)(T chatId, int messageId) if(isTelegramID!T) {
 		StopMessageLiveLocationMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
@@ -727,7 +727,7 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool pinChatMessage(T)(T chatId, uint messageId) if(isTelegramID!T) {
+	bool pinChatMessage(T)(T chatId, int messageId) if(isTelegramID!T) {
 		PinChatMessageMethod m = {
 			message_id: messageId,
 			chat_id: chatId,
