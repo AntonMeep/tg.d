@@ -1,4 +1,0 @@
-*
-!examples/*.d
-!source/*
-!dub.*
