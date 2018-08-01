@@ -545,6 +545,37 @@ struct TelegramBot {
 		return sendVideo(m);
 	}
 
+	@("TelegramBot.sendVideo()")
+	unittest {
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) @trusted {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/sendVideo");
+				data.should.be.equal(
+					Json([
+						"chat_id": Json(42),
+						"video": Json("https://example.com/video.mp4"),
+						"duration": Json(0),
+						"width": Json(0),
+						"height": Json(0),
+						"thumb": Json(""),
+						"caption": Json(""),
+						"parse_mode": Json(""),
+						"supports_streaming": Json(false),
+						"disable_notification": Json(false),
+						"reply_to_message_id": Json(0),
+						"reply_markup": Json.emptyObject,
+					]),
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Message().serializeToJson,
+				]);
+			}
+		).sendVideo(42L, "https://example.com/video.mp4").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+	}
+
 	Message sendAnimation(SendAnimationMethod m) {
 		return callMethod!Message(m);
 	}
