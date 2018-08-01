@@ -462,6 +462,37 @@ struct TelegramBot {
 		return sendAudio(m);
 	}
 
+	@("TelegramBot.sendAudio()")
+	unittest {
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) @trusted {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/sendAudio");
+				data.should.be.equal(
+					Json([
+						"chat_id": Json(42),
+						"audio": Json("https://example.com/woof.mp3"),
+						"caption": Json(""),
+						"parse_mode": Json(""),
+						"duration": Json(0),
+						"performer": Json(""),
+						"title": Json(""),
+						"thumb": Json(""),
+						"disable_notification": Json(false),
+						"reply_to_message_id": Json(0),
+						"reply_markup": Json.emptyObject,
+					]),
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Message().serializeToJson,
+				]);
+			}
+		).sendAudio(42L, "https://example.com/woof.mp3").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+	}
+
+
 	Message sendAnimation(SendAnimationMethod m) {
 		return callMethod!Message(m);
 	}
