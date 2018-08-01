@@ -1240,6 +1240,7 @@ struct Message {
 	MessageEntity[] entities;
 	MessageEntity[] caption_entities;
 	Nullable!Audio audio;
+	Nullable!Animation animation;
 	Nullable!Document document;
 	Nullable!Game game;
 	PhotoSize[] photo;
