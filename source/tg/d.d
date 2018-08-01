@@ -1297,6 +1297,7 @@ struct Audio {
 					title,
 					mime_type;
 	Nullable!int file_size;
+	Nullable!PhotoSize thumb;
 }
 
 struct Document {
@@ -1479,6 +1480,7 @@ struct InputMediaVideo {
 	string type = "video";
 	string media;
 @optional:
+	Nullable!string thumb;
 	Nullable!string caption;
 	Nullable!ParseMode parse_mode;
 	Nullable!int width,
@@ -2077,6 +2079,7 @@ struct SendAudioMethod {
 	int duration;
 	string performer;
 	string title;
+	string thumb;
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
@@ -2088,6 +2091,7 @@ struct SendDocumentMethod {
 
 	TelegramID chat_id;
 	string document;
+	string thumb;
 	string caption;
 	ParseMode parse_mode;
 	bool disable_notification;
@@ -2103,6 +2107,7 @@ struct SendVideoMethod {
 	int duration;
 	int width;
 	int height;
+	string thumb;
 	string caption;
 	ParseMode parse_mode;
 	bool supports_streaming;
@@ -2131,6 +2136,7 @@ struct SendVideoNoteMethod {
 	string video_note;
 	int duration;
 	int length;
+	string thumb;
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
