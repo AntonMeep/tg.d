@@ -965,6 +965,27 @@ struct TelegramBot {
 		return editMessageReplyMarkup(m);
 	}
 
+	auto editMessageMedia(EditMessageMediaMethod m) {
+		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
+	}
+
+	auto editMessageMedia(T)(T chatId, int messageId, InputMedia media) {
+		EditMessageMediaMethod m = {
+			chat_id: chatId,
+			message_id: message_id,
+			media: media,
+		};
+		return editMessageMedia(m);
+	}
+
+	auto editMessageMedia(string inlineMessageId, InputMedia media) {
+		EditMessageMediaMethod m = {
+			inline_message_id: inlineMessageId,
+			media: media,
+		};
+		return editMessageMedia(m);
+	}
+
 	bool deleteMessage(DeleteMessageMethod m) {
 		return callMethod!bool(m);
 	}
@@ -1443,7 +1464,7 @@ struct ResponseParameters {
 }
 
 
-private alias InputMediaStructs = AliasSeq!(InputMediaPhoto, InputMediaVideo);
+private alias InputMediaStructs = AliasSeq!(InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument);
 alias InputMedia = JsonableAlgebraic!InputMediaStructs;
 
 struct InputMediaPhoto {
@@ -1464,6 +1485,39 @@ struct InputMediaVideo {
 				 height,
 				 duration;
 	bool supports_streaming;
+}
+
+struct InputMediaAnimation {
+	string type = "animation";
+	string media;
+@optional:
+	Nullable!string thumb;
+	Nullable!string caption;
+	Nullable!ParseMode parse_mode;
+	Nullable!int width,
+				 height,
+				 duration;
+}
+
+struct InputMediaAudio {
+	string type = "audio";
+	string media;
+@optional:
+	Nullable!string thumb;
+	Nullable!string caption;
+	Nullable!ParseMode parse_mode;
+	Nullable!int duration;
+	Nullable!string performer;
+	Nullable!string title;
+}
+
+struct InputMediaDocument {
+	string type = "document";
+	string media;
+@optional:
+	Nullable!string thumb;
+	Nullable!string caption;
+	Nullable!ParseMode parse_mode;
 }
 
 struct Sticker {
@@ -2344,6 +2398,16 @@ struct EditMessageReplyMarkupMethod {
 	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct EditMessageMediaMethod {
+	mixin TelegramMethod!"/editMessageReplyMarkup";
+
+	TelegramID chat_id;
+	int message_id;
+	string inline_message_id;
+	InputMedia media;
 	ReplyMarkup reply_markup;
 }
 
