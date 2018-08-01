@@ -109,6 +109,22 @@ int main() {
 						parse_mode: ParseMode.markdown,
 					};
 					Bot.sendAnimation(m);
+				} else if(update.message.text.startsWith("/location")) {
+					"Got /location command, sending random location".logInfo;
+
+					Bot.sendLocation(update.message.chat.id, uniform(0.0f, 90.0f), uniform(-180.0f, 180.0f));
+				} else if(update.message.text.startsWith("/venue")) {
+					"Got /venue command, sending random venue".logInfo;
+
+					Bot.sendVenue(update.message.chat.id, uniform(0.0f, 90.0f), uniform(-180.0f, 180.0f), "The Void", "Void st.");
+				} else if(update.message.text.startsWith("/contact")) {
+					"Got /contact command, sending fictional number".logInfo;
+
+					Bot.sendContact(update.message.chat.id, "555-0100", "Fictional Number");
+				} else if(update.message.text.startsWith("/action")) {
+					"Got /action command, pretending to be typing something".logInfo;
+
+					Bot.sendChatAction(update.message.chat.id, "typing");
 				} else {
 					Bot.sendMessage(update.message.chat.id, "What do you mean by that?");
 				}
