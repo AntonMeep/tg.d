@@ -1357,6 +1357,7 @@ struct Contact {
 @optional:
 	Nullable!string last_name;
 	Nullable!int user_id;
+	Nullable!string vcard;
 }
 
 struct Location {
@@ -1840,6 +1841,7 @@ struct InlineQueryResultContact {
 	string first_name;
 @optional:
 	Nullable!string last_name;
+	Nullable!string vcard;
 	Nullable!InlineKeyboardMarkup reply_markup;
 	Nullable!InputMessageContent input_message_content;
 	Nullable!string thumb_url;
@@ -1983,6 +1985,7 @@ struct InputContactMessageContent {
 	string first_name;
 @optional:
 	Nullable!string last_name;
+	Nullable!string vcard;
 }
 
 struct ChosenInlineResult {
@@ -2239,6 +2242,7 @@ struct SendContactMethod {
 	string phone_number;
 	string first_name;
 	string last_name;
+	string vcard;
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
