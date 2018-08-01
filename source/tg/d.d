@@ -460,6 +460,19 @@ struct TelegramBot {
 		return sendAudio(m);
 	}
 
+	Message sendAnimation(SendAnimationMethod m) {
+		return callMethod!Message(m);
+	}
+
+	Message sendAnimation(T)(T chatId, string animation) if(isTelegramID!T) {
+		SendAnimationMethod m = {
+			animation: animation,
+			chat_id: chatId,
+		};
+
+		return sendAnimation(m);
+	}
+
 	Message sendDocument(SendDocumentMethod m) {
 		return callMethod!(Message, SendDocumentMethod)(m);
 	}
@@ -2086,6 +2099,22 @@ struct SendAudioMethod {
 
 }
 
+struct SendAnimationMethod {
+	mixin TelegramMethod!"/sendAnimation";
+
+	TelegramID chat_id;
+	string animation;
+	int duration,
+		width,
+		height;
+	string thumb;
+	string caption;
+	ParseMode parse_mode;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
 struct SendDocumentMethod {
 	mixin TelegramMethod!"/sendDocument";
 
@@ -2408,7 +2437,7 @@ struct EditMessageReplyMarkupMethod {
 }
 
 struct EditMessageMediaMethod {
-	mixin TelegramMethod!"/editMessageReplyMarkup";
+	mixin TelegramMethod!"/editMessageMedia";
 
 	TelegramID chat_id;
 	int message_id;
