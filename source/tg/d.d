@@ -1370,6 +1370,7 @@ struct Venue {
 		   address;
 @optional:
 	Nullable!string foursquare_id;
+	Nullable!string foursquare_type;
 }
 
 struct UserProfilePhotos {
@@ -1824,6 +1825,7 @@ struct InlineQueryResultVenue {
 	string address;
 @optional:
 	Nullable!string foursquare_id;
+	Nullable!string foursquare_type;
 	Nullable!InlineKeyboardMarkup reply_markup;
 	Nullable!InputMessageContent input_message_content;
 	Nullable!string thumb_url;
@@ -1973,6 +1975,7 @@ struct InputVenueMessageContent {
 	string address;
 @optional:
 	Nullable!string foursquare_id;
+	Nullable!string foursquare_type;
 }
 
 struct InputContactMessageContent {
@@ -2223,6 +2226,7 @@ struct SendVenueMethod {
 	string title;
 	string address;
 	string foursquare_id;
+	string foursquare_type;
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
