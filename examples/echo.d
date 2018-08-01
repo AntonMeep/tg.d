@@ -4,11 +4,7 @@ dub.json:
 {
 	"name": "echo",
 	"descripton": "Simple bot which just sends user's messages back",
-	"authors": [
-		"Anton Fediushin"
-	],
-	"copyright": "Copyright © 2018, Anton Fediushin",
-	"license": "MIT",
+	"license": "Public Domain",
 	"dependencies": {
 		"tg-d": {"path": "../"}
 	}

@@ -4,11 +4,7 @@ dub.json:
 {
 	"name": "edir",
 	"descripton": "Simple bot which edits its own messages",
-	"authors": [
-		"Anton Fediushin"
-	],
-	"copyright": "Copyright © 2018, Anton Fediushin",
-	"license": "MIT",
+	"license": "Public Domain",
 	"dependencies": {
 		"tg-d": {"path": "../"}
 	}

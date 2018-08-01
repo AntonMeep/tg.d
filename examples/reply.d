@@ -4,11 +4,7 @@ dub.json:
 {
 	"name": "reply",
 	"descripton": "Simple bot which just replies to user's messages",
-	"authors": [
-		"Anton Fediushin"
-	],
-	"copyright": "Copyright © 2018, Anton Fediushin",
-	"license": "MIT",
+	"license": "Public Domain",
 	"dependencies": {
 		"tg-d": {"path": "../"}
 	}

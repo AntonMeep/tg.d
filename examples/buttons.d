@@ -4,11 +4,7 @@ dub.json:
 {
 	"name": "buttons",
 	"descripton": "Simple bot which shows inline buttons",
-	"authors": [
-		"Anton Fediushin"
-	],
-	"copyright": "Copyright © 2018, Anton Fediushin",
-	"license": "MIT",
+	"license": "Public Domain",
 	"dependencies": {
 		"tg-d": {"path": "../"}
 	}
