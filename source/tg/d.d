@@ -1471,16 +1471,16 @@ struct InputMediaPhoto {
 	string type = "photo";
 	string media;
 @optional:
-	Nullable!string caption,
-					parse_mode;
+	Nullable!string caption;
+	Nullable!ParseMode parse_mode;
 }
 
 struct InputMediaVideo {
 	string type = "video";
 	string media;
 @optional:
-	Nullable!string caption,
-					parse_mode;
+	Nullable!string caption;
+	Nullable!ParseMode parse_mode;
 	Nullable!int width,
 				 height,
 				 duration;
@@ -1939,7 +1939,7 @@ alias InputMessageContent = JsonableAlgebraic!InputMessageContentStructs;
 struct InputTextMessageContent {
 	string message_text;
 @optional:
-	Nullable!string parse_mode;
+	Nullable!ParseMode parse_mode;
 	bool disable_web_page_preview;
 }
 
