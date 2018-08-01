@@ -492,6 +492,32 @@ struct TelegramBot {
 		).sendAudio(42L, "https://example.com/woof.mp3").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
+	Message sendDocument(SendDocumentMethod m) {
+		return callMethod!(Message, SendDocumentMethod)(m);
+	}
+
+	Message sendDocument(T)(T chatId, string document) if(isTelegramID!T) {
+		SendDocumentMethod m = {
+			document: document,
+			chat_id: chatId,
+		};
+
+		return sendDocument(m);
+	}
+
+	Message sendVideo(SendVideoMethod m) {
+		return callMethod!(Message, SendVideoMethod)(m);
+	}
+
+	Message sendVideo(T)(T chatId, string video) if(isTelegramID!T) {
+		SendVideoMethod m = {
+			video: video,
+			chat_id: chatId,
+		};
+
+		return sendVideo(m);
+	}
+
 	Message sendAnimation(SendAnimationMethod m) {
 		return callMethod!Message(m);
 	}
@@ -533,32 +559,6 @@ struct TelegramBot {
 				]);
 			}
 		).sendAnimation(42L, "https://example.com/me.gif").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
-	}
-
-	Message sendDocument(SendDocumentMethod m) {
-		return callMethod!(Message, SendDocumentMethod)(m);
-	}
-
-	Message sendDocument(T)(T chatId, string document) if(isTelegramID!T) {
-		SendDocumentMethod m = {
-			document: document,
-			chat_id: chatId,
-		};
-
-		return sendDocument(m);
-	}
-
-	Message sendVideo(SendVideoMethod m) {
-		return callMethod!(Message, SendVideoMethod)(m);
-	}
-
-	Message sendVideo(T)(T chatId, string video) if(isTelegramID!T) {
-		SendVideoMethod m = {
-			video: video,
-			chat_id: chatId,
-		};
-
-		return sendVideo(m);
 	}
 
 	Message sendVoice(SendVoiceMethod m) {
