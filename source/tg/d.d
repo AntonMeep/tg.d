@@ -1,18 +1,12 @@
 module tg.d;
 
-import vibe.http.client;
-import vibe.stream.operations;
-import vibe.core.core;
+import std.typecons : Nullable;
+
 import vibe.core.log;
 import vibe.data.json;
 import vibe.data.serialization : optional;
-import std.conv;
-import std.typecons;
-import std.exception;
-import std.traits;
 
 import std.meta : AliasSeq, staticIndexOf;
-import std.variant : Algebraic;
 
 version(unittest) import fluent.asserts;
 
@@ -31,8 +25,7 @@ class TelegramBotException : Exception {
 
 struct TelegramBot {
 	private {
-		string baseUrl = "https://api.telegram.org/bot";
-		string apiUrl;
+		string m_url;
 
 		struct MethodResult(T) {
 			bool ok;
@@ -47,30 +40,31 @@ struct TelegramBot {
 @safe:
 
 	this(string token) {
-		this.apiUrl = baseUrl ~ token;
+		this.m_url = "https://api.telegram.org/bot" ~ token;
 	}
 
 	version(unittest) {
 		this(string token, Json delegate(string, Json) @safe fakecall) {
-			this.apiUrl = baseUrl ~ token;
+			this.m_url = "https://api.telegram.org/bot" ~ token;
 			m_fakecall = fakecall;
 		}
 
 		private T callMethod(T, M)(M method) {
-			auto json = m_fakecall(apiUrl ~ method._path, method.serializeToJson).deserializeJson!(MethodResult!T);
+			auto json = m_fakecall(m_url ~ method.m_path, method.serializeToJson).deserializeJson!(MethodResult!T);
 
-			enforce(json.ok == true,
-					new TelegramBotException(json.error_code, json.description));
+			if(!json.ok)
+				throw new TelegramBotException(json.error_code, json.description);
 
 			return json.result;
 		}
 	} else {
 		private T callMethod(T, M)(M method) {
+			import vibe.http.client : requestHTTP, HTTPMethod;
 			T result;
 
-			debug "tg.d | Requesting %s".logDebugV(method._path);
+			debug "tg.d | Requesting %s".logDebugV(method.m_path);
 
-			requestHTTP(apiUrl ~ method._path,
+			requestHTTP(m_url ~ method.m_path,
 				(scope req) {
 					req.method = HTTPMethod.POST;
 					debug version(TgD_Verbose)
@@ -84,8 +78,8 @@ struct TelegramBot {
 
 					auto json = answer.deserializeJson!(MethodResult!T);
 
-					enforce(json.ok == true,
-						new TelegramBotException(json.error_code, json.description));
+					if(!json.ok)
+						throw new TelegramBotException(json.error_code, json.description);
 
 					result = json.result;
 				}
@@ -2161,16 +2155,11 @@ struct WebhookInfo {
 
 mixin template TelegramMethod(string path) {
 package:
-	immutable string _path = path;
+	immutable string m_path = path;
 }
 
 alias TelegramID = JsonableAlgebraic!(long, string);
-enum isTelegramID(T) = is(T == long) || is(T == string);
-
-/// UDA for telegram methods
-struct Method {
-	string path;
-}
+enum isTelegramID(T) = is(T : long) || is(T == string);
 
 struct GetUpdatesMethod {
 	mixin TelegramMethod!"/getUpdates";
