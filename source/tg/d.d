@@ -1,5 +1,6 @@
 module tg.d;
 
+import std.traits : FieldNameTuple;
 import std.typecons : Nullable;
 
 import vibe.core.log;
@@ -50,7 +51,14 @@ struct TelegramBot {
 		}
 
 		private T callMethod(T, M)(M method) {
-			auto json = m_fakecall(m_url ~ method.m_path, method.serializeToJson).deserializeJson!(MethodResult!T);
+			Json j = Json.emptyObject;
+
+			static foreach(field; FieldNameTuple!M)
+				static if(field != "m_path")
+					if(mixin("method." ~ field ~ " != typeof(method." ~ field ~ ").init"))
+						j[field] = mixin("method." ~ field).serializeToJson;
+
+			auto json = m_fakecall(m_url ~ method.m_path, j).deserializeJson!(MethodResult!T);
 
 			if(!json.ok)
 				throw new TelegramBotException(json.error_code, json.description);
@@ -69,7 +77,15 @@ struct TelegramBot {
 					req.method = HTTPMethod.POST;
 					debug version(TgD_Verbose)
 						"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
-					req.writeJsonBody(method.serializeToJson);
+
+					Json j = Json.emptyObject;
+
+					static foreach(field; FieldNameTuple!M)
+						static if(field != "m_path")
+							if(mixin("method." ~ field ~ " != typeof(method." ~ field ~ ").init"))
+								j[field] = mixin("method." ~ field).serializeToJson;
+
+					req.writeJsonBody(j);
 				},
 				(scope res) {
 					auto answer = res.readJson;
@@ -112,10 +128,8 @@ struct TelegramBot {
 				url.should.be.equal("https://api.telegram.org/botTOKEN/getUpdates");
 				data.should.be.equal(
 					Json([
-						"offset": Json(0),
 						"limit": Json(100),
 						"timeout": Json(3),
-						"allowed_updates": Json.emptyArray,
 					])
 				);
 
@@ -193,14 +207,16 @@ struct TelegramBot {
 
 		auto fake = (string url, Json data) @trusted {
 			url.should.be.equal("https://api.telegram.org/botTOKEN/getUpdates");
-			data.should.be.equal(
-				Json([
-					"offset": Json(requestNo ? (requestNo * 100) + 1 : requestNo * 100),
+
+			auto j = Json([
 					"limit": Json(100),
 					"timeout": Json(3),
-					"allowed_updates": Json.emptyArray,
-				])
-			);
+			]);
+
+			if(requestNo)
+				j["offset"] = Json((requestNo * 100) + 1);
+
+			data.should.be.equal(j);
 
 			if(requestNo++ > 3)
 				return Json([
@@ -326,11 +342,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"text": Json("text"),
-						"parse_mode": Json(""),
-						"disable_web_page_preview": Json(false),
-						"disable_notification": Json(false),
-						"reply_to_message_id": Json(0),
-						"reply_markup": Json.emptyObject,
 					])
 				);
 
@@ -349,11 +360,7 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json("@superchat"),
 						"text": Json("text"),
-						"parse_mode": Json(""),
-						"disable_web_page_preview": Json(false),
-						"disable_notification": Json(false),
 						"reply_to_message_id": Json(123),
-						"reply_markup": Json.emptyObject,
 					])
 				);
 
@@ -391,7 +398,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"from_chat_id": Json(43),
-						"disable_notification": Json(false),
 						"message_id": Json(1337),
 					])
 				);
@@ -427,11 +433,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"photo": Json("https://example.com/dogs.jpg"),
-						"caption": Json(""),
-						"parse_mode": Json(""),
-						"disable_notification": Json(false),
-						"reply_to_message_id": Json(0),
-						"reply_markup": Json.emptyObject,
 					]),
 				);
 
@@ -466,15 +467,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"audio": Json("https://example.com/woof.mp3"),
-						"caption": Json(""),
-						"parse_mode": Json(""),
-						"duration": Json(0),
-						"performer": Json(""),
-						"title": Json(""),
-						"thumb": Json(""),
-						"disable_notification": Json(false),
-						"reply_to_message_id": Json(0),
-						"reply_markup": Json.emptyObject,
 					]),
 				);
 
@@ -509,12 +501,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"document": Json("https://example.com/document.pdf"),
-						"thumb": Json(""),
-						"caption": Json(""),
-						"parse_mode": Json(""),
-						"disable_notification": Json(false),
-						"reply_to_message_id": Json(0),
-						"reply_markup": Json.emptyObject,
 					]),
 				);
 
@@ -549,16 +535,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"video": Json("https://example.com/video.mp4"),
-						"duration": Json(0),
-						"width": Json(0),
-						"height": Json(0),
-						"thumb": Json(""),
-						"caption": Json(""),
-						"parse_mode": Json(""),
-						"supports_streaming": Json(false),
-						"disable_notification": Json(false),
-						"reply_to_message_id": Json(0),
-						"reply_markup": Json.emptyObject,
 					]),
 				);
 
@@ -593,15 +569,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"animation": Json("https://example.com/me.gif"),
-						"duration": Json(0),
-						"width": Json(0),
-						"height": Json(0),
-						"thumb": Json(""),
-						"caption": Json(""),
-						"parse_mode": Json(""),
-						"disable_notification": Json(false),
-						"reply_to_message_id": Json(0),
-						"reply_markup": Json.emptyObject,
 					]),
 				);
 
@@ -636,12 +603,6 @@ struct TelegramBot {
 					Json([
 						"chat_id": Json(42),
 						"voice": Json("https://example.com/voice.ogg"),
-						"caption": Json(""),
-						"parse_mode": Json(""),
-						"duration": Json(0),
-						"disable_notification": Json(false),
-						"reply_to_message_id": Json(0),
-						"reply_markup": Json.emptyObject,
 					]),
 				);
 
@@ -2688,6 +2649,10 @@ private struct JsonableAlgebraic(Types...) {
 
 	this(T)(T t) if(m_algebraic.allowed!T) {
 		m_algebraic = typeof(m_algebraic)(t);
+	}
+
+	const bool opEquals(typeof(this) rhs) {
+		return m_algebraic == rhs.m_algebraic;
 	}
 
 	void opAssign(T)(T rhs) if(m_algebraic.allowed!T) {
