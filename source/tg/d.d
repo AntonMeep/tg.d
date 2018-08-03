@@ -1,3 +1,11 @@
+/**
+ * Tg.d is a D client library for Telegram Bot API
+ *
+ * Authors: Anton Fediushin, Pavel Chebotarev
+ * Licence: MIT, see LICENCE
+ * Copyright: Copyright for portions of project tg.d are held by Pavel Chebotarev, 2018 as part of project telega (https://github.com/nexor/telega). All other copyright for project tg.d are held by Anton Fediushin, 2018.
+ * See_Also: $(LINK https://gitlab.com/ohboi/tg.d)
+ */
 module tg.d;
 
 import std.traits : FieldNameTuple;
@@ -14,9 +22,20 @@ version(unittest) import fluent.asserts;
 version(TgD_Verbose)
 	pragma(msg, "tg.d | Warning! tg.d is compiled in verbose mode, user data can end up in logs. DISABLE THIS IN PRODUCTION BUILDS");
 
+
+/**
+ * An exception thrown by tg.d on errors
+ */
 class TelegramBotException : Exception {
+	/**
+	 * Telegram Bot API error code
+	 *
+	 * Doesn't mean anything useful, meaning may change in the future
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#making-requests)
+	 */
 	ushort code;
 
+	/// Constructor
 	this(ushort code, string description, string file = __FILE__,
 			size_t line = __LINE__, Throwable next = null) @nogc @safe pure nothrow {
 		this.code = code;
@@ -24,6 +43,9 @@ class TelegramBotException : Exception {
 	}
 }
 
+/**
+ * Main structure representing one bot
+ */
 struct TelegramBot {
 	private {
 		string m_url;
@@ -40,6 +62,13 @@ struct TelegramBot {
 	}
 @safe:
 
+	/**
+	 * Creates new bot using token
+	 *
+	 * To obtain a new token ask $(LINK2 https://core.telegram.org/bots#botfather, BotFather).
+	 * Params:
+	 *     token = Telegram bot token
+	 */
 	this(string token) {
 		this.m_url = "https://api.telegram.org/bot" ~ token;
 	}
