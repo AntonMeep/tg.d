@@ -147,7 +147,7 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: $(LINK https://core.telegram.org/bots/api#getupdates)
 	 */
-	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 0, string[] allowed_updates = []) {
+	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 3, string[] allowed_updates = []) {
 		GetUpdatesMethod m = {
 			offset: offset,
 			limit: limit,
@@ -184,7 +184,7 @@ struct TelegramBot {
 		).getUpdates.serializeToJsonString.should.be.equal(`[]`);
 	}
 
-	auto updateGetter(int timeout = 0, string[] allowed_updates = []) {
+	auto updateGetter(int timeout = 3, string[] allowed_updates = []) {
 		struct updateGetterImpl {
 			private {
 				TelegramBot m_bot;
