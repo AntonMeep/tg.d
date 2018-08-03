@@ -7,26 +7,14 @@ stages:
   - test
   - coverage
 
-dmd-build: &build
+dmd: &test
   stage: test
   variables:
     COMPILER: dmd
   script:
-    - docker run -v$(pwd):/source ohboi/mini$COMPILER bash -c "dub build -b debug && dub build -b release"
+    - docker run -v$(pwd):/source ohboi/mini$COMPILER dub test
 
-ldc-build:
-  <<: *build
-  variables:
-    COMPILER: ldc
-
-dmd-test: &test
-  stage: test
-  variables:
-    COMPILER: dmd
-  script:
-    - docker run -v$(pwd):/source ohboi/mini$COMPILER bash -c "dub test"
-
-ldc-test:
+ldc:
   <<: *test
   variables:
     COMPILER: ldc
