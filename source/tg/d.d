@@ -134,6 +134,19 @@ struct TelegramBot {
 		}
 	}
 
+	/**
+	 * Use this method to receive incoming updates using long polling
+	 *
+	 * Params:
+	 *     offset          = Identifier of the first update to be returned
+	 *     limit           = Limits the number of updates to be retrieved
+	 *     timeout         = Timeout in seconds for long polling.
+	 *                       Should be positive, short polling (timeout == 0) should be used for testing purposes only.
+	 *     allowed_updates = List the types of updates you want your bot to receive
+	 * Returns: An array of updates
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#getupdates)
+	 */
 	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 0, string[] allowed_updates = []) {
 		GetUpdatesMethod m = {
 			offset: offset,
@@ -145,11 +158,12 @@ struct TelegramBot {
 		return getUpdates(m);
 	}
 
+	/// ditto
 	Update[] getUpdates(GetUpdatesMethod m) {
 		return callMethod!(Update[])(m);
 	}
 
-	@("TelegramBot.getUpdate()")
+	@("TelegramBot.getUpdates()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
