@@ -1316,6 +1316,15 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Leave a group, supergroup or channel
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `LeaveChatMethod`, $(LINK https://core.telegram.org/bots/api#leavechat)
+	 */
 	bool leaveChat(T)(T chat_id) if(isTelegramID!T) {
 		LeaveChatMethod m = {
 			chat_id: chat_id,
@@ -1323,7 +1332,7 @@ struct TelegramBot {
 
 		return leaveChat(m);
 	}
-
+	/// ditto
 	bool leaveChat(LeaveChatMethod m) {
 		return callMethod!bool(m);
 	}
