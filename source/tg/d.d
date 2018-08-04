@@ -1201,6 +1201,15 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Delete a chat photo
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `deleteChatPhoto`, $(LINK https://core.telegram.org/bots/api#deletechatphoto)
+	 */
 	bool deleteChatPhoto(T)(T chat_id) if(isTelegramID!T) {
 		DeleteChatPhotoMethod m = {
 			chat_id: chat_id,
@@ -1208,7 +1217,7 @@ struct TelegramBot {
 
 		return deleteChatPhoto(m);
 	}
-
+	/// ditto
 	bool deleteChatPhoto(DeleteChatPhotoMethod m) {
 		return callMethod!bool(m);
 	}
