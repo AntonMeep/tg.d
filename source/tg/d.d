@@ -866,7 +866,7 @@ struct TelegramBot {
 	/**
 	 * Edit live location message
 	 *
-	 * Overloads either take `chat_id` and `message_id` or `inline_message_id`
+	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
 	 *
 	 * Params:
 	 *     chat_id           = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
@@ -907,7 +907,7 @@ struct TelegramBot {
 	/**
 	 * Stop updating a live location message
 	 *
-	 * Overloads either take `chat_id` and `message_id` or `inline_message_id`
+	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
 	 *
 	 * Params:
 	 *     chat_id           = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
@@ -1487,7 +1487,21 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	auto editMessageText(T)(T chat_id, int message_id, string text) if(isTelegramID!T) {
+	/**
+	 * Edit message
+	 *
+	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
+	 *
+	 * Params:
+	 *     chat_id           = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     message_id        = Identifier of the sent message
+	 *     inline_message_id = Identifier of the inline message
+	 *     text              = New text of the message
+	 * Returns: edited `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `EditMessageTextMethod`, $(LINK https://core.telegram.org/bots/api#editmessagetext)
+	 */
+	Message editMessageText(T)(T chat_id, int message_id, string text) if(isTelegramID!T) {
 		EditMessageTextMethod m = {
 			message_id: message_id,
 			text: text,
@@ -1496,8 +1510,8 @@ struct TelegramBot {
 
 		return editMessageText(m);
 	}
-
-	auto editMessageText(string inline_message_id, string text) {
+	/// ditto
+	Message editMessageText(string inline_message_id, string text) {
 		EditMessageTextMethod m = {
 			inline_message_id: inline_message_id,
 			text: text,
@@ -1505,9 +1519,9 @@ struct TelegramBot {
 
 		return editMessageText(m);
 	}
-
-	auto editMessageText(EditMessageTextMethod m) {
-		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
+	/// ditto
+	Message editMessageText(EditMessageTextMethod m) {
+		return callMethod!Message(m);
 	}
 
 	auto editMessageCaption(T)(T chat_id, int message_id, string caption = null) if(isTelegramID!T) {
