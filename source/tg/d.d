@@ -1061,6 +1061,16 @@ struct TelegramBot {
 		return callMethod!File(m);
 	}
 
+	/**
+	 * Kick a user from a group, a supergroup or a channel
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target group or username of the target supergroup or channel
+	 *     user_id = Unique identifier of the target user
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `KickChatMemberMethod`, $(LINK https://core.telegram.org/bots/api#kickchatmember)
+	 */
 	bool kickChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
 		KickChatMemberMethod m = {
 			user_id: user_id,
@@ -1069,7 +1079,7 @@ struct TelegramBot {
 
 		return kickChatMember(m);
 	}
-
+	/// ditto
 	bool kickChatMember(KickChatMemberMethod m) {
 		return callMethod!bool(m);
 	}
