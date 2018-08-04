@@ -1272,6 +1272,16 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Pin a message in a supergroup or a channel
+	 *
+	 * Params:
+	 *     chat_id    = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     message_id = Identifier of a message to pin
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `PinChatMessageMethod`, $(LINK https://core.telegram.org/bots/api#pinchatmessage)
+	 */
 	bool pinChatMessage(T)(T chat_id, int message_id) if(isTelegramID!T) {
 		PinChatMessageMethod m = {
 			message_id: message_id,
@@ -1280,7 +1290,7 @@ struct TelegramBot {
 
 		return pinChatMessage(m);
 	}
-
+	/// ditto
 	bool pinChatMessage(PinChatMessageMethod m) {
 		return callMethod!bool(m);
 	}
