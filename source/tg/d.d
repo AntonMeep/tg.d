@@ -476,6 +476,17 @@ struct TelegramBot {
 			.should.be.equal(Message().serializeToJsonString);
 	}
 
+	/**
+	 * Forward message from `from_chat_id` to `chat_id`
+	 *
+	 * Params:
+	 *     chat_id      = Unique identifier of the chat or username of the target channel
+	 *     from_chat_id = Unique identifier of the chat or username of the source channel
+	 *     message_id   = ID of the original message
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#forwardmessage)
+	 */
 	Message forwardMessage(T1, T2)(T1 chat_id, T2 from_chat_id, int message_id)
 	if(isTelegramID!T1 && isTelegramID!T2){
 		ForwardMessageMethod m = {
@@ -486,7 +497,7 @@ struct TelegramBot {
 
 		return callMethod!(Message, ForwardMessageMethod)(m);
 	}
-
+	/// ditto
 	Message forwardMessage(ForwardMessageMethod m) {
 		return callMethod!(Message, ForwardMessageMethod)(m);
 	}
