@@ -1295,6 +1295,15 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Unpin a message in a supergroup or a channel
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `UnpinChatMessageMethod`, $(LINK https://core.telegram.org/bots/api#unpinchatmessage)
+	 */
 	bool unpinChatMessage(T)(T chat_id) if(isTelegramID!T) {
 		UnpinChatMessageMethod m = {
 			chat_id: chat_id,
@@ -1302,7 +1311,7 @@ struct TelegramBot {
 
 		return unpinChatMessage(m);
 	}
-
+	/// ditto
 	bool unpinChatMessage(UnpinChatMessageMethod m) {
 		return callMethod!bool(m);
 	}
