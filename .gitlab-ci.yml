@@ -17,7 +17,7 @@ dmd: &test
 ldc:
   <<: *test
   variables:
-    COMPILER: ldc
+    COMPILER: ldc:beta
 
 coverage:
   stage: coverage
