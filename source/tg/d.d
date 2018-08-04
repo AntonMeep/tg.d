@@ -865,7 +865,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	Nullable!Message editMessageLiveLocation(string inline_message_id, float latitude, float longitude) {
+	Message editMessageLiveLocation(string inline_message_id, float latitude, float longitude) {
 		EditMessageLiveLocationMethod m = {
 			inline_message_id: inline_message_id,
 			latitude : latitude,
@@ -875,7 +875,7 @@ struct TelegramBot {
 		return editMessageLiveLocation(m);
 	}
 
-	Nullable!Message editMessageLiveLocation(T)(T chat_id, int message_id, float latitude, float longitude)
+	Message editMessageLiveLocation(T)(T chat_id, int message_id, float latitude, float longitude)
 	if(isTelegramID!T) {
 		EditMessageLiveLocationMethod m = {
 			message_id: message_id,
@@ -887,11 +887,11 @@ struct TelegramBot {
 		return editMessageLiveLocation(m);
 	}
 
-	Nullable!Message editMessageLiveLocation(EditMessageLiveLocationMethod m) {
-		return callMethod!(Nullable!Message)(m);
+	Message editMessageLiveLocation(EditMessageLiveLocationMethod m) {
+		return callMethod!Message(m);
 	}
 
-	Nullable!Message stopMessageLiveLocation(string inline_message_id) {
+	Message stopMessageLiveLocation(string inline_message_id) {
 		StopMessageLiveLocationMethod m = {
 			inline_message_id: inline_message_id,
 		};
@@ -899,7 +899,7 @@ struct TelegramBot {
 		return stopMessageLiveLocation(m);
 	}
 
-	Nullable!Message stopMessageLiveLocation(T)(T chat_id, int message_id) if(isTelegramID!T) {
+	Message stopMessageLiveLocation(T)(T chat_id, int message_id) if(isTelegramID!T) {
 		StopMessageLiveLocationMethod m = {
 			message_id: message_id,
 			chat_id: chat_id,
@@ -908,7 +908,7 @@ struct TelegramBot {
 		return stopMessageLiveLocation(m);
 	}
 
-	Nullable!Message stopMessageLiveLocation(StopMessageLiveLocationMethod m) {
+	Message stopMessageLiveLocation(StopMessageLiveLocationMethod m) {
 		return callMethod!(Nullable!Message)(m);
 	}
 
@@ -1575,11 +1575,6 @@ struct Message {
 				  migrate_from_chat_id;
 
 	private @name("pinned_message") Json m_pinned_message;
-	@property @ignore {
-		Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
-		void    pinned_message(Message m) { m_pinned_message = m.serializeToJson; }
-	}
-
 	@property @ignore {
 		Nullable!Message pinned_message() {
 			return m_pinned_message.type == Json.Type.null_ 
