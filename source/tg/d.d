@@ -332,7 +332,6 @@ struct TelegramBot {
 	/**
 	 * Get current webhook status
 	 *
- 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
 	 * Deprecated: Webhooks aren't fully implemented,
 	 * see an $(LINK2 https://gitlab.com/ohboi/tg.d/issues/4, issue) for more info
