@@ -1153,6 +1153,17 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Generate a new invite link for a chat
+	 *
+	 * Any previously generated link is revoked
+	 *
+	 * Params:
+	 *     chat_id      = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 * Returns: invite link
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `ExportChatInviteLinkMethod`, $(LINK https://core.telegram.org/bots/api#exportchatinvitelink)
+	 */
 	string exportChatInviteLink(T)(T chat_id) if(isTelegramID!T) {
 		ExportChatInviteLinkMethod m = {
 			chat_id: chat_id,
@@ -1160,7 +1171,7 @@ struct TelegramBot {
 
 		return exportChatInviteLink(m);
 	}
-
+	/// ditto
 	string exportChatInviteLink(ExportChatInviteLinkMethod m) {
 		return callMethod!string(m);
 	}
