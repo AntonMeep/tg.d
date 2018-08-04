@@ -839,6 +839,17 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
+	/**
+	 * Send point on the map
+	 *
+	 * Params:
+	 *     chat_id   = Unique identifier of the chat or username of the target channel
+	 *     latitude  = Latitude of the location
+	 *     longitude = Longitude of the location
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendLocationMethod`, $(LINK https://core.telegram.org/bots/api#sendlocation)
+	 */
 	Message sendLocation(T)(T chat_id, float latitude, float longitude) if(isTelegramID!T) {
 		SendLocationMethod m = {
 			latitude: latitude,
@@ -848,7 +859,7 @@ struct TelegramBot {
 
 		return sendLocation(m);
 	}
-
+	/// ditto
 	Message sendLocation(SendLocationMethod m) {
 		return callMethod!Message(m);
 	}
