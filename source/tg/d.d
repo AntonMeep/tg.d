@@ -750,6 +750,18 @@ struct TelegramBot {
 		).sendAnimation(42L, "https://example.com/me.gif").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
+	/**
+	 * Send voice message
+	 *
+	 * Voice message must be in ogg format encoded with OPUS
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     voice   = HTTP URL to get audio from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendVoiceMethod`, $(LINK https://core.telegram.org/bots/api#sendvoice)
+	 */
 	Message sendVoice(T)(T chat_id, string voice) if(isTelegramID!T) {
 		SendVoiceMethod m = {
 			voice: voice,
@@ -758,7 +770,7 @@ struct TelegramBot {
 
 		return sendVoice(m);
 	}
-
+	/// ditto
 	Message sendVoice(SendVoiceMethod m) {
 		return callMethod!(Message, SendVoiceMethod)(m);
 	}
