@@ -825,7 +825,8 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `SendMediaGroupMethod`, $(LINK https://core.telegram.org/bots/api#sendmediagroup)
 	 */
-	Message sendMediaGroup(T)(T chat_id, InputMedia[] media) if(isTelegramID!T) {
+	Message sendMediaGroup(T)(T chat_id, JsonableAlgebraic!(InputMediaPhoto, InputMediaVideo)[] media)
+	if(isTelegramID!T) {
 		SendMediaGroupMethod m = {
 			media: media,
 			chat_id: chat_id,
@@ -2476,7 +2477,7 @@ struct SendMediaGroupMethod {
 	mixin TelegramMethod!"/sendMediaGroup";
 
 	TelegramID chat_id;
-	InputMedia[] media;
+	JsonableAlgebraic!(InputMediaPhoto, InputMediaVideo)[] media;
 	bool disable_notification;
 	int reply_to_message_id;
 }
