@@ -1466,14 +1466,23 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool answerCallbackQuery(string callbackQueryId) {
+	/**
+	 * Answer to a callback query sent from inline keyboard
+	 *
+	 * Params:
+	 *     callback_query_id = Unique identifier for the query to be answered
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `AnswerCallbackQueryMethod`, $(LINK https://core.telegram.org/bots/api#answercallbackquery)
+	 */
+	bool answerCallbackQuery(string callback_query_id) {
 		AnswerCallbackQueryMethod m = {
-			callback_query_id: callbackQueryId,
+			callback_query_id: callback_query_id,
 		};
 
 		return answerCallbackQuery(m);
 	}
-
+	/// ditto
 	bool answerCallbackQuery(AnswerCallbackQueryMethod m) {
 		return callMethod!bool(m);
 	}
