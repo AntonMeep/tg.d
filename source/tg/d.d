@@ -1423,15 +1423,24 @@ struct TelegramBot {
 		return callMethod!ChatMember(m);
 	}
 
-	bool setChatStickerSet(T)(T chat_id, string stickerSetName) if(isTelegramID!T) {
+	/**
+	 * Set a new group sticker set for a supergroup
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SetCharStickerMethod`, $(LINK https://core.telegram.org/bots/api#setchatstickerset)
+	 */
+	bool setChatStickerSet(T)(T chat_id, string sticker_set_name) if(isTelegramID!T) {
 		SetChatStickerSetMethod m = {
-			sticker_set_name: stickerSetName,
+			sticker_set_name: sticker_set_name,
 			chat_id: chat_id,
 		};
 
 		return setChatStickerSet(m);
 	}
-
+	/// ditto
 	bool setChatStickerSet(SetChatStickerSetMethod m) {
 		return callMethod!bool(m);
 	}
