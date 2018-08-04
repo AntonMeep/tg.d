@@ -1084,6 +1084,16 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Unban a previously kicked user in a supergroup or channel
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target group or username of the target supergroup or channel
+	 *     user_id = Unique identifier of the target user
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `UnbanChatMemberMethod`, $(LINK https://core.telegram.org/bots/api#unbanchatmember)
+	 */
 	bool unbanChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
 		UnbanChatMemberMethod m = {
 			user_id: user_id,
@@ -1092,7 +1102,7 @@ struct TelegramBot {
 
 		return unbanChatMember(m);
 	}
-
+	/// ditto
 	bool unbanChatMember(UnbanChatMemberMethod m) {
 		return callMethod!bool(m);
 	}
