@@ -796,15 +796,27 @@ struct TelegramBot {
 		).sendVoice(42L, "https://example.com/voice.ogg").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
-	Message sendVideoNote(T)(T chat_id, string videoNote) if(isTelegramID!T) {
+	/**
+	 * Send video message
+	 *
+	 * Video must be square and shoudln't be longer than 1 minute
+	 *
+	 * Params:
+	 *     chat_id    = Unique identifier of the chat or username of the target channel
+	 *     video_note = HTTP URL to get video from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendVideoNoteMethod`, $(LINK https://core.telegram.org/bots/api#sendvideonote)
+	 */
+	Message sendVideoNote(T)(T chat_id, string video_note) if(isTelegramID!T) {
 		SendVideoNoteMethod m = {
-			video_note: videoNote,
+			video_note: video_note,
 			chat_id: chat_id,
 		};
 
 		return sendVideoNote(m);
 	}
-
+	/// ditto
 	Message sendVideoNote(SendVideoNoteMethod m) {
 		return callMethod!(Message, SendVideoNoteMethod)(m);
 	}
