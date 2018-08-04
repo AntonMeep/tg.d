@@ -658,6 +658,18 @@ struct TelegramBot {
 		).sendDocument(42L, "https://example.com/document.pdf").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
+	/**
+	 * Send video
+	 *
+	 * Video must be in mp4 format
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     video   = HTTP URL to get video from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendVideoMethod`, $(LINK https://core.telegram.org/bots/api#sendvideo)
+	 */
 	Message sendVideo(T)(T chat_id, string video) if(isTelegramID!T) {
 		SendVideoMethod m = {
 			video: video,
@@ -666,7 +678,7 @@ struct TelegramBot {
 
 		return sendVideo(m);
 	}
-
+	/// ditto
 	Message sendVideo(SendVideoMethod m) {
 		return callMethod!(Message, SendVideoMethod)(m);
 	}
