@@ -935,7 +935,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message stopMessageLiveLocation(StopMessageLiveLocationMethod m) {
-		return callMethod!(Nullable!Message)(m);
+		return callMethod!Message(m);
 	}
 
 	/**
