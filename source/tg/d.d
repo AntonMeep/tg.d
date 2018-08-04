@@ -1176,6 +1176,18 @@ struct TelegramBot {
 		return callMethod!string(m);
 	}
 
+	/**
+	 * Set a new profile photo for the chat
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     photo   = New chat photo
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * Deprecated: `InputFile` isn't supported yet
+	 * See_Also: `SetChatPhotoMethod`, $(LINK https://core.telegram.org/bots/api#setchatphoto)
+	 */
+	deprecated("InputFile and every method that uses it aren't supported yet")
 	bool setChatPhoto(T)(T chat_id, InputFile photo) if(isTelegramID!T) {
 		SetChatPhotoMethod m = {
 			photo: photo,
@@ -1184,7 +1196,7 @@ struct TelegramBot {
 
 		return setChatPhoto(m);
 	}
-
+	/// ditto
 	bool setChatPhoto(SetChatPhotoMethod m) {
 		return callMethod!bool(m);
 	}
