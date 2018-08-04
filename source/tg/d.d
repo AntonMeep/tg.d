@@ -1577,7 +1577,7 @@ struct Message {
 	private @name("pinned_message") Json m_pinned_message;
 	@property @ignore {
 		Message pinned_message() { return m_pinned_message.deserializeJson!Message; }
-		void    pinned_messagee(Message m) { m_pinned_message = m.serializeToJson; }
+		void    pinned_message(Message m) { m_pinned_message = m.serializeToJson; }
 	}
 
 	@property @ignore {
