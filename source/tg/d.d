@@ -1445,6 +1445,15 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Delete a group sticker set from a supergroup
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `DeleteChatStickerSet`, $(LINK https://core.telegram.org/bots/api#deletechatstickerset)
+	 */
 	bool deleteChatStickerSet(T)(T chat_id) if(isTelegramID!T) {
 		DeleteChatStickerSetMethod m = {
 			chat_id: chat_id,
@@ -1452,7 +1461,7 @@ struct TelegramBot {
 
 		return deleteChatStickerSet(m);
 	}
-
+	/// ditto
 	bool deleteChatStickerSet(DeleteChatStickerSetMethod m) {
 		return callMethod!bool(m);
 	}
