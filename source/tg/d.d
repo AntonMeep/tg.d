@@ -140,7 +140,7 @@ struct TelegramBot {
 	 * Params:
 	 *     offset          = Identifier of the first update to be returned
 	 *     limit           = Limits the number of updates to be retrieved
-	 *     timeout         = Timeout in seconds for long polling.
+	 *     timeout         = Timeout in seconds for long polling
 	 *                       Should be positive, short polling (timeout == 0) should be used for testing purposes only.
 	 *     allowed_updates = List the types of updates you want your bot to receive
 	 * Returns: An array of updates
@@ -184,6 +184,18 @@ struct TelegramBot {
 		).getUpdates.serializeToJsonString.should.be.equal(`[]`);
 	}
 
+	/**
+	 * Range-based interface for `getUpdates`
+	 *
+	 * This is a preferred way to receive updates because it lazily adjusts `offset` and calls `getUpdates`
+	 * when necessary, allowing you to get more than a 100 updates in a single call.
+	 * Params:
+	 *     timeout         = Timeout in seconds for long polling
+	 *     allowed_updates = List the types of updates you want your bot to receive
+	 * Returns: An InputRange of `Update`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `getUpdates`
+	 */
 	auto updateGetter(int timeout = 3, string[] allowed_updates = []) {
 		struct updateGetterImpl {
 			private {
@@ -277,6 +289,19 @@ struct TelegramBot {
 			.map!(a => a.update_id).array.should.be.equal(updates.map!(a => a.update_id).array);
 	}
 
+	/**
+	 * Use this method to specify a url and receive incoming updates via an outgoing webhook
+	 *
+	 * Params:
+	 *     url          = HTTPS url to send updates to. Use an empty string to remove webhook integration
+	 *     allowed_updates = List the types of updates you want your bot to receive
+	 *     max_connections = Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * Deprecated: Webhook's aren't fully implemented,
+	 * see an $(LINK2 https://gitlab.com/ohboi/tg.d/issues/4, issue) for more info
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#setwebhook)
+	 */
 	deprecated("Webhooks aren't fully implemented yet")
 	bool setWebhook(string url, string[] allowed_updates = [], int max_connections = 40) {
 		SetWebhookMethod m = {
