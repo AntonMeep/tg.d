@@ -476,12 +476,12 @@ struct TelegramBot {
 			.should.be.equal(Message().serializeToJsonString);
 	}
 
-	Message forwardMessage(T1, T2)(T1 chat_id, T2 fromChatId, int message_id)
+	Message forwardMessage(T1, T2)(T1 chat_id, T2 from_chat_id, int message_id)
 	if(isTelegramID!T1 && isTelegramID!T2){
 		ForwardMessageMethod m = {
 			message_id: message_id,
 			chat_id: chat_id,
-			from_chat_id: fromChatId,
+			from_chat_id: from_chat_id,
 		};
 
 		return callMethod!(Message, ForwardMessageMethod)(m);
