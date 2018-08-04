@@ -1358,16 +1358,25 @@ struct TelegramBot {
 		return callMethod!Chat(m);
 	}
 
-	ChatMember getChatAdministrators(T)(T chat_id) if(isTelegramID!T) {
+	/**
+	 * Get a list of administrators in a chat
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target supergroup or channel (in the format `@channelusername`)
+	 * Returns: An array of `ChatMember` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `GetChatAdministatorsMethod`, $(LINK https://core.telegram.org/bots/api#getchatadministrators)
+	 */
+	ChatMember[] getChatAdministrators(T)(T chat_id) if(isTelegramID!T) {
 		GetChatAdministratorsMethod m = {
 			chat_id: chat_id,
 		};
 
 		return getChatAdministrators(m);
 	}
-
-	ChatMember getChatAdministrators(GetChatAdministratorsMethod m) {
-		return callMethod!ChatMember(m);
+	/// ditto
+	ChatMember[] getChatAdministrators(GetChatAdministratorsMethod m) {
+		return callMethod!(ChatMember[])(m);
 	}
 
 	int getChatMembersCount(T)(T chat_id) if(isTelegramID!T) {
