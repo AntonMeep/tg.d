@@ -865,9 +865,9 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	Nullable!Message editMessageLiveLocation(string inlineMessageId, float latitude, float longitude) {
+	Nullable!Message editMessageLiveLocation(string inline_message_id, float latitude, float longitude) {
 		EditMessageLiveLocationMethod m = {
-			inline_message_id: inlineMessageId,
+			inline_message_id: inline_message_id,
 			latitude : latitude,
 			longitude : longitude,
 		};
@@ -891,9 +891,9 @@ struct TelegramBot {
 		return callMethod!(Nullable!Message)(m);
 	}
 
-	Nullable!Message stopMessageLiveLocation(string inlineMessageId) {
+	Nullable!Message stopMessageLiveLocation(string inline_message_id) {
 		StopMessageLiveLocationMethod m = {
-			inline_message_id: inlineMessageId,
+			inline_message_id: inline_message_id,
 		};
 
 		return stopMessageLiveLocation(m);
@@ -1229,9 +1229,9 @@ struct TelegramBot {
 		return editMessageText(m);
 	}
 
-	auto editMessageText(string inlineMessageId, string text) {
+	auto editMessageText(string inline_message_id, string text) {
 		EditMessageTextMethod m = {
-			inline_message_id: inlineMessageId,
+			inline_message_id: inline_message_id,
 			text: text,
 		};
 
@@ -1252,9 +1252,9 @@ struct TelegramBot {
 		return editMessageCaption(m);
 	}
 
-	auto editMessageCaption(string inlineMessageId, string caption = null) {
+	auto editMessageCaption(string inline_message_id, string caption = null) {
 		EditMessageCaptionMethod m = {
-			inline_message_id: inlineMessageId,
+			inline_message_id: inline_message_id,
 			caption: caption,
 		};
 
@@ -1278,9 +1278,9 @@ struct TelegramBot {
 		return editMessageReplyMarkup(m);
 	}
 
-	auto editMessageReplyMarkup(string inlineMessageId, Nullable!ReplyMarkup replyMarkup) {
+	auto editMessageReplyMarkup(string inline_message_id, Nullable!ReplyMarkup replyMarkup) {
 		EditMessageReplyMarkupMethod m = {
-			inline_message_id: inlineMessageId,
+			inline_message_id: inline_message_id,
 			reply_markup: replyMarkup,
 		};
 
@@ -1300,9 +1300,9 @@ struct TelegramBot {
 		return editMessageMedia(m);
 	}
 
-	auto editMessageMedia(string inlineMessageId, InputMedia media) {
+	auto editMessageMedia(string inline_message_id, InputMedia media) {
 		EditMessageMediaMethod m = {
-			inline_message_id: inlineMessageId,
+			inline_message_id: inline_message_id,
 			media: media,
 		};
 		return editMessageMedia(m);
