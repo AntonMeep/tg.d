@@ -1564,6 +1564,41 @@ struct TelegramBot {
 	}
 
 	/**
+	 * Edit audio, document, photo or video message
+	 *
+	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
+	 *
+	 * Params:
+	 *     chat_id           = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     message_id        = Identifier of the sent message
+	 *     inline_message_id = Identifier of the inline message
+	 *     media             = New media content of the message
+	 * Returns: edited `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `EditMessageMediaMethod`, $(LINK https://core.telegram.org/bots/api#editmessagemedia)
+	 */
+	Message editMessageMedia(T)(T chat_id, int message_id, InputMedia media) {
+		EditMessageMediaMethod m = {
+			chat_id: chat_id,
+			message_id: message_id,
+			media: media,
+		};
+		return editMessageMedia(m);
+	}
+	/// ditto
+	Message editMessageMedia(string inline_message_id, InputMedia media) {
+		EditMessageMediaMethod m = {
+			inline_message_id: inline_message_id,
+			media: media,
+		};
+		return editMessageMedia(m);
+	}
+	/// ditto
+	Message editMessageMedia(EditMessageMediaMethod m) {
+		return callMethod!Message(m);
+	}
+
+	/**
 	 * Edit reply markup of a message
 	 *
 	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
@@ -1588,7 +1623,7 @@ struct TelegramBot {
 		return editMessageReplyMarkup(m);
 	}
 	/// ditto
-	auto editMessageReplyMarkup(string inline_message_id, InlineKeyboardMarkup reply_markup) {
+	Message editMessageReplyMarkup(string inline_message_id, InlineKeyboardMarkup reply_markup) {
 		EditMessageReplyMarkupMethod m = {
 			inline_message_id: inline_message_id,
 			reply_markup: reply_markup,
@@ -1597,29 +1632,8 @@ struct TelegramBot {
 		return editMessageReplyMarkup(m);
 	}
 	/// ditto
-	auto editMessageReplyMarkup(EditMessageReplyMarkupMethod m) {
+	Message editMessageReplyMarkup(EditMessageReplyMarkupMethod m) {
 		return callMethod!Message(m);
-	}
-
-	auto editMessageMedia(T)(T chat_id, int message_id, InputMedia media) {
-		EditMessageMediaMethod m = {
-			chat_id: chat_id,
-			message_id: message_id,
-			media: media,
-		};
-		return editMessageMedia(m);
-	}
-
-	auto editMessageMedia(string inline_message_id, InputMedia media) {
-		EditMessageMediaMethod m = {
-			inline_message_id: inline_message_id,
-			media: media,
-		};
-		return editMessageMedia(m);
-	}
-
-	auto editMessageMedia(EditMessageMediaMethod m) {
-		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
 	}
 
 	bool deleteMessage(T)(T chat_id, int message_id) if(isTelegramID!T) {
