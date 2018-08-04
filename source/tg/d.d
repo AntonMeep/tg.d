@@ -815,6 +815,16 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
+	/**
+	 * Send group of photos or videos as an album
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     media   = Photos and videos to be sent
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendMediaGroupMethod`, $(LINK https://core.telegram.org/bots/api#sendmediagroup)
+	 */
 	Message sendMediaGroup(T)(T chat_id, InputMedia[] media) if(isTelegramID!T) {
 		SendMediaGroupMethod m = {
 			media: media,
@@ -823,7 +833,7 @@ struct TelegramBot {
 
 		return sendMediaGroup(m);
 	}
-
+	/// ditto
 	Message sendMediaGroup(SendMediaGroupMethod m) {
 		return callMethod!Message(m);
 	}
