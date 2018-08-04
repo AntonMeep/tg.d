@@ -568,6 +568,18 @@ struct TelegramBot {
 		).sendPhoto(42L, "https://example.com/dogs.jpg").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
+	/**
+	 * Send audio
+	 *
+	 * Audio must be in mp3 format
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     audio   = HTTP URL to get audio from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendAudioMethod`, $(LINK https://core.telegram.org/bots/api#sendaudio)
+	 */
 	Message sendAudio(T)(T chat_id, string audio) if(isTelegramID!T) {
 		SendAudioMethod m = {
 			audio: audio,
@@ -576,7 +588,7 @@ struct TelegramBot {
 
 		return sendAudio(m);
 	}
-
+	/// ditto
 	Message sendAudio(SendAudioMethod m) {
 		return callMethod!(Message, SendAudioMethod)(m);
 	}
