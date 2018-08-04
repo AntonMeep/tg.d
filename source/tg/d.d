@@ -1497,7 +1497,7 @@ struct TelegramBot {
 	 *     message_id        = Identifier of the sent message
 	 *     inline_message_id = Identifier of the inline message
 	 *     text              = New text of the message
-	 * Returns: edited `Message`
+	 * Returns: Edited `Message`
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `EditMessageTextMethod`, $(LINK https://core.telegram.org/bots/api#editmessagetext)
 	 */
@@ -1535,7 +1535,7 @@ struct TelegramBot {
 	 *     message_id        = Identifier of the sent message
 	 *     inline_message_id = Identifier of the inline message
 	 *     caption           = New caption of the message
-	 * Returns: edited `Message`
+	 * Returns: Edited `Message`
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `EditMessageCaptionMethod`, $(LINK https://core.telegram.org/bots/api#editmessagecaption)
 	 */
@@ -1573,7 +1573,7 @@ struct TelegramBot {
 	 *     message_id        = Identifier of the sent message
 	 *     inline_message_id = Identifier of the inline message
 	 *     media             = New media content of the message
-	 * Returns: edited `Message`
+	 * Returns: Edited `Message`
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `EditMessageMediaMethod`, $(LINK https://core.telegram.org/bots/api#editmessagemedia)
 	 */
@@ -1608,7 +1608,7 @@ struct TelegramBot {
 	 *     message_id        = Identifier of the sent message
 	 *     inline_message_id = Identifier of the inline message
 	 *     reply_markup      = Object for a new inline keyboard
-	 * Returns: edited `Message`
+	 * Returns: Edited `Message`
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `EditMessageReplyMarkup`, $(LINK https://core.telegram.org/bots/api#editmessagereplymarkup)
 	 */
@@ -1659,7 +1659,16 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	// TODO sticker is InputFile|string
+	/**
+	 * Send webp sticker
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     sticker = HTTP URL to get sticker from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendStickerMethod`, $(LINK https://core.telegram.org/bots/api#sendsticker)
+	 */
 	Message sendSticker(T)(T chat_id, string sticker) if(isTelegramID!T) {
 		SendStickerMethod m = {
 			sticker: sticker,
@@ -1668,7 +1677,7 @@ struct TelegramBot {
 
 		return sendSticker(m);
 	}
-
+	/// ditto
 	Message sendSticker(SendStickerMethod m) {
 		return callMethod!Message(m);
 	}
