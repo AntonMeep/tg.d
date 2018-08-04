@@ -145,7 +145,7 @@ struct TelegramBot {
 	 *     allowed_updates = List the types of updates you want your bot to receive
 	 * Returns: An array of updates
 	 * Throws: `TelegramBotException` on errors
-	 * See_Also: $(LINK https://core.telegram.org/bots/api#getupdates)
+	 * See_Also: `GetUpdatesMethod`, $(LINK https://core.telegram.org/bots/api#getupdates)
 	 */
 	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 3, string[] allowed_updates = []) {
 		GetUpdatesMethod m = {
@@ -300,7 +300,7 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * Deprecated: Webhooks aren't fully implemented,
 	 * see an $(LINK2 https://gitlab.com/ohboi/tg.d/issues/4, issue) for more info
-	 * See_Also: $(LINK https://core.telegram.org/bots/api#setwebhook)
+	 * See_Also: `SetWebhookMethod`, $(LINK https://core.telegram.org/bots/api#setwebhook)
 	 */
 	deprecated("Webhooks aren't fully implemented yet")
 	bool setWebhook(string url, string[] allowed_updates = [], int max_connections = 40) {
@@ -410,7 +410,7 @@ struct TelegramBot {
 	 *     text     = Text to be sent
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
-	 * See_Also: $(LINK https://core.telegram.org/bots/api#sendmessage)
+	 * See_Also: `SendMessageMethod`, $(LINK https://core.telegram.org/bots/api#sendmessage)
 	 */
 	Message sendMessage(T)(T chat_id, string text) if(isTelegramID!T) {
 		SendMessageMethod m = {
@@ -485,7 +485,7 @@ struct TelegramBot {
 	 *     message_id   = ID of the original message
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
-	 * See_Also: $(LINK https://core.telegram.org/bots/api#forwardmessage)
+	 * See_Also: `ForwardMessageMethod`, $(LINK https://core.telegram.org/bots/api#forwardmessage)
 	 */
 	Message forwardMessage(T1, T2)(T1 chat_id, T2 from_chat_id, int message_id)
 	if(isTelegramID!T1 && isTelegramID!T2){
