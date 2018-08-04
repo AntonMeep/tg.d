@@ -1085,7 +1085,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Unban a previously kicked user in a supergroup or channel
+	 * Unban a previously kicked user in a group, a supergroup or a channel
 	 *
 	 * Params:
 	 *     chat_id = Unique identifier for the target group or username of the target supergroup or channel
@@ -1107,6 +1107,16 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Restrict a user in a supergroup
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target supergroup
+	 *     user_id = Unique identifier of the target user
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `RestrictChatMemberMethod`, $(LINK https://core.telegram.org/bots/api#restrictchatmember)
+	 */
 	bool restrictChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
 		RestrictChatMemberMethod m = {
 			user_id: user_id,
@@ -1115,7 +1125,7 @@ struct TelegramBot {
 
 		return restrictChatMember(m);
 	}
-
+	/// ditto
 	bool restrictChatMember(RestrictChatMemberMethod m) {
 		return callMethod!bool(m);
 	}
