@@ -614,6 +614,16 @@ struct TelegramBot {
 		).sendAudio(42L, "https://example.com/woof.mp3").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
+	/**
+	 * Send file
+	 *
+	 * Params:
+	 *     chat_id  = Unique identifier of the chat or username of the target channel
+	 *     document = HTTP URL to get document from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendDocumentMethod`, $(LINK https://core.telegram.org/bots/api#senddocument)
+	 */
 	Message sendDocument(T)(T chat_id, string document) if(isTelegramID!T) {
 		SendDocumentMethod m = {
 			document: document,
@@ -622,7 +632,7 @@ struct TelegramBot {
 
 		return sendDocument(m);
 	}
-
+	/// ditto
 	Message sendDocument(SendDocumentMethod m) {
 		return callMethod!(Message, SendDocumentMethod)(m);
 	}
