@@ -104,8 +104,6 @@ struct TelegramBot {
 			requestHTTP(m_url ~ method.m_path,
 				(scope req) {
 					req.method = HTTPMethod.POST;
-					debug version(TgD_Verbose)
-						"tg.d | Sending body: %s".logDebugV(method.serializeToJson);
 
 					Json j = Json.emptyObject;
 
@@ -114,12 +112,12 @@ struct TelegramBot {
 							if(mixin("method." ~ field ~ " != typeof(method." ~ field ~ ").init"))
 								j[field] = mixin("method." ~ field).serializeToJson;
 
+					debug version(TgD_Verbose) "tg.d | Sending body: %s".logDebugV(j);
 					req.writeJsonBody(j);
 				},
 				(scope res) {
 					auto answer = res.readJson;
-					debug version(TgD_Verbose)
-						"tg.d | Response data: %s".logDebugV(answer);
+					debug version(TgD_Verbose) "tg.d | Response data: %s".logDebugV(answer);
 
 					auto json = answer.deserializeJson!(MethodResult!T);
 
