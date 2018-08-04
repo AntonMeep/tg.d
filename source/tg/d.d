@@ -1636,6 +1636,16 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
+	/**
+	 * Delete a message
+	 *
+	 * Params:
+	 *     chat_id    = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     message_id = Identifier of the message to delete
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `DeleteMessageMethod`, $(LINK https://core.telegram.org/bots/api#deletemessage)
+	 */
 	bool deleteMessage(T)(T chat_id, int message_id) if(isTelegramID!T) {
 		DeleteMessageMethod m = {
 			message_id: message_id,
@@ -1644,7 +1654,7 @@ struct TelegramBot {
 
 		return deleteMessage(m);
 	}
-
+	/// ditto
 	bool deleteMessage(DeleteMessageMethod m) {
 		return callMethod!bool(m);
 	}
