@@ -863,17 +863,22 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	Message editMessageLiveLocation(string inline_message_id, float latitude, float longitude) {
-		EditMessageLiveLocationMethod m = {
-			inline_message_id: inline_message_id,
-			latitude : latitude,
-			longitude : longitude,
-		};
-
-		return editMessageLiveLocation(m);
-	}
-
-	Message editMessageLiveLocation(T)(T chat_id, int message_id, float latitude, float longitude)
+	/**
+	 * Edit live location message
+	 *
+	 * Overloads either take `chat_id` and `message_id` or `inline_message_id`
+	 *
+	 * Params:
+	 *     chat_id           = Unique identifier of the chat or username of the target channel
+	 *     message_id        = ID of the message to edit
+	 *     inline_message_id = ID of the inline message
+	 *     latitude          = Latitude of new location
+	 *     longitude         = longitude of new location
+	 * Returns: Edited `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `EditMessageLiveLocationMethod`, $(LINK https://core.telegram.org/bots/api#editmessagelivelocation)
+	 */
+	 Message editMessageLiveLocation(T)(T chat_id, int message_id, float latitude, float longitude)
 	if(isTelegramID!T) {
 		EditMessageLiveLocationMethod m = {
 			message_id: message_id,
@@ -884,7 +889,17 @@ struct TelegramBot {
 
 		return editMessageLiveLocation(m);
 	}
+	/// ditto
+	Message editMessageLiveLocation(string inline_message_id, float latitude, float longitude) {
+		EditMessageLiveLocationMethod m = {
+			inline_message_id: inline_message_id,
+			latitude : latitude,
+			longitude : longitude,
+		};
 
+		return editMessageLiveLocation(m);
+	}
+	/// ditto
 	Message editMessageLiveLocation(EditMessageLiveLocationMethod m) {
 		return callMethod!Message(m);
 	}
