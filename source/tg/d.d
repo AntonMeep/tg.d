@@ -397,7 +397,7 @@ struct TelegramBot {
 	 * Send text message
 	 *
 	 * Params:
-	 *     chat_id  = Unique identifier of the chat or username of the channel
+	 *     chat_id  = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     reply_to = If the message is a reply, ID of the original message
 	 *     text     = Text to be sent
 	 * Returns: Sent `Message`
@@ -472,8 +472,8 @@ struct TelegramBot {
 	 * Forward message from `from_chat_id` to `chat_id`
 	 *
 	 * Params:
-	 *     chat_id      = Unique identifier of the chat or username of the target channel
-	 *     from_chat_id = Unique identifier of the chat or username of the source channel
+	 *     chat_id      = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
+	 *     from_chat_id = Unique identifier for the chat where the original message was sent (or channel username in the format `@channelusername`)
 	 *     message_id   = ID of the original message
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -520,7 +520,7 @@ struct TelegramBot {
 	 * Send photo
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     chat_id = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     photo   = HTTP URL to get photo from the internet or `file_id` of the file on Telegram
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -566,7 +566,7 @@ struct TelegramBot {
 	 * Audio must be in mp3 format
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     chat_id = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     audio   = HTTP URL to get audio from the internet or `file_id` of the file on Telegram
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -610,7 +610,7 @@ struct TelegramBot {
 	 * Send file
 	 *
 	 * Params:
-	 *     chat_id  = Unique identifier of the chat or username of the target channel
+	 *     chat_id  = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     document = HTTP URL to get document from the internet or `file_id` of the file on Telegram
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -656,7 +656,7 @@ struct TelegramBot {
 	 * Video must be in mp4 format
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     chat_id = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     video   = HTTP URL to get video from the internet or `file_id` of the file on Telegram
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -702,7 +702,7 @@ struct TelegramBot {
 	 * Animation must be in GIF format or H.264/MPEG-4 AVC video without sound 
 	 *
 	 * Params:
-	 *     chat_id   = Unique identifier of the chat or username of the target channel
+	 *     chat_id   = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     animation = HTTP URL to get animation from the internet or `file_id` of the file on Telegram
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -748,7 +748,7 @@ struct TelegramBot {
 	 * Voice message must be in ogg format encoded with OPUS
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     chat_id = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     voice   = HTTP URL to get audio from the internet or `file_id` of the file on Telegram
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -794,7 +794,7 @@ struct TelegramBot {
 	 * Video must be square and shoudln't be longer than 1 minute
 	 *
 	 * Params:
-	 *     chat_id    = Unique identifier of the chat or username of the target channel
+	 *     chat_id    = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     video_note = HTTP URL to get video from the internet or `file_id` of the file on Telegram
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -817,7 +817,7 @@ struct TelegramBot {
 	 * Send group of photos or videos as an album
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     chat_id = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     media   = Photos and videos to be sent
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -842,7 +842,7 @@ struct TelegramBot {
 	 * Send point on the map
 	 *
 	 * Params:
-	 *     chat_id   = Unique identifier of the chat or username of the target channel
+	 *     chat_id   = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     latitude  = Latitude of the location
 	 *     longitude = Longitude of the location
 	 * Returns: Sent `Message`
@@ -869,7 +869,7 @@ struct TelegramBot {
 	 * Overloads either take `chat_id` and `message_id` or `inline_message_id`
 	 *
 	 * Params:
-	 *     chat_id           = Unique identifier of the chat or username of the target channel
+	 *     chat_id           = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     message_id        = ID of the message to edit
 	 *     inline_message_id = ID of the inline message
 	 *     latitude          = Latitude of new location
@@ -910,7 +910,7 @@ struct TelegramBot {
 	 * Overloads either take `chat_id` and `message_id` or `inline_message_id`
 	 *
 	 * Params:
-	 *     chat_id           = Unique identifier of the chat or username of the target channel
+	 *     chat_id           = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     message_id        = ID of the message to edit
 	 *     inline_message_id = ID of the inline message
 	 * Returns: Edited `Message`
@@ -942,7 +942,7 @@ struct TelegramBot {
 	 * Send information about a venue
 	 *
 	 * Params:
-	 *     chat_id   = Unique identifier of the chat or username of the target channel
+	 *     chat_id   = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     latitude  = Latitude of the venue
 	 *     longitude = Longitude of the venue
 	 *     title     = Name of the venue
@@ -972,7 +972,7 @@ struct TelegramBot {
 	 * Send phone contact
 	 *
 	 * Params:
-	 *     chat_id      = Unique identifier of the chat or username of the target channel
+	 *     chat_id      = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     phone_number = Contact's phone number
 	 *     first_name   = Contact's first name
 	 *     last_name    = Contact's last name
@@ -1000,7 +1000,7 @@ struct TelegramBot {
 	 * Send chat action
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     chat_id = Unique identifier for the target chat or username of the target channel  (in the format `@channelusername`)
 	 *     action  = Type of action, (typing, upload_photo, record_video, etc)
 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
@@ -1065,7 +1065,7 @@ struct TelegramBot {
 	 * Kick a user from a group, a supergroup or a channel
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier for the target group or username of the target supergroup or channel
+	 *     chat_id = Unique identifier for the target group or username of the target supergroup or channel (in the format `@channelusername`)
 	 *     user_id = Unique identifier of the target user
 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
@@ -1088,7 +1088,7 @@ struct TelegramBot {
 	 * Unban a previously kicked user in a group, a supergroup or a channel
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier for the target group or username of the target supergroup or channel
+	 *     chat_id = Unique identifier for the target group or username of the target supergroup or channel (in the format `@username`)
 	 *     user_id = Unique identifier of the target user
 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
@@ -1111,7 +1111,7 @@ struct TelegramBot {
 	 * Restrict a user in a supergroup
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier for the target chat or username of the target supergroup
+	 *     chat_id = Unique identifier for the target chat or username of the target supergroup (in the format `@supergroupusername`)
 	 *     user_id = Unique identifier of the target user
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
@@ -1134,7 +1134,7 @@ struct TelegramBot {
 	 * Promote or demote a user in a supergroup or a channel
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier for the target chat or username of the target channel
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
 	 *     user_id = Unique identifier of the target user
 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
