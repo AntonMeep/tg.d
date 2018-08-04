@@ -1379,6 +1379,15 @@ struct TelegramBot {
 		return callMethod!(ChatMember[])(m);
 	}
 
+	/**
+	 * Get the number of members in a chat
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target supergroup or channel (in the format `@channelusername`)
+	 * Returns: number of members
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `GetChatMembersCountMethod`, $(LINK https://core.telegram.org/bots/api#getchatmemberscount)
+	 */
 	int getChatMembersCount(T)(T chat_id) if(isTelegramID!T) {
 		GetChatMembersCountMethod m = {
 			chat_id: chat_id,
@@ -1386,7 +1395,7 @@ struct TelegramBot {
 
 		return getChatMembersCount(m);
 	}
-
+	/// ditto
 	int getChatMembersCount(GetChatMembersCountMethod m) {
 		return callMethod!int(m);
 	}
