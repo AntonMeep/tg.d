@@ -524,6 +524,16 @@ struct TelegramBot {
 		).forwardMessage(42L, 43L, 1337).serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
+	/**
+	 * Send photo
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     photo   = HTTP URL to get photo from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendPhotoMethod`, $(LINK https://core.telegram.org/bots/api#sendphoto)
+	 */
 	Message sendPhoto(T)(T chat_id, string photo) if(isTelegramID!T) {
 		SendPhotoMethod m = {
 			photo: photo,
@@ -532,7 +542,7 @@ struct TelegramBot {
 
 		return sendPhoto(m);
 	}
-
+	/// ditto
 	Message sendPhoto(SendPhotoMethod m) {
 		return callMethod!(Message, SendPhotoMethod)(m);
 	}
