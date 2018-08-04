@@ -1222,7 +1222,18 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool setChatTitle(T)(T chat_id, string title) if(isTelegramID!T) {
+	/**
+	 * Change the title of a chat
+	 *
+	 * Params:
+	 *     chat_id      = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SetChatTitleMethod`, $(LINK https://core.telegram.org/bots/api#setchattitle)
+	 */
+	bool setChatTitle(T)(T chat_id, string title)
+	if(isTelegramID!T)
+	in(1 <= title.length && title.length <= 255) {
 		SetChatTitleMethod m = {
 			title: title,
 			chat_id: chat_id,
@@ -1230,7 +1241,7 @@ struct TelegramBot {
 
 		return setChatTitle(m);
 	}
-
+	/// title
 	bool setChatTitle(SetChatTitleMethod m) {
 		return callMethod!bool(m);
 	}
