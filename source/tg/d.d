@@ -904,14 +904,19 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	Message stopMessageLiveLocation(string inline_message_id) {
-		StopMessageLiveLocationMethod m = {
-			inline_message_id: inline_message_id,
-		};
-
-		return stopMessageLiveLocation(m);
-	}
-
+	/**
+	 * Stop updating a live location message
+	 *
+	 * Overloads either take `chat_id` and `message_id` or `inline_message_id`
+	 *
+	 * Params:
+	 *     chat_id      = Unique identifier of the chat or username of the target channel
+	 *     message_id        = ID of the message to edit
+	 *     inline_message_id = ID of the inline message
+	 * Returns: Edited `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `StopMessageLiveLocation`, $(LINK https://core.telegram.org/bots/api#stopmessagelivelocation)
+	 */
 	Message stopMessageLiveLocation(T)(T chat_id, int message_id) if(isTelegramID!T) {
 		StopMessageLiveLocationMethod m = {
 			message_id: message_id,
@@ -920,7 +925,15 @@ struct TelegramBot {
 
 		return stopMessageLiveLocation(m);
 	}
+	/// ditto
+	Message stopMessageLiveLocation(string inline_message_id) {
+		StopMessageLiveLocationMethod m = {
+			inline_message_id: inline_message_id,
+		};
 
+		return stopMessageLiveLocation(m);
+	}
+	/// ditto
 	Message stopMessageLiveLocation(StopMessageLiveLocationMethod m) {
 		return callMethod!(Nullable!Message)(m);
 	}
