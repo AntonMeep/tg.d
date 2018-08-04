@@ -63,7 +63,7 @@ struct TelegramBot {
 @safe:
 
 	/**
-	 * Creates new bot using token
+	 * Create a new bot using token
 	 *
 	 * To obtain a new token ask $(LINK2 https://core.telegram.org/bots#botfather, BotFather).
 	 * Params:
@@ -135,7 +135,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Receives incoming updates using long polling
+	 * Receive incoming updates using long polling
 	 *
 	 * Params:
 	 *     offset          = Identifier of the first update to be returned
@@ -290,7 +290,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Sets webhook to be used to receive incoming updates
+	 * Set webhook to be used to receive incoming updates
 	 *
 	 * Params:
 	 *     url          = HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -314,7 +314,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Deletes webhook integration
+	 * Delete webhook integration
 	 *
 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
@@ -344,6 +344,13 @@ struct TelegramBot {
 		return callMethod!(WebhookInfo, GetWebhookInfoMethod)(m);
 	}
 
+	/**
+	 * Get current bot info
+	 *
+	 * Returns: Basic information about the bot in a `User` structure
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#getme)
+	 */
 	User getMe() {
 		GetMeMethod m;
 
@@ -394,6 +401,16 @@ struct TelegramBot {
 		);
 	}
 
+	/**
+	 * Send text message
+	 *
+	 * Params:
+	 *     chatId = Unique identifier of the chat or username of the channel
+	 *     text   = Text to be sent
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#sendmessage)
+	 */
 	Message sendMessage(T)(T chatId, string text) if(isTelegramID!T) {
 		SendMessageMethod m = {
 			text: text,
@@ -403,6 +420,17 @@ struct TelegramBot {
 		return sendMessage(m);
 	}
 
+	/**
+	 * Reply to a message
+	 *
+	 * Params:
+	 *     chatId  = Unique identifier of the chat or username of the channel
+	 *     reply_to = ID of the original message
+	 *     text     = Text to be sent
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#sendmessage)
+	 */
 	Message sendMessage(T)(T chatId, int reply_to, string text) if(isTelegramID!T) {
 		SendMessageMethod m = {
 			text: text,
