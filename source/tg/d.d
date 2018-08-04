@@ -910,7 +910,7 @@ struct TelegramBot {
 	 * Overloads either take `chat_id` and `message_id` or `inline_message_id`
 	 *
 	 * Params:
-	 *     chat_id      = Unique identifier of the chat or username of the target channel
+	 *     chat_id           = Unique identifier of the chat or username of the target channel
 	 *     message_id        = ID of the message to edit
 	 *     inline_message_id = ID of the inline message
 	 * Returns: Edited `Message`
@@ -938,6 +938,19 @@ struct TelegramBot {
 		return callMethod!(Nullable!Message)(m);
 	}
 
+	/**
+	 * Send information about a venue
+	 *
+	 * Params:
+	 *     chat_id   = Unique identifier of the chat or username of the target channel
+	 *     latitude  = Latitude of the venue
+	 *     longitude = Longitude of the venue
+	 *     title     = Name of the venue
+	 *     address   = Address of the venue
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendVenueMethod`, $(LINK https://core.telegram.org/bots/api#sendvenue)
+	 */
 	Message sendVenue(T)(T chat_id, float latitude, float longitude, string title, string address)
 	if(isTelegramID!T) {
 		SendVenueMethod m = {
@@ -950,7 +963,7 @@ struct TelegramBot {
 
 		return sendVenue(m);
 	}
-
+	/// ditto
 	Message sendVenue(SendVenueMethod m) {
 		return callMethod!Message(m);
 	}
