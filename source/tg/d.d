@@ -290,7 +290,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Sets a webhook to be used to receive incoming updates
+	 * Sets webhook to be used to receive incoming updates
 	 *
 	 * Params:
 	 *     url          = HTTPS url to send updates to. Use an empty string to remove webhook integration
@@ -298,7 +298,7 @@ struct TelegramBot {
 	 *     max_connections = Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery, 1-100
 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
-	 * Deprecated: Webhook's aren't fully implemented,
+	 * Deprecated: Webhooks aren't fully implemented,
 	 * see an $(LINK2 https://gitlab.com/ohboi/tg.d/issues/4, issue) for more info
 	 * See_Also: $(LINK https://core.telegram.org/bots/api#setwebhook)
 	 */
@@ -313,6 +313,15 @@ struct TelegramBot {
 		return callMethod!(bool, SetWebhookMethod)(m);
 	}
 
+	/**
+	 * Deletes webhook integration
+	 *
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * Deprecated: Webhooks aren't fully implemented,
+	 * see an $(LINK2 https://gitlab.com/ohboi/tg.d/issues/4, issue) for more info
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#deletewebhook)
+	 */
 	deprecated("Webhooks aren't fully implemented yet")
 	bool deleteWebhook() {
 		DeleteWebhookMethod m = DeleteWebhookMethod();
@@ -320,6 +329,15 @@ struct TelegramBot {
 		return callMethod!(bool, DeleteWebhookMethod)(m);
 	}
 
+	/**
+	 * Get current webhook status
+	 *
+ 	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * Deprecated: Webhooks aren't fully implemented,
+	 * see an $(LINK2 https://gitlab.com/ohboi/tg.d/issues/4, issue) for more info
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#getwebhookinfo)
+	 */
 	deprecated("Webhooks aren't fully implemented yet")
 	WebhookInfo getWebhookInfo() {
 		GetWebhookInfoMethod m = GetWebhookInfoMethod();
