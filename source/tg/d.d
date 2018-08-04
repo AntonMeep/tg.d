@@ -968,17 +968,30 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	Message sendContact(T)(T chat_id, string phone_number, string first_name)
+	/**
+	 * Send phone contact
+	 *
+	 * Params:
+	 *     chat_id      = Unique identifier of the chat or username of the target channel
+	 *     phone_number = Contact's phone number
+	 *     first_name   = Contact's first name
+	 *     last_name    = Contact's last name
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendContactMethod`, $(LINK https://core.telegram.org/bots/api#sendcontact)
+	 */
+	Message sendContact(T)(T chat_id, string phone_number, string first_name, string last_name = "")
 	if(isTelegramID!T) {
 		SendContactMethod m = {
 			phone_number: phone_number,
 			first_name : first_name,
+			last_name: last_name,
 			chat_id: chat_id,
 		};
 
 		return sendContact(m);
 	}
-
+	/// ditto
 	Message sendContact(SendContactMethod m) {
 		return callMethod!Message(m);
 	}
