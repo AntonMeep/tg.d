@@ -826,7 +826,8 @@ struct TelegramBot {
 	 * See_Also: `SendMediaGroupMethod`, $(LINK https://core.telegram.org/bots/api#sendmediagroup)
 	 */
 	Message sendMediaGroup(T)(T chat_id, JsonableAlgebraic!(InputMediaPhoto, InputMediaVideo)[] media)
-	if(isTelegramID!T) {
+	if(isTelegramID!T)
+	in(2 <= media.length && media.length <= 10) {
 		SendMediaGroupMethod m = {
 			media: media,
 			chat_id: chat_id,
