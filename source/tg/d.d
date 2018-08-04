@@ -1488,7 +1488,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Edit message
+	 * Edit message text
 	 *
 	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
 	 *
@@ -1501,7 +1501,8 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `EditMessageTextMethod`, $(LINK https://core.telegram.org/bots/api#editmessagetext)
 	 */
-	Message editMessageText(T)(T chat_id, int message_id, string text) if(isTelegramID!T) {
+	Message editMessageText(T)(T chat_id, int message_id, string text)
+	if(isTelegramID!T) {
 		EditMessageTextMethod m = {
 			message_id: message_id,
 			text: text,
@@ -1524,7 +1525,22 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	auto editMessageCaption(T)(T chat_id, int message_id, string caption = null) if(isTelegramID!T) {
+	/**
+	 * Edit message caption
+	 *
+	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
+	 *
+	 * Params:
+	 *     chat_id           = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     message_id        = Identifier of the sent message
+	 *     inline_message_id = Identifier of the inline message
+	 *     caption           = New caption of the message
+	 * Returns: edited `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `EditMessageCaptionMethod`, $(LINK https://core.telegram.org/bots/api#editmessagecaption)
+	 */
+	Message editMessageCaption(T)(T chat_id, int message_id, string caption)
+	if(isTelegramID!T) {
 		EditMessageCaptionMethod m = {
 			message_id: message_id,
 			caption: caption,
@@ -1533,8 +1549,8 @@ struct TelegramBot {
 
 		return editMessageCaption(m);
 	}
-
-	auto editMessageCaption(string inline_message_id, string caption = null) {
+	/// ditto
+	Message editMessageCaption(string inline_message_id, string caption) {
 		EditMessageCaptionMethod m = {
 			inline_message_id: inline_message_id,
 			caption: caption,
@@ -1542,9 +1558,9 @@ struct TelegramBot {
 
 		return editMessageCaption(m);
 	}
-
-	auto editMessageCaption(EditMessageCaptionMethod m) {
-		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
+	/// ditto
+	Message editMessageCaption(EditMessageCaptionMethod m) {
+		return callMethod!Message(m);
 	}
 
 	auto editMessageReplyMarkup(T)(T chat_id, int message_id, InlineKeyboardMarkup replyMarkup)
