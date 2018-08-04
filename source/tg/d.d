@@ -996,6 +996,16 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
+	/**
+	 * Send chat action
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier of the chat or username of the target channel
+	 *     action  = Type of action, (typing, upload_photo, record_video, etc)
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendChatActionMethod`, $(LINK https://core.telegram.org/bots/api#sendchataction)
+	 */
 	bool sendChatAction(T)(T chat_id, string action) if(isTelegramID!T) {
 		SendChatActionMethod m = {
 			action: action,
@@ -1004,7 +1014,7 @@ struct TelegramBot {
 
 		return sendChatAction(m);
 	}
-
+	/// ditto
 	bool sendChatAction(SendChatActionMethod m) {
 		return callMethod!bool(m);
 	}
