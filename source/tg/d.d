@@ -1226,7 +1226,8 @@ struct TelegramBot {
 	 * Change the title of a chat
 	 *
 	 * Params:
-	 *     chat_id      = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     title   = New chat title
 	 * Returns: `true` on success
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `SetChatTitleMethod`, $(LINK https://core.telegram.org/bots/api#setchattitle)
@@ -1246,7 +1247,19 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool setChatDescription(T)(T chat_id, string description) if(isTelegramID!T) {
+	/**
+	 * Change the description of a supergroup or a channel
+	 *
+	 * Params:
+	 *     chat_id     = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     description = New chat description
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SetChatDescriptionMethod`, $(LINK https://core.telegram.org/bots/api#setchatdescription)
+	 */
+	bool setChatDescription(T)(T chat_id, string description = "")
+	if(isTelegramID!T)
+	in(title.length <= 255) {
 		SetChatDescriptionMethod m = {
 			description: description,
 			chat_id: chat_id,
@@ -1254,7 +1267,7 @@ struct TelegramBot {
 
 		return setChatDescription(m);
 	}
-
+	/// ditto
 	bool setChatDescription(SetChatDescriptionMethod m) {
 		return callMethod!bool(m);
 	}
