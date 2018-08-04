@@ -1400,6 +1400,16 @@ struct TelegramBot {
 		return callMethod!int(m);
 	}
 
+	/**
+	 * Get information about a member of a chat
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target supergroup or channel (in the format `@channelusername`)
+	 *     user_id = Unique identifier of the target user
+	 * Returns: `ChatMember` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `GetChatMemberMethod`, $(LINK https://core.telegram.org/bots/api#getchatmember)
+	 */
 	ChatMember getChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
 		GetChatMemberMethod m = {
 			user_id: user_id,
@@ -1408,7 +1418,7 @@ struct TelegramBot {
 
 		return getChatMember(m);
 	}
-
+	/// ditto
 	ChatMember getChatMember(GetChatMemberMethod m) {
 		return callMethod!ChatMember(m);
 	}
