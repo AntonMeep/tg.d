@@ -1019,6 +1019,15 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Get a list of profile pictures for specified user
+	 *
+	 * Params:
+	 *     user_id = Unique identifier of the target user
+	 * Returns: `UserProfilePhotos` struct
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `GetUserProfilePhotosMethod`, $(LINK https://core.telegram.org/bots/api#getuserprofilephotos)
+	 */
 	UserProfilePhotos getUserProfilePhotos(int user_id) {
 		GetUserProfilePhotosMethod m = {
 			user_id: user_id,
@@ -1026,7 +1035,7 @@ struct TelegramBot {
 
 		return getUserProfilePhotos(m);
 	}
-
+	/// ditto
 	UserProfilePhotos getUserProfilePhotos(GetUserProfilePhotosMethod m) {
 		return callMethod!UserProfilePhotos(m);
 	}
