@@ -9,7 +9,6 @@
 module tg.d;
 
 import std.traits : FieldNameTuple;
-import std.typecons : Nullable;
 
 import vibe.core.log;
 import vibe.data.json;
@@ -366,8 +365,8 @@ struct TelegramBot {
 					])
 				]);
 			}
-		).getMe.serializeToJsonString.should.be.equal(
-			`{"id":42,"is_bot":true,"first_name":"John","last_name":null,"username":null,"language_code":null}`
+		).getMe.should.be.equal(
+			User(42, true, "John")
 		);
 
 		TelegramBot(
@@ -388,8 +387,8 @@ struct TelegramBot {
 					])
 				]);
 			}
-		).getMe.serializeToJsonString.should.be.equal(
-			`{"id":42,"is_bot":false,"first_name":"John","last_name":"Smith","username":"js","language_code":"en-GB"}`
+		).getMe.should.be.equal(
+			User(42, false, "John", "Smith", "js", "en-GB")
 		);
 	}
 
@@ -1802,15 +1801,15 @@ struct InputFile {}
 struct Update {
 	int update_id;
 @optional:
-	Nullable!Message message,
-					 edited_message,
-					 channel_post,
-					 edited_channel_post;
-	Nullable!InlineQuery inline_query;
-	Nullable!ChosenInlineResult chosen_inline_result;
-	Nullable!CallbackQuery callback_query;
-	Nullable!ShippingQuery shopping_query;
-	Nullable!PreCheckoutQuery pre_checkout_query;
+	Message message,
+			edited_message,
+			channel_post,
+			edited_channel_post;
+	InlineQuery inline_query;
+	ChosenInlineResult chosen_inline_result;
+	CallbackQuery callback_query;
+	ShippingQuery shopping_query;
+	PreCheckoutQuery pre_checkout_query;
 }
 
 struct User {
@@ -1818,9 +1817,9 @@ struct User {
 	bool is_bot;
 	string first_name;
 @optional:
-	Nullable!string last_name,
-					username,
-					language_code;
+	string last_name,
+			username,
+			language_code;
 }
 
 struct Chat {
@@ -1828,29 +1827,28 @@ struct Chat {
 	long id;
 	ChatType type;
 @optional:
-	Nullable!string title,
-					username,
-					first_name,
-					last_name;
+	string title,
+			username,
+			first_name,
+			last_name;
 	bool all_members_are_administrators;
-	Nullable!ChatPhoto photo;
-	Nullable!string description,
-					invite_link;
+	ChatPhoto photo;
+	string description,
+			invite_link;
 
 	private @name("pinned_message") Json m_pinned_message;
 	@property @ignore {
-		Nullable!Message pinned_message() {
+		Message pinned_message() {
 			return m_pinned_message.type == Json.Type.null_ 
-					? Nullable!Message.init
-					: Nullable!Message(m_pinned_message.deserializeJson!Message);
+					? Message.init
+					: m_pinned_message.deserializeJson!Message;
 		}
-		void pinned_message(Nullable!Message m) {
-			if(!m.isNull)
-				m_pinned_message = m.get.serializeToJson;
+		void pinned_message(Message m) {
+			m_pinned_message = m.serializeToJson;
 		}
 	}
 
-	Nullable!string sticker_set_name;
+	string sticker_set_name;
 	bool can_set_sticker_set;
 }
 
@@ -1863,76 +1861,74 @@ struct Message {
 		void id(int i) { message_id = i;    }
 	}
 
-	@optional Nullable!User from;
+	@optional User from;
 	long date;
 	Chat chat;
 
 @optional:
-	Nullable!User forward_from;
-	Nullable!Chat forward_from_chat;
-	Nullable!int forward_from_message_id;
-	Nullable!string forward_signature;
-	Nullable!long forward_date;
+	User forward_from;
+	Chat forward_from_chat;
+	int forward_from_message_id;
+	string forward_signature;
+	long forward_date;
 
 	private @name("reply_to_message") Json m_reply_to_message;
 	@property @ignore {
-		Nullable!Message reply_to_message() {
+		Message reply_to_message() {
 			return m_reply_to_message.type == Json.Type.null_ 
-					? Nullable!Message.init
-					: Nullable!Message(m_reply_to_message.deserializeJson!Message);
+					? Message.init
+					: m_reply_to_message.deserializeJson!Message;
 		}
-		void reply_to_message(Nullable!Message m) {
-			if(!m.isNull)
-				m_reply_to_message = m.get.serializeToJson;
+		void reply_to_message(Message m) {
+			m_reply_to_message = m.serializeToJson;
 		}
 	}
 
-	Nullable!long edit_date;
-	Nullable!string media_group_id,
-					author_signature,
-					text;
+	long edit_date;
+	string media_group_id,
+			author_signature,
+			text;
 	MessageEntity[] entities;
 	MessageEntity[] caption_entities;
-	Nullable!Audio audio;
-	Nullable!Animation animation;
-	Nullable!Document document;
-	Nullable!Game game;
+	Audio audio;
+	Animation animation;
+	Document document;
+	Game game;
 	PhotoSize[] photo;
-	Nullable!Sticker sticker;
-	Nullable!Video video;
-	Nullable!Voice voice;
-	Nullable!VideoNote video_note;
-	Nullable!string caption;
-	Nullable!Contact contact;
-	Nullable!Location location;
-	Nullable!Venue venue;
+	Sticker sticker;
+	Video video;
+	Voice voice;
+	VideoNote video_note;
+	string caption;
+	Contact contact;
+	Location location;
+	Venue venue;
 	User[] new_chat_members;
-	Nullable!User left_chat_member;
-	Nullable!string new_chat_title;
+	User left_chat_member;
+	string new_chat_title;
 	PhotoSize[] new_chat_photo;
 	bool delete_chat_photo,
-				  group_chat_created,
-				  supergroup_chat_created,
-				  channel_chat_created;
-	Nullable!long migrate_to_chat_id,
-				  migrate_from_chat_id;
+			group_chat_created,
+			supergroup_chat_created,
+			channel_chat_created;
+	long migrate_to_chat_id,
+			migrate_from_chat_id;
 
 	private @name("pinned_message") Json m_pinned_message;
 	@property @ignore {
-		Nullable!Message pinned_message() {
+		Message pinned_message() {
 			return m_pinned_message.type == Json.Type.null_ 
-					? Nullable!Message.init
-					: Nullable!Message(m_pinned_message.deserializeJson!Message);
+					? Message.init
+					: m_pinned_message.deserializeJson!Message;
 		}
-		void pinned_message(Nullable!Message m) {
-			if(!m.isNull)
-				m_pinned_message = m.get.serializeToJson;
+		void pinned_message(Message m) {
+			m_pinned_message = m.serializeToJson;
 		}
 	}
 
-	Nullable!Invoice invoice;
-	Nullable!SuccessfulPayment successful_payment;
-	Nullable!string connected_website;
+	Invoice invoice;
+	SuccessfulPayment successful_payment;
+	string connected_website;
 }
 
 struct MessageEntity {
@@ -1940,8 +1936,8 @@ struct MessageEntity {
 	int offset;
 	int length;
 @optional:
-	Nullable!string url;
-	Nullable!User user;
+	string url;
+	User user;
 }
 
 struct PhotoSize {
@@ -1949,27 +1945,27 @@ struct PhotoSize {
 	int width;
 	int height;
 @optional:
-	Nullable!int file_size;
+	int file_size;
 }
 
 struct Audio {
 	string file_id;
 	int duration;
 @optional:
-	Nullable!string performer,
-					title,
-					mime_type;
-	Nullable!int file_size;
-	Nullable!PhotoSize thumb;
+	string performer,
+			title,
+			mime_type;
+	int file_size;
+	PhotoSize thumb;
 }
 
 struct Document {
 	string file_id;
 @optional:
-	Nullable!PhotoSize thumb;
-	Nullable!string file_name,
-					mime_type;
-	Nullable!int file_size;
+	PhotoSize thumb;
+	string file_name,
+			mime_type;
+	int file_size;
 }
 
 struct Video {
@@ -1978,17 +1974,17 @@ struct Video {
 		height,
 		duration;
 @optional:
-	Nullable!PhotoSize thumb;
-	Nullable!string mime_type;
-	Nullable!int file_size;
+	PhotoSize thumb;
+	string mime_type;
+	int file_size;
 }
 
 struct Voice {
 	string file_id;
 	int duration;
 @optional:
-	Nullable!string mime_type;
-	Nullable!int file_size;
+	string mime_type;
+	int file_size;
 }
 
 struct VideoNote {
@@ -1996,17 +1992,17 @@ struct VideoNote {
 	int length,
 		duration;
 @optional:
-	Nullable!PhotoSize thumb;
-	Nullable!int file_size;
+	PhotoSize thumb;
+	int file_size;
 }
 
 struct Contact {
 	string phone_number,
 		   first_name;
 @optional:
-	Nullable!string last_name;
-	Nullable!int user_id;
-	Nullable!string vcard;
+	string last_name;
+	int user_id;
+	string vcard;
 }
 
 struct Location {
@@ -2019,8 +2015,8 @@ struct Venue {
 	string title,
 		   address;
 @optional:
-	Nullable!string foursquare_id;
-	Nullable!string foursquare_type;
+	string foursquare_id;
+	string foursquare_type;
 }
 
 struct UserProfilePhotos {
@@ -2031,8 +2027,8 @@ struct UserProfilePhotos {
 struct File {
 	string file_id;
 @optional:
-	Nullable!int file_size;
-	Nullable!string file_path;
+	int file_size;
+	string file_path;
 }
 
 private alias ReplyMarkupStructs = AliasSeq!(ReplyKeyboardMarkup, ReplyKeyboardRemove,
@@ -2049,15 +2045,15 @@ struct ReplyKeyboardMarkup {
 	KeyboardButton[][] keyboard;
 @optional:
 	bool resize_keyboard,
-				  one_time_keyboard,
-				  selective;
+			one_time_keyboard,
+			selective;
 }
 
 struct KeyboardButton {
 	string text;
 @optional:
 	bool request_contact,
-				  request_location;
+			request_location;
 }
 
 struct ReplyKeyboardRemove {
@@ -2086,10 +2082,10 @@ struct CallbackQuery {
 	User from;
 	string chat_instance;
 @optional:
-	Nullable!Message message;
-	Nullable!string inline_message_id,
-					data,
-					game_short_name;
+	Message message;
+	string inline_message_id,
+			data,
+			game_short_name;
 }
 
 struct ForceReply {
@@ -2100,33 +2096,33 @@ struct ForceReply {
 
 struct ChatPhoto {
 	string small_file_id,
-		   big_file_id;
+			big_file_id;
 }
 
 struct ChatMember {
 	User user;
 	string status;
 @optional:
-	Nullable!long until_date;
+	long until_date;
 	bool can_be_edited,
-				  can_change_info,
-				  can_post_messages,
-				  can_edit_messages,
-				  can_delete_messages,
-				  can_invite_users,
-				  can_restrict_members,
-				  can_pin_messages,
-				  can_promote_members,
-				  can_send_messages,
-				  can_send_media_messages,
-				  can_send_other_messages,
-				  can_add_web_page_previews;
+			can_change_info,
+			can_post_messages,
+			can_edit_messages,
+			can_delete_messages,
+			can_invite_users,
+			can_restrict_members,
+			can_pin_messages,
+			can_promote_members,
+			can_send_messages,
+			can_send_media_messages,
+			can_send_other_messages,
+			can_add_web_page_previews;
 }
 
 struct ResponseParameters {
 @optional:
-	Nullable!long migrate_to_chat_id;
-	Nullable!int retry_after;
+	long migrate_to_chat_id;
+	int retry_after;
 }
 
 
@@ -2137,20 +2133,20 @@ struct InputMediaPhoto {
 	string type = "photo";
 	string media;
 @optional:
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
+	string caption;
+	ParseMode parse_mode;
 }
 
 struct InputMediaVideo {
 	string type = "video";
 	string media;
 @optional:
-	Nullable!string thumb;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!int width,
-				 height,
-				 duration;
+	string thumb;
+	string caption;
+	ParseMode parse_mode;
+	int width,
+		height,
+		duration;
 	bool supports_streaming;
 }
 
@@ -2158,33 +2154,33 @@ struct InputMediaAnimation {
 	string type = "animation";
 	string media;
 @optional:
-	Nullable!string thumb;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!int width,
-				 height,
-				 duration;
+	string thumb;
+	string caption;
+	ParseMode parse_mode;
+	int width,
+		height,
+		duration;
 }
 
 struct InputMediaAudio {
 	string type = "audio";
 	string media;
 @optional:
-	Nullable!string thumb;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!int duration;
-	Nullable!string performer;
-	Nullable!string title;
+	string thumb;
+	string caption;
+	ParseMode parse_mode;
+	int duration;
+	string performer;
+	string title;
 }
 
 struct InputMediaDocument {
 	string type = "document";
 	string media;
 @optional:
-	Nullable!string thumb;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
+	string thumb;
+	string caption;
+	ParseMode parse_mode;
 }
 
 struct Sticker {
@@ -2192,11 +2188,11 @@ struct Sticker {
 	int width,
 		height;
 @optional:
-	Nullable!PhotoSize thumb;
-	Nullable!string emoji,
-					set_name;
-	Nullable!MaskPosition mask_position;
-	Nullable!int file_size;
+	PhotoSize thumb;
+	string emoji,
+			set_name;
+	MaskPosition mask_position;
+	int file_size;
 }
 
 struct StickerSet {
@@ -2218,18 +2214,18 @@ struct Game {
 		   description;
 	PhotoSize[] photo;
 @optional:
-	Nullable!string text;
+	string text;
 	MessageEntity[] text_entities;
-	Nullable!Animation animation;
+	Animation animation;
 }
 
 struct Animation {
 	string file_id;
 @optional:
-	Nullable!PhotoSize thumb;
-	Nullable!string file_name,
-					mime_type;
-	Nullable!int file_size;
+	PhotoSize thumb;
+	string file_name,
+			mime_type;
+	int file_size;
 }
 
 struct CallbackGame {}
@@ -2264,10 +2260,10 @@ struct ShippingAddress {
 
 struct OrderInfo {
 @optional:
-	Nullable!string name,
-					phone_number,
-					email;
-	Nullable!ShippingAddress shipping_address;
+	string name,
+			phone_number,
+			email;
+	ShippingAddress shipping_address;
 }
 
 struct ShippingOption {
@@ -2283,8 +2279,8 @@ struct SuccessfulPayment {
 		   telegram_payment_charge_id,
 		   provider_payment_charge_id;
 @optional:
-	Nullable!string shipping_option_id;
-	Nullable!OrderInfo order_info;
+	string shipping_option_id;
+	OrderInfo order_info;
 }
 
 struct ShippingQuery {
@@ -2301,8 +2297,8 @@ struct PreCheckoutQuery {
 	int total_amount;
 	string invoice_payload;
 @optional:
-	Nullable!string shipping_option_id;
-	Nullable!OrderInfo order_info;
+	string shipping_option_id;
+	OrderInfo order_info;
 }
 
 struct InlineQuery {
@@ -2311,7 +2307,7 @@ struct InlineQuery {
 	string query,
 		   offset;
 @optional:
-	Nullable!Location location;
+	Location location;
 }
 
 private alias InlineQueryResultStructs = AliasSeq!(InlineQueryResultArticle, InlineQueryResultPhoto,
@@ -2332,13 +2328,13 @@ struct InlineQueryResultArticle {
 	string title;
 	InputMessageContent input_message_content;
 @optional:
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!string url;
+	InlineKeyboardMarkup reply_markup;
+	string url;
 	bool hide_url;
-	Nullable!string description;
-	Nullable!string thumb_url;
-	Nullable!int thumb_width;
-	Nullable!int thumb_height;
+	string description;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
 }
 
 struct InlineQueryResultPhoto {
@@ -2347,14 +2343,14 @@ struct InlineQueryResultPhoto {
 	string photo_url;
 	string thumb_url;
 @optional:
-	Nullable!int photo_width;
-	Nullable!int photo_height;
-	Nullable!string title;
-	Nullable!string description;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	int photo_width;
+	int photo_height;
+	string title;
+	string description;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultGif {
@@ -2363,14 +2359,14 @@ struct InlineQueryResultGif {
 	string gif_url;
 	string thumb_url;
 @optional:
-	Nullable!int gif_width;
-	Nullable!int gif_height;
-	Nullable!int gif_duration;
-	Nullable!string title;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InputMessageContent input_message_content;
-	Nullable!InlineKeyboardMarkup reply_markup;
+	int gif_width;
+	int gif_height;
+	int gif_duration;
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InputMessageContent input_message_content;
+	InlineKeyboardMarkup reply_markup;
 }
 
 struct InlineQueryResultMpeg4Gif{
@@ -2382,11 +2378,11 @@ struct InlineQueryResultMpeg4Gif{
 	int mpeg4_duration;
 	string thumb_url;
 @optional:
-	Nullable!string title;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultVideo {
@@ -2397,14 +2393,14 @@ struct InlineQueryResultVideo {
 	string thumb_url;
 	string title;
 @optional:
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!int video_width;
-	Nullable!int video_height;
-	Nullable!int video_duration;
-	Nullable!string description;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string caption;
+	ParseMode parse_mode;
+	int video_width;
+	int video_height;
+	int video_duration;
+	string description;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultAudio {
@@ -2413,12 +2409,12 @@ struct InlineQueryResultAudio {
 	string audio_url;
 	string title;
 @optional:
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!string performer;
-	Nullable!int audio_duration;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string caption;
+	ParseMode parse_mode;
+	string performer;
+	int audio_duration;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultVoice {
@@ -2427,11 +2423,11 @@ struct InlineQueryResultVoice {
 	string voice_url;
 	string title;
 @optional:
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!int voice_duration;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string caption;
+	ParseMode parse_mode;
+	int voice_duration;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultDocument {
@@ -2441,14 +2437,14 @@ struct InlineQueryResultDocument {
 	string document_url;
 	string mime_type;
 @optional:
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!string description;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
-	Nullable!string thumb_url;
-	Nullable!int thumb_width;
-	Nullable!int thumb_height;
+	string caption;
+	ParseMode parse_mode;
+	string description;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
 }
 
 struct InlineQueryResultLocation {
@@ -2458,12 +2454,12 @@ struct InlineQueryResultLocation {
 	float longitude;
 	string title;
 @optional:
-	Nullable!int live_period;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
-	Nullable!string thumb_url;
-	Nullable!int thumb_width;
-	Nullable!int thumb_height;
+	int live_period;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
 }
 
 struct InlineQueryResultVenue {
@@ -2474,13 +2470,13 @@ struct InlineQueryResultVenue {
 	string title;
 	string address;
 @optional:
-	Nullable!string foursquare_id;
-	Nullable!string foursquare_type;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
-	Nullable!string thumb_url;
-	Nullable!int thumb_width;
-	Nullable!int thumb_height;
+	string foursquare_id;
+	string foursquare_type;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
 }
 
 struct InlineQueryResultContact {
@@ -2489,20 +2485,20 @@ struct InlineQueryResultContact {
 	string phone_number;
 	string first_name;
 @optional:
-	Nullable!string last_name;
-	Nullable!string vcard;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
-	Nullable!string thumb_url;
-	Nullable!int thumb_width;
-	Nullable!int thumb_height;
+	string last_name;
+	string vcard;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
+	string thumb_url;
+	int thumb_width;
+	int thumb_height;
 }
 
 struct InlineQueryResultGame {
 	string type = "game";
 	string id;
 	string game_short_name;
-	@optional Nullable!InlineKeyboardMarkup reply_markup;
+	@optional InlineKeyboardMarkup reply_markup;
 }
 
 struct InlineQueryResultCachedPhoto {
@@ -2510,12 +2506,12 @@ struct InlineQueryResultCachedPhoto {
 	string id;
 	string photo_file_id;
 @optional:
-	Nullable!string title;
-	Nullable!string description;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string title;
+	string description;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultCachedGif{
@@ -2523,11 +2519,11 @@ struct InlineQueryResultCachedGif{
 	string id;
 	string gif_file_id;
 @optional:
-	Nullable!string title;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultCachedMpeg4Gif{
@@ -2535,11 +2531,11 @@ struct InlineQueryResultCachedMpeg4Gif{
 	string id;
 	string mpeg4_file_id;
 @optional:
-	Nullable!string title;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string title;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultCachedSticker {
@@ -2547,8 +2543,8 @@ struct InlineQueryResultCachedSticker {
 	string id;
 	string sticker_file_id;
 @optional:
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultCachedDocument {
@@ -2557,11 +2553,11 @@ struct InlineQueryResultCachedDocument {
 	string title;
 	string document_file_id;
 @optional:
-	Nullable!string description;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;;
+	string description;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;;
 }
 
 struct InlineQueryResultCachedVideo {
@@ -2570,11 +2566,11 @@ struct InlineQueryResultCachedVideo {
 	string video_file_id;
 	string title;
 @optional:
-	Nullable!string description;
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string description;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultCachedVoice {
@@ -2583,10 +2579,10 @@ struct InlineQueryResultCachedVoice {
 	string voice_file_id;
 	string title;
 @optional:
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 struct InlineQueryResultCachedAudio {
@@ -2594,10 +2590,10 @@ struct InlineQueryResultCachedAudio {
 	string id;
 	string audio_file_id;
 @optional:
-	Nullable!string caption;
-	Nullable!ParseMode parse_mode;
-	Nullable!InlineKeyboardMarkup reply_markup;
-	Nullable!InputMessageContent input_message_content;
+	string caption;
+	ParseMode parse_mode;
+	InlineKeyboardMarkup reply_markup;
+	InputMessageContent input_message_content;
 }
 
 private alias InputMessageContentStructs = AliasSeq!(InputTextMessageContent,
@@ -2608,7 +2604,7 @@ alias InputMessageContent = JsonableAlgebraic!InputMessageContentStructs;
 struct InputTextMessageContent {
 	string message_text;
 @optional:
-	Nullable!ParseMode parse_mode;
+	ParseMode parse_mode;
 	bool disable_web_page_preview;
 }
 
@@ -2616,7 +2612,7 @@ struct InputLocationMessageContent {
 	float latitude;
 	float longitude;
 @optional:
-	Nullable!int live_period;
+	int live_period;
 }
 
 struct InputVenueMessageContent {
@@ -2625,16 +2621,16 @@ struct InputVenueMessageContent {
 	string title;
 	string address;
 @optional:
-	Nullable!string foursquare_id;
-	Nullable!string foursquare_type;
+	string foursquare_id;
+	string foursquare_type;
 }
 
 struct InputContactMessageContent {
 	string phone_number;
 	string first_name;
 @optional:
-	Nullable!string last_name;
-	Nullable!string vcard;
+	string last_name;
+	string vcard;
 }
 
 struct ChosenInlineResult {
@@ -2642,8 +2638,8 @@ struct ChosenInlineResult {
 	User from;
 	string query;
 @optional:
-	Nullable!Location location;
-	Nullable!string inline_message_id;
+	Location location;
+	string inline_message_id;
 }
 
 struct WebhookInfo {
@@ -2651,15 +2647,13 @@ struct WebhookInfo {
 	bool has_custom_certificate;
 	int pending_update_count;
 @optional:
-	Nullable!long last_error_date;
-	Nullable!string last_error_message;
-	Nullable!int max_connections;
+	long last_error_date;
+	string last_error_message;
+	int max_connections;
 	string[] allowed_updates;
 }
 
-/******************************************************************/
 /*                        Telegram methods                        */
-/******************************************************************/
 
 mixin template TelegramMethod(string path) {
 package:
@@ -2682,7 +2676,7 @@ struct SetWebhookMethod {
 	mixin TelegramMethod!"/setWebhook";
 
 	string url;
-	Nullable!InputFile certificate;
+	InputFile certificate;
 	int max_connections;
 	string[] allowed_updates;
 }
