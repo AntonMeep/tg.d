@@ -1488,7 +1488,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Edit message text
+	 * Edit text of a message
 	 *
 	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
 	 *
@@ -1526,7 +1526,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Edit message caption
+	 * Edit caption of a message
 	 *
 	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
 	 *
@@ -1563,30 +1563,42 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	auto editMessageReplyMarkup(T)(T chat_id, int message_id, InlineKeyboardMarkup replyMarkup)
+	/**
+	 * Edit reply markup of a message
+	 *
+	 * Overloads take either `chat_id` and `message_id` or `inline_message_id`
+	 *
+	 * Params:
+	 *     chat_id           = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 *     message_id        = Identifier of the sent message
+	 *     inline_message_id = Identifier of the inline message
+	 *     reply_markup      = Object for a new inline keyboard
+	 * Returns: edited `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `EditMessageReplyMarkup`, $(LINK https://core.telegram.org/bots/api#editmessagereplymarkup)
+	 */
+	Message editMessageReplyMarkup(T)(T chat_id, int message_id, InlineKeyboardMarkup reply_markup)
 	if(isTelegramID!T) {
 		EditMessageReplyMarkupMethod m = {
 			message_id: message_id,
 			chat_id: chat_id,
-			reply_markup: replyMarkup,
+			reply_markup: reply_markup,
 		};
-
-		m.reply_markup = replyMarkup;
 
 		return editMessageReplyMarkup(m);
 	}
-
-	auto editMessageReplyMarkup(string inline_message_id, Nullable!ReplyMarkup replyMarkup) {
+	/// ditto
+	auto editMessageReplyMarkup(string inline_message_id, InlineKeyboardMarkup reply_markup) {
 		EditMessageReplyMarkupMethod m = {
 			inline_message_id: inline_message_id,
-			reply_markup: replyMarkup,
+			reply_markup: reply_markup,
 		};
 
 		return editMessageReplyMarkup(m);
 	}
-
+	/// ditto
 	auto editMessageReplyMarkup(EditMessageReplyMarkupMethod m) {
-		return callMethod!(JsonableAlgebraic!(Message, bool))(m);
+		return callMethod!Message(m);
 	}
 
 	auto editMessageMedia(T)(T chat_id, int message_id, InputMedia media) {
