@@ -1337,6 +1337,15 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Get up-to-date information about the chat
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
+	 * Returns: `Chat` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `GetChatMethod`, $(LINK https://core.telegram.org/bots/api#getchat)
+	 */
 	Chat getChat(T)(T chat_id) if(isTelegramID!T) {
 		GetChatMethod m = {
 			chat_id: chat_id,
@@ -1344,7 +1353,7 @@ struct TelegramBot {
 
 		return getChat(m);
 	}
-
+	/// ditto
 	Chat getChat(GetChatMethod m) {
 		return callMethod!Chat(m);
 	}
