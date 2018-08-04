@@ -12,8 +12,6 @@ dub.json:
 +/
 
 import core.time      : seconds;
-import std.algorithm  : each;
-import std.range      : tee;
 import tg.d;
 import vibe.core.args : readRequiredOption;
 import vibe.core.core : runApplication, setTimer;
@@ -21,7 +19,7 @@ import vibe.core.log  : logInfo;
 
 int main() {
 	auto Bot = TelegramBot(
-		"token|t".readRequiredOption!string("Bot token to use. Ask Botfather for it")
+		"token|t".readRequiredOption!string("Bot token to use. Ask BotFather for it")
 	);
 
 	auto me = Bot.getMe;
@@ -29,19 +27,19 @@ int main() {
 	"\tID: %d"           .logInfo(me.id);
 	"\tIs bot: %s"       .logInfo(me.is_bot);
 	"\tFirst name: %s"   .logInfo(me.first_name);
-	"\tLast name: %s"    .logInfo(me.last_name.isNull     ? "null" : me.last_name);
-	"\tUsername: %s"     .logInfo(me.username.isNull      ? "null" : me.username);
-	"\tLanguage code: %s".logInfo(me.language_code.isNull ? "null" : me.language_code);
+	"\tLast name: %s"    .logInfo(me.last_name);
+	"\tUsername: %s"     .logInfo(me.username);
+	"\tLanguage code: %s".logInfo(me.language_code);
 
 	"Setting up the timer".logInfo;
 	1.seconds.setTimer(
 		() {
 			foreach(update; Bot.updateGetter) {
-				if(!update.callback_query.isNull) {
+				if(update.callback_query.id) {
 					"Answering callback query".logInfo;
 					Bot.answerCallbackQuery(update.callback_query.id);
 					Bot.sendMessage(update.callback_query.message.chat.id, "Done!");
-				} else if(!update.message.isNull && !update.message.text.isNull) {
+				} else if(update.message.id) {
 					InlineKeyboardButton button_url = {
 						text: "Visit project's repository",
 						url: "https://gitlab.com/ohboi/tg.d",
