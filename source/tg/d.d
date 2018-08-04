@@ -704,6 +704,18 @@ struct TelegramBot {
 		).sendVideo(42L, "https://example.com/video.mp4").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
 	}
 
+	/**
+	 * Send animation
+	 *
+	 * Animation must be in GIF format or H.264/MPEG-4 AVC video without sound 
+	 *
+	 * Params:
+	 *     chat_id   = Unique identifier of the chat or username of the target channel
+	 *     animation = HTTP URL to get animation from the internet or `file_id` of the file on Telegram
+	 * Returns: Sent `Message`
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SendAnimationMethod`, $(LINK https://core.telegram.org/bots/api#sendanimation)
+	 */
 	Message sendAnimation(T)(T chat_id, string animation) if(isTelegramID!T) {
 		SendAnimationMethod m = {
 			animation: animation,
@@ -712,7 +724,7 @@ struct TelegramBot {
 
 		return sendAnimation(m);
 	}
-
+	/// ditto
 	Message sendAnimation(SendAnimationMethod m) {
 		return callMethod!Message(m);
 	}
