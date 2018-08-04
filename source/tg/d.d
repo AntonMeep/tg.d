@@ -1040,14 +1040,23 @@ struct TelegramBot {
 		return callMethod!UserProfilePhotos(m);
 	}
 
-	File getFile(string fileId) {
+	/**
+	 * Get info about a file and prepare it for downloading
+	 *
+	 * Params:
+	 *     file_id      = File identifier to get info about
+	 * Returns: `File` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `GetFileMethod`, $(LINK https://core.telegram.org/bots/api#getfile)
+	 */
+	File getFile(string file_id) {
 		GetFileMethod m = {
-			file_id: fileId,
+			file_id: file_id,
 		};
 
 		return getFile(m);
 	}
-
+	/// ditto
 	File getFile(GetFileMethod m) {
 		return callMethod!File(m);
 	}
