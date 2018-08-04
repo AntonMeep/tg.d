@@ -135,7 +135,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Use this method to receive incoming updates using long polling
+	 * Receives incoming updates using long polling
 	 *
 	 * Params:
 	 *     offset          = Identifier of the first update to be returned
@@ -290,7 +290,7 @@ struct TelegramBot {
 	}
 
 	/**
-	 * Use this method to specify a url and receive incoming updates via an outgoing webhook
+	 * Sets a webhook to be used to receive incoming updates
 	 *
 	 * Params:
 	 *     url          = HTTPS url to send updates to. Use an empty string to remove webhook integration
