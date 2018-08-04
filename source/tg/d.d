@@ -405,8 +405,9 @@ struct TelegramBot {
 	 * Send text message
 	 *
 	 * Params:
-	 *     chat_id = Unique identifier of the chat or username of the channel
-	 *     text   = Text to be sent
+	 *     chat_id  = Unique identifier of the chat or username of the channel
+	 *     reply_to = If the message is a reply, ID of the original message
+	 *     text     = Text to be sent
 	 * Returns: Sent `Message`
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: $(LINK https://core.telegram.org/bots/api#sendmessage)
@@ -419,18 +420,7 @@ struct TelegramBot {
 
 		return sendMessage(m);
 	}
-
-	/**
-	 * Reply to a message
-	 *
-	 * Params:
-	 *     chat_id  = Unique identifier of the chat or username of the channel
-	 *     reply_to = ID of the original message
-	 *     text     = Text to be sent
-	 * Returns: Sent `Message`
-	 * Throws: `TelegramBotException` on errors
-	 * See_Also: $(LINK https://core.telegram.org/bots/api#sendmessage)
-	 */
+	/// ditto
 	Message sendMessage(T)(T chat_id, int reply_to, string text) if(isTelegramID!T) {
 		SendMessageMethod m = {
 			text: text,
@@ -440,7 +430,7 @@ struct TelegramBot {
 
 		return sendMessage(m);
 	}
-
+	/// ditto
 	Message sendMessage(SendMessageMethod m) {
 		return callMethod!(Message, SendMessageMethod)(m);
 	}
