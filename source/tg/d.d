@@ -310,7 +310,7 @@ struct TelegramBot {
 			max_connections: max_connections,
 		};
 
-		return callMethod!(bool, SetWebhookMethod)(m);
+		return callMethod!bool(m);
 	}
 
 	/**
@@ -324,9 +324,7 @@ struct TelegramBot {
 	 */
 	deprecated("Webhooks aren't fully implemented yet")
 	bool deleteWebhook() {
-		DeleteWebhookMethod m = DeleteWebhookMethod();
-
-		return callMethod!(bool, DeleteWebhookMethod)(m);
+		return callMethod!bool(DeleteWebhookMethod());
 	}
 
 	/**
@@ -339,9 +337,7 @@ struct TelegramBot {
 	 */
 	deprecated("Webhooks aren't fully implemented yet")
 	WebhookInfo getWebhookInfo() {
-		GetWebhookInfoMethod m = GetWebhookInfoMethod();
-
-		return callMethod!(WebhookInfo, GetWebhookInfoMethod)(m);
+		return callMethod!WebhookInfo(GetWebhookInfoMethod());
 	}
 
 	/**
@@ -352,9 +348,7 @@ struct TelegramBot {
 	 * See_Also: $(LINK https://core.telegram.org/bots/api#getme)
 	 */
 	User getMe() {
-		GetMeMethod m;
-
-		return callMethod!(User, GetMeMethod)(m);
+		return callMethod!User(GetMeMethod());
 	}
 
 	@("TelegramBot.getMe()")
@@ -432,7 +426,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message sendMessage(SendMessageMethod m) {
-		return callMethod!(Message, SendMessageMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	@("TelegramBot.sendMessage()")
@@ -495,11 +489,11 @@ struct TelegramBot {
 			from_chat_id: from_chat_id,
 		};
 
-		return callMethod!(Message, ForwardMessageMethod)(m);
+		return callMethod!Message(m);
 	}
 	/// ditto
 	Message forwardMessage(ForwardMessageMethod m) {
-		return callMethod!(Message, ForwardMessageMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	@("TelegramBot.forwardMessage()")
@@ -544,7 +538,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message sendPhoto(SendPhotoMethod m) {
-		return callMethod!(Message, SendPhotoMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	@("TelegramBot.sendPhoto()")
@@ -590,7 +584,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message sendAudio(SendAudioMethod m) {
-		return callMethod!(Message, SendAudioMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	@("TelegramBot.sendAudio()")
@@ -634,7 +628,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message sendDocument(SendDocumentMethod m) {
-		return callMethod!(Message, SendDocumentMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	@("TelegramBot.sendDocument()")
@@ -680,7 +674,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message sendVideo(SendVideoMethod m) {
-		return callMethod!(Message, SendVideoMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	@("TelegramBot.sendVideo()")
@@ -772,7 +766,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message sendVoice(SendVoiceMethod m) {
-		return callMethod!(Message, SendVoiceMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	@("TelegramBot.sendVoice()")
@@ -818,7 +812,7 @@ struct TelegramBot {
 	}
 	/// ditto
 	Message sendVideoNote(SendVideoNoteMethod m) {
-		return callMethod!(Message, SendVideoNoteMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	Message sendMediaGroup(T)(T chat_id, InputMedia[] media) if(isTelegramID!T) {
@@ -831,7 +825,7 @@ struct TelegramBot {
 	}
 
 	Message sendMediaGroup(SendMediaGroupMethod m) {
-		return callMethod!(Message, SendMediaGroupMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	Message sendLocation(T)(T chat_id, float latitude, float longitude) if(isTelegramID!T) {
@@ -845,7 +839,7 @@ struct TelegramBot {
 	}
 
 	Message sendLocation(SendLocationMethod m) {
-		return callMethod!(Message, SendLocationMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	Nullable!Message editMessageLiveLocation(string inlineMessageId, float latitude, float longitude) {
@@ -871,7 +865,7 @@ struct TelegramBot {
 	}
 
 	Nullable!Message editMessageLiveLocation(EditMessageLiveLocationMethod m) {
-		return callMethod!(Nullable!Message, EditMessageLiveLocationMethod)(m);
+		return callMethod!(Nullable!Message)(m);
 	}
 
 	Nullable!Message stopMessageLiveLocation(string inlineMessageId) {
@@ -892,7 +886,7 @@ struct TelegramBot {
 	}
 
 	Nullable!Message stopMessageLiveLocation(StopMessageLiveLocationMethod m) {
-		return callMethod!(Nullable!Message, StopMessageLiveLocationMethod)(m);
+		return callMethod!(Nullable!Message)(m);
 	}
 
 	Message sendVenue(T)(T chat_id, float latitude, float longitude, string title, string address)
@@ -909,7 +903,7 @@ struct TelegramBot {
 	}
 
 	Message sendVenue(SendVenueMethod m) {
-		return callMethod!(Message, SendVenueMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	Message sendContact(T)(T chat_id, string phone_number, string first_name)
@@ -924,7 +918,7 @@ struct TelegramBot {
 	}
 
 	Message sendContact(SendContactMethod m) {
-		return callMethod!(Message, SendContactMethod)(m);
+		return callMethod!Message(m);
 	}
 
 	bool sendChatAction(T)(T chat_id, string action) if(isTelegramID!T) {
@@ -937,7 +931,7 @@ struct TelegramBot {
 	}
 
 	bool sendChatAction(SendChatActionMethod m) {
-		return callMethod!(bool, SendChatActionMethod)(m);
+		return callMethod!bool(m);
 	}
 
 	UserProfilePhotos getUserProfilePhotos(int user_id) {
@@ -949,7 +943,7 @@ struct TelegramBot {
 	}
 
 	UserProfilePhotos getUserProfilePhotos(GetUserProfilePhotosMethod m) {
-		return callMethod!(UserProfilePhotos, GetUserProfilePhotosMethod)(m);
+		return callMethod!UserProfilePhotos(m);
 	}
 
 	File getFile(string fileId) {
@@ -961,7 +955,7 @@ struct TelegramBot {
 	}
 
 	File getFile(GetFileMethod m) {
-		return callMethod!(File, GetFileMethod)(m);
+		return callMethod!File(m);
 	}
 
 	bool kickChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
@@ -974,7 +968,7 @@ struct TelegramBot {
 	}
 
 	bool kickChatMember(KickChatMemberMethod m) {
-		return callMethod!(bool, KickChatMemberMethod)(m);
+		return callMethod!bool(m);
 	}
 
 	bool unbanChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
@@ -987,7 +981,7 @@ struct TelegramBot {
 	}
 
 	bool unbanChatMember(UnbanChatMemberMethod m) {
-		return callMethod!(bool, UnbanChatMemberMethod)(m);
+		return callMethod!bool(m);
 	}
 
 	bool restrictChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
