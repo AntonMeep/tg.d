@@ -1130,6 +1130,16 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Promote or demote a user in a supergroup or a channel
+	 *
+	 * Params:
+	 *     chat_id = Unique identifier for the target chat or username of the target channel
+	 *     user_id = Unique identifier of the target user
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `PromoteChatMemberMethod`, $(LINKhttps://core.telegram.org/bots/api#promotechatmember)
+	 */
 	bool promoteChatMember(T)(T chat_id, int user_id) if(isTelegramID!T) {
 		PromoteChatMemberMethod m = {
 			user_id: user_id,
@@ -1138,7 +1148,7 @@ struct TelegramBot {
 
 		return promoteChatMember(m);
 	}
-
+	/// ditto
 	bool promoteChatMember(PromoteChatMemberMethod m) {
 		return callMethod!bool(m);
 	}
