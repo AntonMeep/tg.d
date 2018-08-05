@@ -12,16 +12,14 @@ dub.json:
 +/
 
 import core.time      : seconds;
-import std.algorithm  : each;
-import std.range      : tee;
-import tg.d           : TelegramBot, SendMessageMethod;
+import tg.d           : TelegramBot;
 import vibe.core.args : readRequiredOption;
 import vibe.core.core : runApplication, setTimer;
 import vibe.core.log  : logInfo;
 
 int main() {
 	auto Bot = TelegramBot(
-		"token|t".readRequiredOption!string("Bot token to use. Ask Botfather for it")
+		"token|t".readRequiredOption!string("Bot token to use. Ask BotFather for it")
 	);
 
 	auto me = Bot.getMe;
@@ -29,18 +27,19 @@ int main() {
 	"\tID: %d"           .logInfo(me.id);
 	"\tIs bot: %s"       .logInfo(me.is_bot);
 	"\tFirst name: %s"   .logInfo(me.first_name);
-	"\tLast name: %s"    .logInfo(me.last_name.isNull     ? "null" : me.last_name);
-	"\tUsername: %s"     .logInfo(me.username.isNull      ? "null" : me.username);
-	"\tLanguage code: %s".logInfo(me.language_code.isNull ? "null" : me.language_code);
+	"\tLast name: %s"    .logInfo(me.last_name);
+	"\tUsername: %s"     .logInfo(me.username);
+	"\tLanguage code: %s".logInfo(me.language_code);
 
 	"Setting up the timer".logInfo;
 	1.seconds.setTimer(
-		() {
-			Bot.updateGetter
-				.tee!( a =>
-					Bot.sendMessage(a.message.chat.id, a.message.id, "Oh, do you really mean it? It's so nice of you!"))
-				.each!(a =>
-					"Replied to user %s who wrote `%s`".logInfo(a.message.from.first_name, a.message.text));
+		{
+			foreach(update; Bot.updateGetter) {
+				if(update.message.isNull)
+					continue; // Skipping other kinds of updates
+				Bot.sendMessage(update.message.chat.id, update.message.id, "Oh, do you really mean it? It's so nice of you!");
+				"Replied to user %s who wrote `%s`".logInfo(update.message.from.first_name, update.message.text);
+			}
 		},
 		true); // To run this timer not just once, but every second
 

@@ -45,15 +45,15 @@ int main() {
 	"\tID: %d"           .logInfo(me.id);
 	"\tIs bot: %s"       .logInfo(me.is_bot);
 	"\tFirst name: %s"   .logInfo(me.first_name);
-	"\tLast name: %s"    .logInfo(me.last_name.isNull     ? "null" : me.last_name);
-	"\tUsername: %s"     .logInfo(me.username.isNull      ? "null" : me.username);
-	"\tLanguage code: %s".logInfo(me.language_code.isNull ? "null" : me.language_code);
+	"\tLast name: %s"    .logInfo(me.last_name);
+	"\tUsername: %s"     .logInfo(me.username);
+	"\tLanguage code: %s".logInfo(me.language_code);
 
 	"Setting up the timer".logInfo;
 	1.seconds.setTimer(
 		() {
 			foreach(update; Bot.updateGetter) {
-				if(update.message.isNull || update.message.text.isNull) // We are only caring about text messages
+				if(update.message.isNull || !update.message.text.length) // We are only caring about text messages
 					continue;
 
 				if(update.message.text.startsWith("/photo")) {

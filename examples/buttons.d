@@ -35,13 +35,13 @@ int main() {
 	1.seconds.setTimer(
 		() {
 			foreach(update; Bot.updateGetter) {
-				if(update.callback_query.id) {
+				if(!update.callback_query.isNull) {
 					"Answering callback query".logInfo;
 					Bot.answerCallbackQuery(update.callback_query.id);
 					Bot.sendMessage(update.callback_query.message.chat.id, "Done!");
-				} else if(update.message.id) {
+				} else if(!update.message.isNull) {
 					InlineKeyboardButton button_url = {
-						text: "Visit project's repository",
+						text: "Visit repository",
 						url: "https://gitlab.com/ohboi/tg.d",
 					};
 
