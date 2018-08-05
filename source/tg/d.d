@@ -8,11 +8,10 @@
  */
 module tg.d;
 
-import std.traits : FieldNameTuple;
+import std.math : isNaN;
 
 import vibe.core.log;
-import vibe.data.json;
-import vibe.data.serialization : optional;
+import vibe.data.json : Json;
 
 import std.meta : AliasSeq, staticIndexOf;
 
@@ -52,6 +51,7 @@ struct TelegramBot {
 		struct MethodResult(T) {
 			bool ok;
 		@optional:
+		@optional:
 			T result;
 			ushort error_code;
 			string description;
@@ -59,8 +59,6 @@ struct TelegramBot {
 
 		version(unittest) Json delegate(string, Json) @safe m_fakecall;
 	}
-@safe:
-
 	/**
 	 * Create a new bot using token
 	 *
@@ -79,14 +77,7 @@ struct TelegramBot {
 		}
 
 		private T callMethod(T, M)(M method) {
-			Json j = Json.emptyObject;
-
-			static foreach(field; FieldNameTuple!M)
-				static if(field != "m_path")
-					if(mixin("method." ~ field ~ " != typeof(method." ~ field ~ ").init"))
-						j[field] = mixin("method." ~ field).serializeToJson;
-
-			auto json = m_fakecall(m_url ~ method.m_path, j).deserializeJson!(MethodResult!T);
+			auto json = m_fakecall(m_url ~ method.m_path, method.serializeToJson).deserializeJson!(MethodResult!T);
 
 			if(!json.ok)
 				throw new TelegramBotException(json.error_code, json.description);
@@ -104,12 +95,7 @@ struct TelegramBot {
 				(scope req) {
 					req.method = HTTPMethod.POST;
 
-					Json j = Json.emptyObject;
-
-					static foreach(field; FieldNameTuple!M)
-						static if(field != "m_path")
-							if(mixin("method." ~ field ~ " != typeof(method." ~ field ~ ").init"))
-								j[field] = mixin("method." ~ field).serializeToJson;
+					Json j = method.serializeToJson;
 
 					debug version(TgD_Verbose) "tg.d | Sending body: %s".logDebugV(j);
 					req.writeJsonBody(j);
@@ -178,7 +164,7 @@ struct TelegramBot {
 					"result": Json.emptyArray,
 				]);
 			}
-		).getUpdates.serializeToJsonString.should.be.equal(`[]`);
+		).getUpdates.length.should.be.equal(0);
 	}
 
 	/**
@@ -205,7 +191,6 @@ struct TelegramBot {
 				string[] m_allowed_updates;
 			}
 
-		@safe:
 			this(TelegramBot bot, int timeout, string[] allowed_updates) {
 				m_bot = bot;
 				m_buffer.reserve = 100;
@@ -444,7 +429,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendMessage(42L, "text").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).sendMessage(42L, "text").isNull.should.be.equal(true);
 
 		TelegramBot(
 			"TOKEN",
@@ -463,8 +448,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendMessage("@superchat", 123, "text").serializeToJsonString
-			.should.be.equal(Message().serializeToJsonString);
+		).sendMessage("@superchat", 123, "text").isNull.should.be.equal(true);
 	}
 
 	/**
@@ -512,7 +496,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).forwardMessage(42L, 43L, 1337).serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).forwardMessage(42L, 43L, 1337).isNull.should.be.equal(true);
 	}
 
 	/**
@@ -556,7 +540,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendPhoto(42L, "https://example.com/dogs.jpg").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).sendPhoto(42L, "https://example.com/dogs.jpg").isNull.should.be.equal(true);
 	}
 
 	/**
@@ -602,7 +586,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendAudio(42L, "https://example.com/woof.mp3").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).sendAudio(42L, "https://example.com/woof.mp3").isNull.should.be.equal(true);
 	}
 
 	/**
@@ -646,7 +630,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendDocument(42L, "https://example.com/document.pdf").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).sendDocument(42L, "https://example.com/document.pdf").isNull.should.be.equal(true);
 	}
 
 	/**
@@ -692,7 +676,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendVideo(42L, "https://example.com/video.mp4").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).sendVideo(42L, "https://example.com/video.mp4").isNull.should.be.equal(true);
 	}
 
 	/**
@@ -738,7 +722,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendAnimation(42L, "https://example.com/me.gif").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).sendAnimation(42L, "https://example.com/me.gif").isNull.should.be.equal(true);
 	}
 
 	/**
@@ -784,7 +768,7 @@ struct TelegramBot {
 					"result": Message().serializeToJson,
 				]);
 			}
-		).sendVoice(42L, "https://example.com/voice.ogg").serializeToJsonString.should.be.equal(Message().serializeToJsonString);
+		).sendVoice(42L, "https://example.com/voice.ogg").isNull.should.be.equal(true);
 	}
 
 	/**
@@ -822,7 +806,7 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `SendMediaGroupMethod`, $(LINK https://core.telegram.org/bots/api#sendmediagroup)
 	 */
-	Message sendMediaGroup(T)(T chat_id, JsonableAlgebraic!(InputMediaPhoto, InputMediaVideo)[] media)
+	Message sendMediaGroup(T)(T chat_id, Algebraic!(InputMediaPhoto, InputMediaVideo)[] media)
 	if(isTelegramID!T)
 	in(2 <= media.length && media.length <= 10) {
 		SendMediaGroupMethod m = {
@@ -1800,6 +1784,7 @@ struct InputFile {}
 
 struct Update {
 	int update_id;
+
 @optional:
 	Message message,
 			edited_message,
@@ -1810,23 +1795,34 @@ struct Update {
 	CallbackQuery callback_query;
 	ShippingQuery shopping_query;
 	PreCheckoutQuery pre_checkout_query;
+
+@ignore @property:
+	bool isNull() { return update_id == typeof(update_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct User {
 	int id;
 	bool is_bot;
 	string first_name;
+
 @optional:
 	string last_name,
 			username,
 			language_code;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Chat {
 @safe:
 	long id;
 	ChatType type;
+
 @optional:
+
 	string title,
 			username,
 			first_name,
@@ -1838,18 +1834,22 @@ struct Chat {
 
 	private @name("pinned_message") Json m_pinned_message;
 	@property @ignore {
-		Message pinned_message() {
-			return m_pinned_message.type == Json.Type.null_ 
-					? Message.init
-					: m_pinned_message.deserializeJson!Message;
-		}
-		void pinned_message(Message m) {
-			m_pinned_message = m.serializeToJson;
-		}
+		// Message pinned_message() {
+		// 	return m_pinned_message.type == Json.Type.null_ 
+		// 			? Message.init
+		// 			: m_pinned_message.deserializeJson!Message;
+		// }
+		// void pinned_message(Message m) {
+		// 	m_pinned_message = m.serializeToJson;
+		// }
 	}
 
 	string sticker_set_name;
 	bool can_set_sticker_set;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Message {
@@ -1861,11 +1861,11 @@ struct Message {
 		void id(int i) { message_id = i;    }
 	}
 
-	@optional User from;
 	long date;
 	Chat chat;
 
 @optional:
+	User from;
 	User forward_from;
 	Chat forward_from_chat;
 	int forward_from_message_id;
@@ -1874,14 +1874,14 @@ struct Message {
 
 	private @name("reply_to_message") Json m_reply_to_message;
 	@property @ignore {
-		Message reply_to_message() {
-			return m_reply_to_message.type == Json.Type.null_ 
-					? Message.init
-					: m_reply_to_message.deserializeJson!Message;
-		}
-		void reply_to_message(Message m) {
-			m_reply_to_message = m.serializeToJson;
-		}
+		// Message reply_to_message() {
+		// 	return m_reply_to_message.type == Json.Type.null_ 
+		// 			? Message.init
+		// 			: m_reply_to_message.deserializeJson!Message;
+		// }
+		// void reply_to_message(Message m) {
+		// 	m_reply_to_message = m.serializeToJson;
+		// }
 	}
 
 	long edit_date;
@@ -1916,56 +1916,80 @@ struct Message {
 
 	private @name("pinned_message") Json m_pinned_message;
 	@property @ignore {
-		Message pinned_message() {
-			return m_pinned_message.type == Json.Type.null_ 
-					? Message.init
-					: m_pinned_message.deserializeJson!Message;
-		}
-		void pinned_message(Message m) {
-			m_pinned_message = m.serializeToJson;
-		}
+		// Message pinned_message() {
+		// 	return m_pinned_message.type == Json.Type.null_ 
+		// 			? Message.init
+		// 			: m_pinned_message.deserializeJson!Message;
+		// }
+		// void pinned_message(Message m) {
+		// 	m_pinned_message = m.serializeToJson;
+		// }
 	}
 
 	Invoice invoice;
 	SuccessfulPayment successful_payment;
 	string connected_website;
+
+@ignore @property:
+	bool isNull() { return message_id == typeof(message_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct MessageEntity {
 	string type;
 	int offset;
 	int length;
+
 @optional:
 	string url;
 	User user;
+
+@ignore @property:
+	bool isNull() { return length == typeof(length).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct PhotoSize {
 	string file_id;
 	int width;
 	int height;
+
 @optional:
 	int file_size;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Audio {
 	string file_id;
 	int duration;
+
 @optional:
 	string performer,
 			title,
 			mime_type;
 	int file_size;
 	PhotoSize thumb;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Document {
 	string file_id;
+
 @optional:
 	PhotoSize thumb;
 	string file_name,
 			mime_type;
 	int file_size;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Video {
@@ -1973,62 +1997,100 @@ struct Video {
 	int width,
 		height,
 		duration;
+
 @optional:
 	PhotoSize thumb;
 	string mime_type;
 	int file_size;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Voice {
 	string file_id;
 	int duration;
+
 @optional:
 	string mime_type;
 	int file_size;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct VideoNote {
 	string file_id;
 	int length,
 		duration;
+
 @optional:
 	PhotoSize thumb;
 	int file_size;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Contact {
 	string phone_number,
 		   first_name;
+
 @optional:
 	string last_name;
 	int user_id;
 	string vcard;
+
+@ignore @property:
+	bool isNull() { return phone_number == typeof(phone_number).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Location {
 	float longitude,
 		  latitude;
+
+@ignore @property:
+	bool isNull() { return longitude.isNaN; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Venue {
 	Location location;
 	string title,
 		   address;
+
 @optional:
 	string foursquare_id;
 	string foursquare_type;
+
+@ignore @property:
+	bool isNull() { return location.isNull; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct UserProfilePhotos {
 	int total_count;
 	PhotoSize[] photos;
+
+@ignore @property:
+	bool isNull() { return total_count == typeof(total_count).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct File {
 	string file_id;
+
 @optional:
 	int file_size;
 	string file_path;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 private alias ReplyMarkupStructs = AliasSeq!(ReplyKeyboardMarkup, ReplyKeyboardRemove,
@@ -2038,36 +2100,56 @@ private alias ReplyMarkupStructs = AliasSeq!(ReplyKeyboardMarkup, ReplyKeyboardR
  Abstract structure for unioining ReplyKeyboardMarkup, ReplyKeyboardRemove,
  InlineKeyboardMarkup and ForceReply
 */
-alias ReplyMarkup = JsonableAlgebraic!ReplyMarkupStructs;
+alias ReplyMarkup = Algebraic!ReplyMarkupStructs;
 enum isReplyMarkup(T) = is(T == ReplyMarkup) || staticIndexOf!(T, ReplyMarkupStructs) >= 0;
 
 struct ReplyKeyboardMarkup {
 	KeyboardButton[][] keyboard;
+
 @optional:
 	bool resize_keyboard,
 			one_time_keyboard,
 			selective;
+
+@ignore @property:
+	bool isNull() { return keyboard == typeof(keyboard).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct KeyboardButton {
 	string text;
+
 @optional:
 	bool request_contact,
 			request_location;
+
+@ignore @property:
+	bool isNull() { return text == typeof(text).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ReplyKeyboardRemove {
-	bool remove_keyboard = true;
+	bool remove_keyboard;
+
 @optional:
 	bool selective;
+
+@ignore @property:
+	bool isNull() { return remove_keyboard == typeof(remove_keyboard).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineKeyboardMarkup {
 	InlineKeyboardButton[][] inline_keyboard;
+
+@ignore @property:
+	bool isNull() { return inline_keyboard == typeof(inline_keyboard).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineKeyboardButton {
 	string text;
+
 @optional:
 	string url,
 		   callback_data,
@@ -2075,33 +2157,53 @@ struct InlineKeyboardButton {
 		   switch_inline_query_current_chat;
 	CallbackGame callback_game;
 	bool pay;
+
+@ignore @property:
+	bool isNull() { return text == typeof(text).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct CallbackQuery {
 	string id;
 	User from;
 	string chat_instance;
+
 @optional:
 	Message message;
 	string inline_message_id,
 			data,
 			game_short_name;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ForceReply {
 	bool force_reply;
+
 @optional:
 	bool selective;
+
+@ignore @property:
+	bool isNull() { return force_reply == typeof(force_reply).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ChatPhoto {
 	string small_file_id,
 			big_file_id;
+
+
+@ignore @property:
+	bool isNull() { return small_file_id == typeof(small_file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ChatMember {
 	User user;
 	string status;
+
 @optional:
 	long until_date;
 	bool can_be_edited,
@@ -2117,29 +2219,43 @@ struct ChatMember {
 			can_send_media_messages,
 			can_send_other_messages,
 			can_add_web_page_previews;
+
+@ignore @property:
+	bool isNull() { return user.isNull; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ResponseParameters {
 @optional:
 	long migrate_to_chat_id;
 	int retry_after;
+
+@ignore @property:
+	bool isNull() { return !migrate_to_chat_id && !retry_after; }
+	deprecated typeof(this) get() { return this; }
 }
 
 
 private alias InputMediaStructs = AliasSeq!(InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument);
-alias InputMedia = JsonableAlgebraic!InputMediaStructs;
+alias InputMedia = Algebraic!InputMediaStructs;
 
 struct InputMediaPhoto {
 	string type = "photo";
 	string media;
+
 @optional:
 	string caption;
 	ParseMode parse_mode;
+
+@ignore @property:
+	bool isNull() { return media == typeof(media).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaVideo {
 	string type = "video";
 	string media;
+
 @optional:
 	string thumb;
 	string caption;
@@ -2148,11 +2264,16 @@ struct InputMediaVideo {
 		height,
 		duration;
 	bool supports_streaming;
+
+@ignore @property:
+	bool isNull() { return media == typeof(media).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaAnimation {
 	string type = "animation";
 	string media;
+
 @optional:
 	string thumb;
 	string caption;
@@ -2160,11 +2281,16 @@ struct InputMediaAnimation {
 	int width,
 		height,
 		duration;
+
+@ignore @property:
+	bool isNull() { return media == typeof(media).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaAudio {
 	string type = "audio";
 	string media;
+
 @optional:
 	string thumb;
 	string caption;
@@ -2172,27 +2298,41 @@ struct InputMediaAudio {
 	int duration;
 	string performer;
 	string title;
+
+@ignore @property:
+	bool isNull() { return media == typeof(media).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaDocument {
 	string type = "document";
 	string media;
+
 @optional:
 	string thumb;
 	string caption;
 	ParseMode parse_mode;
+
+@ignore @property:
+	bool isNull() { return media == typeof(media).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Sticker {
 	string file_id;
 	int width,
 		height;
+
 @optional:
 	PhotoSize thumb;
 	string emoji,
 			set_name;
 	MaskPosition mask_position;
 	int file_size;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct StickerSet {
@@ -2200,6 +2340,10 @@ struct StickerSet {
 		   title;
 	bool contains_masks;
 	Sticker[] stickers;
+
+@ignore @property:
+	bool isNull() { return name == typeof(name).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct MaskPosition {
@@ -2207,38 +2351,64 @@ struct MaskPosition {
 	float x_shift,
 		  y_shift,
 		  scale;
+
+@ignore @property:
+	bool isNull() { return point == typeof(point).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Game {
 	string title,
 		   description;
 	PhotoSize[] photo;
+
 @optional:
 	string text;
 	MessageEntity[] text_entities;
 	Animation animation;
+
+@ignore @property:
+	bool isNull() { return title == typeof(title).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Animation {
 	string file_id;
+
 @optional:
 	PhotoSize thumb;
 	string file_name,
 			mime_type;
 	int file_size;
+
+@ignore @property:
+	bool isNull() { return file_id == typeof(file_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
-struct CallbackGame {}
+struct CallbackGame {
+@ignore @property:
+	bool isNull() { return true; }
+	deprecated typeof(this) get() { return this; }
+}
 
 struct GameHighScore {
 	int position;
 	User user;
 	int score;
+
+@ignore @property:
+	bool isNull() { return position == typeof(position).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct LabeledPrice {
 	string label;
 	int amount;
+
+@ignore @property:
+	bool isNull() { return label == typeof(label).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct Invoice {
@@ -2247,6 +2417,10 @@ struct Invoice {
 		   start_parameter,
 		   currency;
 	int total_amount;
+
+@ignore @property:
+	bool isNull() { return title == typeof(title).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ShippingAddress {
@@ -2256,6 +2430,10 @@ struct ShippingAddress {
 		   street_line1,
 		   street_line2,
 		   post_code;
+
+@ignore @property:
+	bool isNull() { return country_code == typeof(country_code).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct OrderInfo {
@@ -2264,12 +2442,20 @@ struct OrderInfo {
 			phone_number,
 			email;
 	ShippingAddress shipping_address;
+
+@ignore @property:
+	bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ShippingOption {
 	string id,
 		   title;
 	LabeledPrice[] prices;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct SuccessfulPayment {
@@ -2278,9 +2464,14 @@ struct SuccessfulPayment {
 	string invoice_payload,
 		   telegram_payment_charge_id,
 		   provider_payment_charge_id;
+
 @optional:
 	string shipping_option_id;
 	OrderInfo order_info;
+
+@ignore @property:
+	bool isNull() { return currency == typeof(currency).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ShippingQuery {
@@ -2288,6 +2479,10 @@ struct ShippingQuery {
 	User from;
 	string invoice_payload;
 	ShippingAddress shipping_address;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct PreCheckoutQuery {
@@ -2296,9 +2491,14 @@ struct PreCheckoutQuery {
 	string currency;
 	int total_amount;
 	string invoice_payload;
+
 @optional:
 	string shipping_option_id;
 	OrderInfo order_info;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQuery {
@@ -2306,8 +2506,13 @@ struct InlineQuery {
 	User from;
 	string query,
 		   offset;
+
 @optional:
 	Location location;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 private alias InlineQueryResultStructs = AliasSeq!(InlineQueryResultArticle, InlineQueryResultPhoto,
@@ -2320,13 +2525,14 @@ private alias InlineQueryResultStructs = AliasSeq!(InlineQueryResultArticle, Inl
 		InlineQueryResultCachedMpeg4Gif, InlineQueryResultCachedSticker, InlineQueryResultCachedDocument,
 		InlineQueryResultCachedVideo, InlineQueryResultCachedVoice, InlineQueryResultCachedAudio);
 
-alias InlineQueryResult = JsonableAlgebraic!InlineQueryResultStructs;
+alias InlineQueryResult = Algebraic!InlineQueryResultStructs;
 
 struct InlineQueryResultArticle {
 	string type = "article";
 	string id;
 	string title;
 	InputMessageContent input_message_content;
+
 @optional:
 	InlineKeyboardMarkup reply_markup;
 	string url;
@@ -2335,6 +2541,10 @@ struct InlineQueryResultArticle {
 	string thumb_url;
 	int thumb_width;
 	int thumb_height;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultPhoto {
@@ -2342,6 +2552,7 @@ struct InlineQueryResultPhoto {
 	string id;
 	string photo_url;
 	string thumb_url;
+
 @optional:
 	int photo_width;
 	int photo_height;
@@ -2351,6 +2562,10 @@ struct InlineQueryResultPhoto {
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultGif {
@@ -2358,6 +2573,7 @@ struct InlineQueryResultGif {
 	string id;
 	string gif_url;
 	string thumb_url;
+
 @optional:
 	int gif_width;
 	int gif_height;
@@ -2367,6 +2583,10 @@ struct InlineQueryResultGif {
 	ParseMode parse_mode;
 	InputMessageContent input_message_content;
 	InlineKeyboardMarkup reply_markup;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultMpeg4Gif{
@@ -2377,12 +2597,17 @@ struct InlineQueryResultMpeg4Gif{
 	int mpeg4_height;
 	int mpeg4_duration;
 	string thumb_url;
+
 @optional:
 	string title;
 	string caption;
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultVideo {
@@ -2392,6 +2617,7 @@ struct InlineQueryResultVideo {
 	string mime_type;
 	string thumb_url;
 	string title;
+
 @optional:
 	string caption;
 	ParseMode parse_mode;
@@ -2401,6 +2627,10 @@ struct InlineQueryResultVideo {
 	string description;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultAudio {
@@ -2408,6 +2638,7 @@ struct InlineQueryResultAudio {
 	string id;
 	string audio_url;
 	string title;
+
 @optional:
 	string caption;
 	ParseMode parse_mode;
@@ -2415,6 +2646,10 @@ struct InlineQueryResultAudio {
 	int audio_duration;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultVoice {
@@ -2422,12 +2657,17 @@ struct InlineQueryResultVoice {
 	string id;
 	string voice_url;
 	string title;
+
 @optional:
 	string caption;
 	ParseMode parse_mode;
 	int voice_duration;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultDocument {
@@ -2436,6 +2676,7 @@ struct InlineQueryResultDocument {
 	string title;
 	string document_url;
 	string mime_type;
+
 @optional:
 	string caption;
 	ParseMode parse_mode;
@@ -2445,6 +2686,10 @@ struct InlineQueryResultDocument {
 	string thumb_url;
 	int thumb_width;
 	int thumb_height;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultLocation {
@@ -2453,6 +2698,7 @@ struct InlineQueryResultLocation {
 	float latitude;
 	float longitude;
 	string title;
+
 @optional:
 	int live_period;
 	InlineKeyboardMarkup reply_markup;
@@ -2460,6 +2706,10 @@ struct InlineQueryResultLocation {
 	string thumb_url;
 	int thumb_width;
 	int thumb_height;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultVenue {
@@ -2469,6 +2719,7 @@ struct InlineQueryResultVenue {
 	float longitude;
 	string title;
 	string address;
+
 @optional:
 	string foursquare_id;
 	string foursquare_type;
@@ -2477,6 +2728,10 @@ struct InlineQueryResultVenue {
 	string thumb_url;
 	int thumb_width;
 	int thumb_height;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultContact {
@@ -2484,6 +2739,7 @@ struct InlineQueryResultContact {
 	string id;
 	string phone_number;
 	string first_name;
+
 @optional:
 	string last_name;
 	string vcard;
@@ -2492,19 +2748,30 @@ struct InlineQueryResultContact {
 	string thumb_url;
 	int thumb_width;
 	int thumb_height;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultGame {
 	string type = "game";
 	string id;
 	string game_short_name;
-	@optional InlineKeyboardMarkup reply_markup;
+
+@optional:
+	InlineKeyboardMarkup reply_markup;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedPhoto {
 	string type = "photo";
 	string id;
 	string photo_file_id;
+
 @optional:
 	string title;
 	string description;
@@ -2512,39 +2779,58 @@ struct InlineQueryResultCachedPhoto {
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedGif{
 	string type = "gif";
 	string id;
 	string gif_file_id;
+
 @optional:
 	string title;
 	string caption;
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedMpeg4Gif{
 	string type = "mpeg4_gif";
 	string id;
 	string mpeg4_file_id;
+
 @optional:
 	string title;
 	string caption;
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedSticker {
 	string type = "sticker";
 	string id;
 	string sticker_file_id;
+
 @optional:
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedDocument {
@@ -2552,12 +2838,17 @@ struct InlineQueryResultCachedDocument {
 	string id;
 	string title;
 	string document_file_id;
+
 @optional:
 	string description;
 	string caption;
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
-	InputMessageContent input_message_content;;
+	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedVideo {
@@ -2565,12 +2856,17 @@ struct InlineQueryResultCachedVideo {
 	string id;
 	string video_file_id;
 	string title;
+
 @optional:
 	string description;
 	string caption;
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedVoice {
@@ -2578,41 +2874,61 @@ struct InlineQueryResultCachedVoice {
 	string id;
 	string voice_file_id;
 	string title;
+
 @optional:
 	string caption;
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedAudio {
 	string type = "audio";
 	string id;
 	string audio_file_id;
+
 @optional:
 	string caption;
 	ParseMode parse_mode;
 	InlineKeyboardMarkup reply_markup;
 	InputMessageContent input_message_content;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 private alias InputMessageContentStructs = AliasSeq!(InputTextMessageContent,
 		InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
 
-alias InputMessageContent = JsonableAlgebraic!InputMessageContentStructs;
+alias InputMessageContent = Algebraic!InputMessageContentStructs;
 
 struct InputTextMessageContent {
 	string message_text;
+
 @optional:
 	ParseMode parse_mode;
 	bool disable_web_page_preview;
+
+@ignore @property:
+	bool isNull() { return message_text == typeof(message_text).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InputLocationMessageContent {
 	float latitude;
 	float longitude;
+
 @optional:
 	int live_period;
+
+@ignore @property:
+	bool isNull() { return latitude.isNaN; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InputVenueMessageContent {
@@ -2620,65 +2936,87 @@ struct InputVenueMessageContent {
 	float longitude;
 	string title;
 	string address;
+
 @optional:
 	string foursquare_id;
 	string foursquare_type;
+
+@ignore @property:
+	bool isNull() { return latitude.isNaN; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct InputContactMessageContent {
 	string phone_number;
 	string first_name;
+
 @optional:
 	string last_name;
 	string vcard;
+
+@ignore @property:
+	bool isNull() { return phone_number == typeof(phone_number).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct ChosenInlineResult {
 	string result_id;
 	User from;
 	string query;
+
 @optional:
 	Location location;
 	string inline_message_id;
+
+@ignore @property:
+	bool isNull() { return result_id == typeof(result_id).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 struct WebhookInfo {
 	string url;
 	bool has_custom_certificate;
 	int pending_update_count;
+
 @optional:
 	long last_error_date;
 	string last_error_message;
 	int max_connections;
 	string[] allowed_updates;
+
+@ignore @property:
+	bool isNull() { return url == typeof(url).init; }
+	deprecated typeof(this) get() { return this; }
 }
 
 /*                        Telegram methods                        */
 
 mixin template TelegramMethod(string path) {
-package:
-	immutable string m_path = path;
+	package @ignore immutable string m_path = path;
 }
 
-alias TelegramID = JsonableAlgebraic!(long, string);
+alias TelegramID = Algebraic!(long, string);
 enum isTelegramID(T) = is(T : long) || is(T == string);
 
 struct GetUpdatesMethod {
 	mixin TelegramMethod!"/getUpdates";
 
+@optional:
 	int offset;
-	int limit;
-	int timeout;
-	string[] allowed_updates;
+	int limit = 100;
+	int timeout = 0;
+	string[] allowed_updates = [];
 }
 
 struct SetWebhookMethod {
 	mixin TelegramMethod!"/setWebhook";
 
 	string url;
+
+@optional:
 	InputFile certificate;
-	int max_connections;
-	string[] allowed_updates;
+	int max_connections = 40;
+	string[] allowed_updates = [];
 }
 
 struct DeleteWebhookMethod {
@@ -2698,6 +3036,8 @@ struct SendMessageMethod {
 
 	TelegramID chat_id;
 	string text;
+
+@optional:
 	ParseMode parse_mode;
 	bool disable_web_page_preview;
 	bool disable_notification;
@@ -2711,7 +3051,7 @@ struct ForwardMessageMethod {
 
 	TelegramID chat_id;
 	TelegramID from_chat_id;
-	bool disable_notification;
+@optional bool disable_notification;
 	int message_id;
 }
 
@@ -2720,6 +3060,8 @@ struct SendPhotoMethod {
 
 	TelegramID chat_id;
 	string photo;
+
+@optional:
 	string caption;
 	ParseMode parse_mode;
 	bool disable_notification;
@@ -2732,6 +3074,8 @@ struct SendAudioMethod {
 
 	TelegramID chat_id;
 	string audio;
+
+@optional:
 	string caption;
 	ParseMode parse_mode;
 	int duration;
@@ -2749,6 +3093,8 @@ struct SendAnimationMethod {
 
 	TelegramID chat_id;
 	string animation;
+
+@optional:
 	int duration,
 		width,
 		height;
@@ -2765,6 +3111,8 @@ struct SendDocumentMethod {
 
 	TelegramID chat_id;
 	string document;
+
+@optional:
 	string thumb;
 	string caption;
 	ParseMode parse_mode;
@@ -2778,6 +3126,8 @@ struct SendVideoMethod {
 
 	TelegramID chat_id;
 	string video;
+
+@optional:
 	int duration;
 	int width;
 	int height;
@@ -2795,6 +3145,8 @@ struct SendVoiceMethod {
 
 	TelegramID chat_id;
 	string voice;
+
+@optional:
 	string caption;
 	ParseMode parse_mode;
 	int duration;
@@ -2808,6 +3160,8 @@ struct SendVideoNoteMethod {
 
 	TelegramID chat_id;
 	string video_note;
+
+@optional:
 	int duration;
 	int length;
 	string thumb;
@@ -2821,7 +3175,9 @@ struct SendMediaGroupMethod {
 	mixin TelegramMethod!"/sendMediaGroup";
 
 	TelegramID chat_id;
-	JsonableAlgebraic!(InputMediaPhoto, InputMediaVideo)[] media;
+	Algebraic!(InputMediaPhoto, InputMediaVideo)[] media;
+
+@optional:
 	bool disable_notification;
 	int reply_to_message_id;
 }
@@ -2832,6 +3188,8 @@ struct SendLocationMethod {
 	TelegramID chat_id;
 	float latitude;
 	float longitude;
+
+@optional:
 	int live_period;
 	bool disable_notification;
 	int reply_to_message_id;
@@ -2841,16 +3199,20 @@ struct SendLocationMethod {
 struct EditMessageLiveLocationMethod {
 	mixin TelegramMethod!"/editMessageLiveLocation";
 
+	float latitude;
+	float longitude;
+
+@optional:
 	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
-	float latitude;
-	float longitude;
 	ReplyMarkup reply_markup;
 }
 
 struct StopMessageLiveLocationMethod {
 	mixin TelegramMethod!"/stopMessageLiveLocation";
+
+@optional:
 
 	TelegramID chat_id;
 	int message_id;
@@ -2866,6 +3228,8 @@ struct SendVenueMethod {
 	float longitude;
 	string title;
 	string address;
+
+@optional:
 	string foursquare_id;
 	string foursquare_type;
 	bool disable_notification;
@@ -2879,6 +3243,8 @@ struct SendContactMethod {
 	TelegramID chat_id;
 	string phone_number;
 	string first_name;
+
+@optional:
 	string last_name;
 	string vcard;
 	bool disable_notification;
@@ -2897,6 +3263,8 @@ struct GetUserProfilePhotosMethod {
 	mixin TelegramMethod!"/getUserProfilePhotos";
 
 	int user_id;
+
+@optional:
 	int offset;
 	int limit;
 }
@@ -2912,6 +3280,8 @@ struct KickChatMemberMethod {
 
 	TelegramID chat_id;
 	int user_id;
+
+@optional:
 	int until_date;
 }
 
@@ -2927,6 +3297,8 @@ struct RestrictChatMemberMethod {
 
 	TelegramID chat_id;
 	int user_id;
+
+@optional:
 	int until_date;
 	bool can_send_messages;
 	bool can_send_media_messages;
@@ -2939,6 +3311,8 @@ struct PromoteChatMemberMethod {
 
 	TelegramID chat_id;
 	int user_id;
+
+@optional:
 	bool can_change_info;
 	bool can_post_messages;
 	bool can_edit_messages;
@@ -2980,6 +3354,8 @@ struct SetChatDescriptionMethod {
 	mixin TelegramMethod!"/setChatDescription";
 
 	TelegramID chat_id;
+
+@optional:
 	string description;
 }
 
@@ -2988,6 +3364,8 @@ struct PinChatMessageMethod {
 
 	TelegramID chat_id;
 	int message_id;
+
+@optional:
 	bool disable_notification;
 }
 
@@ -3045,6 +3423,8 @@ struct AnswerCallbackQueryMethod {
 	mixin TelegramMethod!"/answerCallbackQuery";
 
 	string callback_query_id;
+
+@optional:
 	string text;
 	bool show_alert;
 	string url;
@@ -3054,10 +3434,12 @@ struct AnswerCallbackQueryMethod {
 struct EditMessageTextMethod {
 	mixin TelegramMethod!"/editMessageText";
 
+	string text;
+
+@optional:
 	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
-	string text;
 	ParseMode parse_mode;
 	bool disable_web_page_preview;
 	ReplyMarkup reply_markup;
@@ -3066,6 +3448,7 @@ struct EditMessageTextMethod {
 struct EditMessageCaptionMethod {
 	mixin TelegramMethod!"/editMessageCaption";
 
+@optional:
 	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
@@ -3077,6 +3460,7 @@ struct EditMessageCaptionMethod {
 struct EditMessageReplyMarkupMethod {
 	mixin TelegramMethod!"/editMessageReplyMarkup";
 
+@optional:
 	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
@@ -3086,10 +3470,12 @@ struct EditMessageReplyMarkupMethod {
 struct EditMessageMediaMethod {
 	mixin TelegramMethod!"/editMessageMedia";
 
+	InputMedia media;
+
+@optional:
 	TelegramID chat_id;
 	int message_id;
 	string inline_message_id;
-	InputMedia media;
 	ReplyMarkup reply_markup;
 }
 
@@ -3105,6 +3491,8 @@ struct SendStickerMethod {
 
 	TelegramID chat_id;
 	string sticker; // TODO InputFile|string
+
+@optional:
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
@@ -3131,6 +3519,8 @@ struct CreateNewStickerSetMethod {
 	string title;
 	string png_sticker; // TODO InputFile|string
 	string emojis;
+
+@optional:
 	bool contains_masks;
 	MaskPosition mask_position;
 }
@@ -3142,6 +3532,8 @@ struct AddStickerToSetMethod {
 	string name;
 	string png_sticker; // TODO InputFile|string
 	string emojis;
+
+@optional:
 	MaskPosition mask_position;
 }
 
@@ -3163,6 +3555,8 @@ struct AnswerInlineQueryMethod {
 
 	string inline_query_id;
 	InlineQueryResult[] results;
+
+@optional:
 	int cache_time;
 	bool is_personal;
 	string next_offset;
@@ -3170,67 +3564,157 @@ struct AnswerInlineQueryMethod {
 	string switch_pm_parameter;
 }
 
-// In short, this is an Algebraic type which can be Json serialized/deserialized
-// While serialization works for any `Types`, deserialization is a bit tricky
-// It will work *only* if there's only one struct in the list
-// i.e. JsonableAlgebraic!(S1, bool, int) will work and JsonableAlgebraic!(S1, S2) won't
-// This is more than enough for the Telegram's bot API though
-private struct JsonableAlgebraic(Types...) {
-@trusted:
-	import std.meta;
-	import std.variant : Algebraic;
+enum optional;
+enum ignore;
+struct name {
+	string name;
+}
 
-	private {
-		Algebraic!Types m_algebraic;
-	}
-
-	@property const auto algebraicOf() { return m_algebraic; }
-
-	alias algebraicOf this;
-
-	this(T)(T t) if(m_algebraic.allowed!T) {
-		m_algebraic = typeof(m_algebraic)(t);
-	}
-
-	const bool opEquals(typeof(this) rhs) {
-		return m_algebraic == rhs.m_algebraic;
-	}
-
-	void opAssign(T)(T rhs) if(m_algebraic.allowed!T) {
-		m_algebraic = rhs;
-	}
-
-	void opAssign(typeof(this) rhs) {
-		m_algebraic = rhs.m_algebraic;
-	}
-
-	const Json toJson() {
-		if(!m_algebraic.hasValue)
+import std.variant : Algebraic, VariantN;
+@trusted Json serializeToJson(T)(T value) {
+	import std.traits;
+	static if(is(T : Json)) {
+		return value;
+	} else static if(isInstanceOf!(VariantN, T)) {
+		if(!value.hasValue)
 			return Json.emptyObject;
 
-		static foreach(T; Types)
-			if(m_algebraic.type == typeid(T))
-				return m_algebraic.get!T.serializeToJson;
+		static foreach(Type; value.AllowedTypes)
+			if(value.type == typeid(Type))
+				return value.get!Type.serializeToJson;
 
 		return Json(null);
-	}
-
-	static typeof(this) fromJson(Json src) {
-		import std.traits : isAggregateType;
-		static foreach(T; Types) {
-			static if(isAggregateType!T) {
-				if(src.type == Json.Type.object)
-					return typeof(this)(src.deserializeJson!T);
+	} else static if(is(T == struct)) {
+		auto ret = Json.emptyObject;
+		foreach(i, ref field; value.tupleof) {
+			if(hasUDA!(value.tupleof[i], ignore) || (hasUDA!(value.tupleof[i], optional) && !field.shouldSerialize)) {
+				continue;
 			} else {
-				if(src.type == Json.typeId!T)
-					return typeof(this)(src.deserializeJson!T);
+				enum udas = getUDAs!(value.tupleof[i], name);
+				static if(udas.length) {
+					ret[udas[0].name] = field.serializeToJson;
+				} else {
+					ret[__traits(identifier, value.tupleof[i])] = field.serializeToJson;
+				}
 			}
 		}
-		return typeof(this).init;
+		return ret;
+	} else static if(isArray!T && !is(T : string)) {
+		auto ret = Json.emptyArray;
+		foreach(i; value) {
+			ret.appendArrayElement(i.serializeToJson);
+		}
+		return ret;
+	} else {
+		return Json(value);
 	}
 }
 
-@("JsonableAlgebraic works for multiple structs")
+bool shouldSerialize(T)(T value) {
+	static if(__traits(compiles, value.isNull)) {
+		return !value.isNull;
+	} else static if(__traits(compiles, value.hasValue)) {
+		return value.hasValue;
+	} else {
+		return value != typeof(value).init;
+	}
+}
+
+@("serializeToJson serializes simple values")
+unittest {
+	"Hey".serializeToJson.should.be.equal(Json("Hey"));
+	42.serializeToJson.should.be.equal(Json(42));
+	null.serializeToJson.should.be.equal(Json(null));
+}
+
+@("serializeToJson serializes structures and arrays")
+unittest {
+	struct S {
+		int n;
+		string t;
+	}
+	S(42, "text").serializeToJson.should.be.equal(Json([
+		"n": Json(42),
+		"t": Json("text"),
+	]));
+
+	["hey", "you"].serializeToJson.should.be.equal(Json([Json("hey"), Json("you")]));
+	[S(41, "text1"), S(42, "text2")].serializeToJson.should.be.equal(Json([
+		Json([
+			"n": Json(41),
+			"t": Json("text1")
+		]),
+		Json([
+			"n": Json(42),
+			"t": Json("text2")
+		]),
+	]));
+
+	struct S2 {
+		int n;
+	}
+
+	struct S1 {
+		S2 s2;
+	}
+	S1(S2(42)).serializeToJson.should.be.equal(Json(["s2": Json(["n": Json(42)])]));
+
+	[
+		[41, 42],
+		[43, 44],
+	].serializeToJson.should.be.equal(Json([
+		Json([
+			Json(41), Json(42),
+		]),
+		Json([
+			Json(43), Json(44),
+		]),
+	]));
+}
+
+@("serializeToJson ignores `@ignore` fields")
+unittest {
+	struct S {
+		@ignore int n;
+		string t;
+	}
+	S(42, "text").serializeToJson.should.be.equal(Json(["t": Json("text")]));
+
+	struct S2 {
+		int n;
+		@ignore string t;
+	}
+
+	struct S1 {
+		S2 s2;
+	}
+	S1(S2(42, "text")).serializeToJson.should.be.equal(Json(["s2": Json(["n": Json(42)])]));
+}
+
+@("serializeToJson ignores `@optional` fields when their value is equal to `typeof(field).init`")
+unittest {
+	struct S {
+		@optional @name("i") int n;
+		string t;
+	}
+
+	S(int.init, "text").serializeToJson.should.be.equal(Json(["t": Json("text")]));
+	S(42, "text").serializeToJson.should.be.equal(Json(["i": Json(42), "t": Json("text")]));
+
+
+	struct S2 {
+		int n;
+		@optional string t;
+	}
+
+	struct S1 {
+		S2 s2;
+	}
+	S1(S2(42)).serializeToJson.should.be.equal(Json(["s2": Json(["n": Json(42)])]));
+	S1(S2(42, "text")).serializeToJson.should.be.equal(Json(["s2": Json(["n": Json(42), "t": Json("text")])]));
+}
+
+@("serializeToJson serializes Algebraic values")
 unittest {
 	struct S1 {
 		int s1;
@@ -3240,59 +3724,99 @@ unittest {
 		string s2;
 	}
 
-	JsonableAlgebraic!(S1, S2)(S1(42)).serializeToJsonString
+	Algebraic!(S1, S2)(S1(42)).serializeToJson.toString
 		.should.be.equal(`{"s1":42}`);
-	JsonableAlgebraic!(S1, S2)(S2("hello")).serializeToJsonString
+	Algebraic!(S1, S2)(S2("hello")).serializeToJson.toString
 		.should.be.equal(`{"s2":"hello"}`);
 }
 
-@("JsonableAlgebraic is @safe")
-@safe unittest {
-	struct S1 {
-		JsonableAlgebraic!(int, bool) a;
-	}
+@("serializeToJson serializes complex structs")
+unittest {
+	auto data = Message(42, 0, Chat(1337, ChatType.group)).serializeToJson;
 
-	S1 s1;
-
-	static assert(__traits(compiles, () @safe { s1.a = JsonableAlgebraic!(int, bool)(42); }));
-	static assert(__traits(compiles, () @safe { JsonableAlgebraic!(int, bool) b = 42; }));
+	data["message_id"].should.be.equal(Json(42));
+	data["date"].should.be.equal(Json(0));
+	data["chat"]["type"].should.be.equal(Json("group"));
+	data["chat"]["id"].should.be.equal(Json(1337));
 }
 
-@("JsonableAlgebraic works as a field in another struct")
-unittest {
-	struct S1 {
-		int s1;
-	}
+T deserializeJson(T)(Json value) {
+	import std.traits;
+	import std.exception;
+	static if(is(T : Json)) {
+		return value;
+	} else static if(isInstanceOf!(VariantN, T)) {
+		return T.init;
+	} else static if(is(T == struct)) {
+		enforce(value.type == Json.Type.object);
+		T ret;
+		foreach(i, ref field; ret.tupleof) {
+			if(hasUDA!(ret.tupleof[i], ignore)) {
+				continue;
+			} else {
+				enum udas = getUDAs!(ret.tupleof[i], name);
+				static if(udas.length) {
+					if(value[udas[0].name].type == Json.Type.undefined) {
+						static if(!hasUDA!(ret.tupleof[i], optional))
+							throw new Exception("Missing value for non-optional field "~ udas[0].name);
+					} else {					
+						field = value[udas[0].name].deserializeJson!(typeof(field));
+					}
+				} else {
+					if(value[__traits(identifier, ret.tupleof[i])].type == Json.Type.undefined) {
+						static if(!hasUDA!(ret.tupleof[i], optional))
+							throw new Exception("Missing value for non-optional field "~ __traits(identifier, ret.tupleof[i]));
+					} else {					
+						field = value[__traits(identifier, ret.tupleof[i])].deserializeJson!(typeof(field));
+					}
+				}
+			}
+		}
+		return ret;
+	} else static if(isArray!T && !is(T : string)) {
+		enforce(value.type == Json.Type.array);
+		T ret;
+		foreach(ref e; value)
+			ret ~= e.deserializeJson!(ForeachType!T);
+		
+		return ret;
+	} else static if(is(T == enum)) {
+		enforce(value.type == Json.Type.string);
+		auto tmp = value.deserializeJson!string;
 
-	struct S2 {
-		string s2;
+		switch(tmp) {
+		static foreach(member; EnumMembers!T) {
+			case member: {
+				return member;
+			}
+		}
+		default:
+			assert(0);
+		}
+	} else {
+		return value.get!T;
 	}
-
-	struct Aggregate {
-		JsonableAlgebraic!(S1, S2) aggregate;
-	}
-
-	Aggregate(JsonableAlgebraic!(S1, S2)(S1(42))).serializeToJsonString
-		.should.be.equal(`{"aggregate":{"s1":42}}`);
-	Aggregate(JsonableAlgebraic!(S1, S2)(S2("hello"))).serializeToJsonString
-		.should.be.equal(`{"aggregate":{"s2":"hello"}}`);
 }
 
-@("JsonableAlgebraic can be used for simple deserialization")
+@("deserializeJson deserializes simple values")
 unittest {
-	struct S1 {
-		int s1;
-	}
-
-	`{"s1":42}`.deserializeJson!(JsonableAlgebraic!(S1, bool))
-		.should.be.equal(JsonableAlgebraic!(S1, bool)(S1(42)));
-	`false`.deserializeJson!(JsonableAlgebraic!(S1, bool))
-		.should.be.equal(JsonableAlgebraic!(S1, bool)(false));
+	Json("hey").deserializeJson!string.should.be.equal("hey");
+	Json(42).deserializeJson!int.should.be.equal(42);
+	Json([
+		Json(42),
+		Json(43),
+	]).deserializeJson!(int[]).should.be.equal([42, 43]);
 }
 
-@("JsonableAlgebraic supports useful methods of Algebraic type")
+@("deserializeJson deserializes structs")
 unittest {
-	JsonableAlgebraic!(int, bool)(true).type.should.be.equal(typeid(bool));
-	JsonableAlgebraic!(int, bool, float)(0.0f).type.should.be.equal(typeid(float));
-	JsonableAlgebraic!(int, string)("hello").get!string.should.be.equal("hello");
+	struct S {
+		int n;
+		string t;
+	}
+
+	Json([
+		"n": Json(42),
+		"t": Json("text"),
+	]).deserializeJson!S.should.be.equal(S(42, "text"));
 }
