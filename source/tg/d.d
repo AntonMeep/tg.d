@@ -3564,6 +3564,8 @@ struct AnswerInlineQueryMethod {
 	string switch_pm_parameter;
 }
 
+private:
+
 enum optional;
 enum ignore;
 struct name {
