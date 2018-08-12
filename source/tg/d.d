@@ -1872,6 +1872,23 @@ enum ParseMode : string {
 	html     = "HTML",
 }
 
+/// Type of the `MessageEntity`
+enum EntityType : string {
+	mention      = "mention",      /// Mention
+	hashtag      = "hashtag",      /// Hashtag
+	cashtag      = "cashtag",      /// Cashtag
+	bot_command  = "bot_command",  /// Bot command
+	url          = "url",          /// URL
+	email        = "email",        /// E-mail
+	phone_number = "phone_number", /// Phone number
+	bold         = "bold",         /// Bold text
+	italic       = "italic",       /// Italic text
+	code         = "code",         /// Code, monowidth string
+	pre          = "pre",          /// Pre, monowidth block
+	text_link    = "text_link",    /// For clickable text URLs
+	text_mention = "text_mention", /// For users without usernames
+}
+
 /**
  * Represents the contents of a file to be uploaded
  * Deprecated: Not yet implemented.
@@ -2171,8 +2188,9 @@ struct Message {
 	@ignore @property bool isNull() { return message_id == typeof(message_id).init; }
 }
 
+
 struct MessageEntity {
-	string type;
+	EntityType type;
 	int offset;
 	int length;
 
