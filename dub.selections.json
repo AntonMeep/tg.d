@@ -14,6 +14,7 @@
 		"memutils": "0.4.11",
 		"mir-linux-kernel": "1.0.0",
 		"openssl": "1.1.6+1.0.1g",
+		"silly": "0.0.1",
 		"stdx-allocator": "2.77.2",
 		"taggedalgebraic": "0.10.11",
 		"vibe-core": "1.4.1",
