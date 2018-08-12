@@ -1918,22 +1918,34 @@ struct Update {
 	/// New incoming pre-checkout query
 	PreCheckoutQuery pre_checkout_query;
 
-	/// This method can be used to check if update is empty
-	@ignore @property bool isNull() { return update_id == typeof(update_id).init; }
+	@safe @ignore @property bool isNull() { return update_id == typeof(update_id).init; }
 }
 
+/**
+ * Telegram user or a bot
+ * See_Also: $(LINK https://core.telegram.org/bots/api#user)
+ */
 struct User {
+	/// Unique identifier
 	int id;
+
+	/// `true`, if user is a bot
 	bool is_bot;
+
+	/// User's first name
 	string first_name;
 
 @optional:
-	string last_name,
-			username,
-			language_code;
+	/// User's last name
+	string last_name;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	/// User's username
+	string username;
+
+	/// IETF language tag of the user's language
+	string language_code;
+
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct Chat {
