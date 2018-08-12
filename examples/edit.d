@@ -14,7 +14,7 @@ dub.json:
 import core.time      : seconds;
 import tg.d           : TelegramBot;
 import vibe.core.args : readRequiredOption;
-import vibe.core.core : runApplication, setTimer, sleep, runTask;
+import vibe.core.core : runApplication, sleep, runTask;
 import vibe.core.log  : logInfo;
 
 int main() {
@@ -31,10 +31,9 @@ int main() {
 	"\tUsername: %s"     .logInfo(me.username);
 	"\tLanguage code: %s".logInfo(me.language_code);
 
-	"Setting up the timer".logInfo;
-	1.seconds.setTimer(
-		() {
-			foreach(update; Bot.updateGetter) {
+	runTask({
+		while(true) {
+			foreach(update; Bot.pollUpdates) {
 				runTask({
 					auto sent = Bot.sendMessage(update.message.chat.id, update.message.text);
 					2.seconds.sleep;
@@ -43,10 +42,9 @@ int main() {
 					Bot.editMessageText(sent.chat.id, sent.id, "Nope, I don't think so");
 				});
 			}
-		},
-		true); // To run this timer not just once, but every second
+		}
+	});
 
-	"Running the bot".logInfo;
 	return runApplication();
 }
 
