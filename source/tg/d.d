@@ -2188,18 +2188,28 @@ struct Message {
 	@ignore @property bool isNull() { return message_id == typeof(message_id).init; }
 }
 
-
+/**
+ * One special entity in a text message
+ * See_Also: $(LINK https://core.telegram.org/bots/api#messageentity)
+ */
 struct MessageEntity {
+	/// Type of the entity
 	EntityType type;
+
+	/// Offset in UTF-16 code units to the start of the entity
 	int offset;
+
+	/// Length of the entity in UTF-16 code units
 	int length;
 
 @optional:
+	/// For “text_link” only, url that will be opened after user taps on the text
 	string url;
+
+	/// For “text_mention” only, the mentioned user
 	User user;
 
-@ignore @property:
-	bool isNull() { return length == typeof(length).init; }
+	@ignore @property bool isNull() { return length == typeof(length).init; }
 }
 
 struct PhotoSize {
