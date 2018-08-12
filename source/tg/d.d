@@ -1746,6 +1746,18 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Add a new sticker to a set
+	 *
+	 * Params:
+	 *     user_id     = User identifier of created sticker set owner
+	 *     name        = Sticker set name
+	 *     png_sticker = Png image with a sticker, Pass `file_id` or an HTTP URL to get a file from the Internet
+	 *     emojis      = One or more emoji corresponding to the sticker
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `AddStickerToSetMethod`, $(LINK https://core.telegram.org/bots/api#addstickertoset)
+	 */
 	bool addStickerToSet(int user_id, string name, string pngSticker, string emojis) {
 		AddStickerToSetMethod m = {
 			user_id: user_id,
@@ -1756,7 +1768,7 @@ struct TelegramBot {
 
 		return addStickerToSet(m);
 	}
-
+	/// ditto
 	bool addStickerToSet(AddStickerToSetMethod m) {
 		return callMethod!bool(m);
 	}
