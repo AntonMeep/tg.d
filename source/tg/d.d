@@ -1948,39 +1948,63 @@ struct User {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Chat
+ * See_Also: $(LINK https://core.telegram.org/bots/api#chat)
+ */
 struct Chat {
 @safe:
+	/// Unique identifier
 	long id;
+
+	/// Type
 	ChatType type;
 
 @optional:
+	/// Title, for supergroups, channels and group chats
+	string title;
 
-	string title,
-			username,
-			first_name,
-			last_name;
+	/// Username, for private chats, supergroups and channels if available
+	string username;
+
+	/// First name of the other party in a private chat
+	string first_name;
+
+	/// Last name of the other party in a private chat
+	string last_name;
+
+	/// True if a group has ‘All Members Are Admins’ enabled
 	bool all_members_are_administrators;
+
+	/// Chat photo. Returned only in `getChat`
 	ChatPhoto photo;
-	string description,
-			invite_link;
+
+	/// Description, for supergroups and channel chats. Returned only in `getChat`
+	string description;
+
+	/// Chat invite link, for supergroups and channel chats. Returned only in `getChat`
+	string invite_link;
 
 	private @name("pinned_message") Json m_pinned_message;
-	@property @ignore {
-		// Message pinned_message() {
-		// 	return m_pinned_message.type == Json.Type.null_ 
-		// 			? Message.init
-		// 			: m_pinned_message.deserializeJson!Message;
-		// }
-		// void pinned_message(Message m) {
-		// 	m_pinned_message = m.serializeToJson;
-		// }
+
+	/// Pinned message, for supergroups and channel chats. Returned only in `getChat`
+	@property @ignore Message pinned_message() {
+		return m_pinned_message.type == Json.Type.null_ 
+				? Message.init
+				: m_pinned_message.deserializeJson!Message;
+	}
+	/// ditto
+	@property @ignore void pinned_message(Message m) {
+		m_pinned_message = m.serializeToJson;
 	}
 
+	/// For supergroups, name of group sticker set. Returned only in `getChat`
 	string sticker_set_name;
+
+	/// True, if the bot can change the group sticker set. Returned only in `getChat`
 	bool can_set_sticker_set;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct Message {
