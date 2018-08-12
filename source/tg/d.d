@@ -1773,6 +1773,16 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Move a sticker in a set to a specific position
+	 *
+	 * Params:
+	 *     sticker  = File identifier of the sticker
+	 *     position = New sticker position in the set, zero-based
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `SetStickerPositionInSetMethod`, $(LINK https://core.telegram.org/bots/api#setstickerpositioninset)
+	 */
 	bool setStickerPositionInSet(string sticker, int position) {
 		SetStickerPositionInSetMethod m = {
 			sticker: sticker,
@@ -1781,7 +1791,7 @@ struct TelegramBot {
 
 		return setStickerPositionInSet(m);
 	}
-
+	/// ditto
 	bool setStickerPositionInSet(SetStickerPositionInSetMethod m) {
 		return callMethod!bool(m);
 	}
