@@ -1890,7 +1890,6 @@ struct Update {
 
 @ignore @property:
 	bool isNull() { return update_id == typeof(update_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct User {
@@ -1905,7 +1904,6 @@ struct User {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Chat {
@@ -1941,7 +1939,6 @@ struct Chat {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Message {
@@ -2024,7 +2021,6 @@ struct Message {
 
 @ignore @property:
 	bool isNull() { return message_id == typeof(message_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct MessageEntity {
@@ -2038,7 +2034,6 @@ struct MessageEntity {
 
 @ignore @property:
 	bool isNull() { return length == typeof(length).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct PhotoSize {
@@ -2051,7 +2046,6 @@ struct PhotoSize {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Audio {
@@ -2067,7 +2061,6 @@ struct Audio {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Document {
@@ -2081,7 +2074,6 @@ struct Document {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Video {
@@ -2097,7 +2089,6 @@ struct Video {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Voice {
@@ -2110,7 +2101,6 @@ struct Voice {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct VideoNote {
@@ -2124,7 +2114,6 @@ struct VideoNote {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Contact {
@@ -2138,7 +2127,6 @@ struct Contact {
 
 @ignore @property:
 	bool isNull() { return phone_number == typeof(phone_number).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Location {
@@ -2147,7 +2135,6 @@ struct Location {
 
 @ignore @property:
 	bool isNull() { return longitude.isNaN; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Venue {
@@ -2161,7 +2148,6 @@ struct Venue {
 
 @ignore @property:
 	bool isNull() { return location.isNull; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct UserProfilePhotos {
@@ -2170,7 +2156,6 @@ struct UserProfilePhotos {
 
 @ignore @property:
 	bool isNull() { return total_count == typeof(total_count).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct File {
@@ -2182,7 +2167,6 @@ struct File {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 private alias ReplyMarkupStructs = AliasSeq!(ReplyKeyboardMarkup, ReplyKeyboardRemove,
@@ -2205,7 +2189,6 @@ struct ReplyKeyboardMarkup {
 
 @ignore @property:
 	bool isNull() { return keyboard == typeof(keyboard).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct KeyboardButton {
@@ -2217,7 +2200,6 @@ struct KeyboardButton {
 
 @ignore @property:
 	bool isNull() { return text == typeof(text).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ReplyKeyboardRemove {
@@ -2228,7 +2210,6 @@ struct ReplyKeyboardRemove {
 
 @ignore @property:
 	bool isNull() { return remove_keyboard == typeof(remove_keyboard).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineKeyboardMarkup {
@@ -2236,7 +2217,6 @@ struct InlineKeyboardMarkup {
 
 @ignore @property:
 	bool isNull() { return inline_keyboard == typeof(inline_keyboard).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineKeyboardButton {
@@ -2252,7 +2232,6 @@ struct InlineKeyboardButton {
 
 @ignore @property:
 	bool isNull() { return text == typeof(text).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct CallbackQuery {
@@ -2268,7 +2247,6 @@ struct CallbackQuery {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ForceReply {
@@ -2279,7 +2257,6 @@ struct ForceReply {
 
 @ignore @property:
 	bool isNull() { return force_reply == typeof(force_reply).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ChatPhoto {
@@ -2289,7 +2266,6 @@ struct ChatPhoto {
 
 @ignore @property:
 	bool isNull() { return small_file_id == typeof(small_file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ChatMember {
@@ -2314,7 +2290,6 @@ struct ChatMember {
 
 @ignore @property:
 	bool isNull() { return user.isNull; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ResponseParameters {
@@ -2324,7 +2299,6 @@ struct ResponseParameters {
 
 @ignore @property:
 	bool isNull() { return !migrate_to_chat_id && !retry_after; }
-	deprecated typeof(this) get() { return this; }
 }
 
 
@@ -2341,7 +2315,6 @@ struct InputMediaPhoto {
 
 @ignore @property:
 	bool isNull() { return media == typeof(media).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaVideo {
@@ -2359,7 +2332,6 @@ struct InputMediaVideo {
 
 @ignore @property:
 	bool isNull() { return media == typeof(media).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaAnimation {
@@ -2376,7 +2348,6 @@ struct InputMediaAnimation {
 
 @ignore @property:
 	bool isNull() { return media == typeof(media).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaAudio {
@@ -2393,7 +2364,6 @@ struct InputMediaAudio {
 
 @ignore @property:
 	bool isNull() { return media == typeof(media).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InputMediaDocument {
@@ -2407,7 +2377,6 @@ struct InputMediaDocument {
 
 @ignore @property:
 	bool isNull() { return media == typeof(media).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Sticker {
@@ -2424,7 +2393,6 @@ struct Sticker {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct StickerSet {
@@ -2435,7 +2403,6 @@ struct StickerSet {
 
 @ignore @property:
 	bool isNull() { return name == typeof(name).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct MaskPosition {
@@ -2446,7 +2413,6 @@ struct MaskPosition {
 
 @ignore @property:
 	bool isNull() { return point == typeof(point).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Game {
@@ -2461,7 +2427,6 @@ struct Game {
 
 @ignore @property:
 	bool isNull() { return title == typeof(title).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Animation {
@@ -2475,13 +2440,11 @@ struct Animation {
 
 @ignore @property:
 	bool isNull() { return file_id == typeof(file_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct CallbackGame {
 @ignore @property:
 	bool isNull() { return true; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct GameHighScore {
@@ -2491,7 +2454,6 @@ struct GameHighScore {
 
 @ignore @property:
 	bool isNull() { return position == typeof(position).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct LabeledPrice {
@@ -2500,7 +2462,6 @@ struct LabeledPrice {
 
 @ignore @property:
 	bool isNull() { return label == typeof(label).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct Invoice {
@@ -2512,7 +2473,6 @@ struct Invoice {
 
 @ignore @property:
 	bool isNull() { return title == typeof(title).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ShippingAddress {
@@ -2525,7 +2485,6 @@ struct ShippingAddress {
 
 @ignore @property:
 	bool isNull() { return country_code == typeof(country_code).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct OrderInfo {
@@ -2537,7 +2496,6 @@ struct OrderInfo {
 
 @ignore @property:
 	bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ShippingOption {
@@ -2547,7 +2505,6 @@ struct ShippingOption {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct SuccessfulPayment {
@@ -2563,7 +2520,6 @@ struct SuccessfulPayment {
 
 @ignore @property:
 	bool isNull() { return currency == typeof(currency).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ShippingQuery {
@@ -2574,7 +2530,6 @@ struct ShippingQuery {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct PreCheckoutQuery {
@@ -2590,7 +2545,6 @@ struct PreCheckoutQuery {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQuery {
@@ -2604,7 +2558,6 @@ struct InlineQuery {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 private alias InlineQueryResultStructs = AliasSeq!(InlineQueryResultArticle, InlineQueryResultPhoto,
@@ -2636,7 +2589,6 @@ struct InlineQueryResultArticle {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultPhoto {
@@ -2657,7 +2609,6 @@ struct InlineQueryResultPhoto {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultGif {
@@ -2678,7 +2629,6 @@ struct InlineQueryResultGif {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultMpeg4Gif{
@@ -2699,7 +2649,6 @@ struct InlineQueryResultMpeg4Gif{
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultVideo {
@@ -2722,7 +2671,6 @@ struct InlineQueryResultVideo {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultAudio {
@@ -2741,7 +2689,6 @@ struct InlineQueryResultAudio {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultVoice {
@@ -2759,7 +2706,6 @@ struct InlineQueryResultVoice {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultDocument {
@@ -2781,7 +2727,6 @@ struct InlineQueryResultDocument {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultLocation {
@@ -2801,7 +2746,6 @@ struct InlineQueryResultLocation {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultVenue {
@@ -2823,7 +2767,6 @@ struct InlineQueryResultVenue {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultContact {
@@ -2843,7 +2786,6 @@ struct InlineQueryResultContact {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultGame {
@@ -2856,7 +2798,6 @@ struct InlineQueryResultGame {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedPhoto {
@@ -2874,7 +2815,6 @@ struct InlineQueryResultCachedPhoto {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedGif{
@@ -2891,7 +2831,6 @@ struct InlineQueryResultCachedGif{
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedMpeg4Gif{
@@ -2908,7 +2847,6 @@ struct InlineQueryResultCachedMpeg4Gif{
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedSticker {
@@ -2922,7 +2860,6 @@ struct InlineQueryResultCachedSticker {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedDocument {
@@ -2940,7 +2877,6 @@ struct InlineQueryResultCachedDocument {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedVideo {
@@ -2958,7 +2894,6 @@ struct InlineQueryResultCachedVideo {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedVoice {
@@ -2975,7 +2910,6 @@ struct InlineQueryResultCachedVoice {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InlineQueryResultCachedAudio {
@@ -2991,7 +2925,6 @@ struct InlineQueryResultCachedAudio {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 private alias InputMessageContentStructs = AliasSeq!(InputTextMessageContent,
@@ -3008,7 +2941,6 @@ struct InputTextMessageContent {
 
 @ignore @property:
 	bool isNull() { return message_text == typeof(message_text).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InputLocationMessageContent {
@@ -3020,7 +2952,6 @@ struct InputLocationMessageContent {
 
 @ignore @property:
 	bool isNull() { return latitude.isNaN; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InputVenueMessageContent {
@@ -3035,7 +2966,6 @@ struct InputVenueMessageContent {
 
 @ignore @property:
 	bool isNull() { return latitude.isNaN; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct InputContactMessageContent {
@@ -3048,7 +2978,6 @@ struct InputContactMessageContent {
 
 @ignore @property:
 	bool isNull() { return phone_number == typeof(phone_number).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct ChosenInlineResult {
@@ -3062,7 +2991,6 @@ struct ChosenInlineResult {
 
 @ignore @property:
 	bool isNull() { return result_id == typeof(result_id).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 struct WebhookInfo {
@@ -3078,7 +3006,6 @@ struct WebhookInfo {
 
 @ignore @property:
 	bool isNull() { return url == typeof(url).init; }
-	deprecated typeof(this) get() { return this; }
 }
 
 /*                        Telegram methods                        */
