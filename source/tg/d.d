@@ -2007,86 +2007,168 @@ struct Chat {
 	@ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Message
+ * See_Also: $(LINK https://core.telegram.org/bots/api#message)
+ */
 struct Message {
 @safe:
+	/// Unique message identifier inside this chat
 	int message_id;
 
-	@property @ignore {
-		int  id()      { return message_id; }
-		void id(int i) { message_id = i;    }
-	}
+	/// Shorthand for `message_id`;
+	alias id = message_id;
 
+	/// Date the message was sent in Unix time
 	long date;
+
+	/// Conversation the message belongs to
 	Chat chat;
 
 @optional:
+	/// Sender, empty for messages sent to channels
 	User from;
+
+	/// For forwarded messages, sender of the original message
 	User forward_from;
+
+	/// For messages forwarded from channels, information about the original channel
 	Chat forward_from_chat;
+
+	/// For messages forwarded from channels, identifier of the original message in the channel
 	int forward_from_message_id;
+
+	/// For messages forwarded from channels, signature of the post author if present
 	string forward_signature;
+
+	/// For forwarded messages, date the original message was sent in Unix time
 	long forward_date;
 
 	private @name("reply_to_message") Json m_reply_to_message;
-	@property @ignore {
-		// Message reply_to_message() {
-		// 	return m_reply_to_message.type == Json.Type.null_ 
-		// 			? Message.init
-		// 			: m_reply_to_message.deserializeJson!Message;
-		// }
-		// void reply_to_message(Message m) {
-		// 	m_reply_to_message = m.serializeToJson;
-		// }
+	
+	/// For replies, the original message
+	@property @ignore Message reply_to_message() {
+		return m_reply_to_message.type == Json.Type.null_ 
+				? Message.init
+				: m_reply_to_message.deserializeJson!Message;
+	}
+	/// ditto
+	@property @ignore void reply_to_message(Message m) {
+		m_reply_to_message = m.serializeToJson;
 	}
 
+	/// Date the message was last edited in Unix time
 	long edit_date;
-	string media_group_id,
-			author_signature,
-			text;
+
+	/// The unique identifier of a media message group this message belongs to
+	string media_group_id;
+
+	/// Signature of the post author for messages in channels
+	string author_signature;
+
+	/// For text messages, the actual UTF-8 text of the message
+	string text;
+
+	/// For text messages, special entities like usernames, URLs, bot commands, etc. that appear in the text
 	MessageEntity[] entities;
+
+	// For messages with a caption, special entities like usernames, URLs, bot commands, etc. that appear in the caption
 	MessageEntity[] caption_entities;
+
+	/// Message is an audio file, information about the file
 	Audio audio;
-	Animation animation;
+
+	/// Message is a general file, information about the file
 	Document document;
+
+	/// Message is an animation, information about the animation
+	Animation animation; 
+
+	/// Message is a game, information about the game
 	Game game;
+
+	/// Message is a photo, available sizes of the photo
 	PhotoSize[] photo;
+
+	/// Message is a sticker, information about the sticker
 	Sticker sticker;
+
+	/// Message is a video, information about the video
 	Video video;
+
+	/// Message is a voice message, information about the file
 	Voice voice;
+
+	/// Message is a video note, information about the video message
 	VideoNote video_note;
+
+	/// Caption for the audio, document, photo, video or voice
 	string caption;
+
+	/// Message is a shared contact, information about the contact
 	Contact contact;
+
+	/// Message is a shared location, information about the location
 	Location location;
+
+	/// Message is a venue, information about the venue
 	Venue venue;
+
+	/// New members that were added to the group or supergroup and information about them
 	User[] new_chat_members;
+
+	/// A member was removed from the group, information about them
 	User left_chat_member;
+
+	/// A chat title was changed to this value
 	string new_chat_title;
+
+	/// A chat photo was change to this value
 	PhotoSize[] new_chat_photo;
-	bool delete_chat_photo,
-			group_chat_created,
-			supergroup_chat_created,
-			channel_chat_created;
-	long migrate_to_chat_id,
-			migrate_from_chat_id;
+
+	/// Service message: the chat photo was deleted
+	bool delete_chat_photo;
+
+	/// Service message: the group has been created
+	bool group_chat_created;
+
+	/// Service message: the supergroup has been created
+	bool supergroup_chat_created;
+
+	/// Service message: the channel has been created
+	bool channel_chat_created;
+
+	/// The group has been migrated to a supergroup with the specified identifier
+	long migrate_to_chat_id;
+
+	/// The supergroup has been migrated from a group with the specified identifier
+	long migrate_from_chat_id;
 
 	private @name("pinned_message") Json m_pinned_message;
-	@property @ignore {
-		// Message pinned_message() {
-		// 	return m_pinned_message.type == Json.Type.null_ 
-		// 			? Message.init
-		// 			: m_pinned_message.deserializeJson!Message;
-		// }
-		// void pinned_message(Message m) {
-		// 	m_pinned_message = m.serializeToJson;
-		// }
+
+	/// Specified message was pinned
+	@property @ignore Message pinned_message() {
+		return m_pinned_message.type == Json.Type.null_ 
+				? Message.init
+				: m_pinned_message.deserializeJson!Message;
+	}
+	/// ditto
+	@property @ignore void pinned_message(Message m) {
+		m_pinned_message = m.serializeToJson;
 	}
 
+	/// Message is an invoice for a payment, information about the invoice
 	Invoice invoice;
+
+	/// Message is a service message about a successful payment, information about the payment
 	SuccessfulPayment successful_payment;
+
+	/// The domain name of the website on which the user has logged in
 	string connected_website;
 
-@ignore @property:
-	bool isNull() { return message_id == typeof(message_id).init; }
+	// TODO: Telegram Passport #10
+
+	@ignore @property bool isNull() { return message_id == typeof(message_id).init; }
 }
 
 struct MessageEntity {
