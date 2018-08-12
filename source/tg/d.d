@@ -1713,23 +1713,35 @@ struct TelegramBot {
 		return callMethod!File(m);
 	}
 
-	// TODO pngSticker is InputFile|string
+	/**
+	 * Create new sticker set owned by a user
+	 *
+	 * Params:
+	 *     user_id     = User identifier of created sticker set owner
+	 *     name        = Short name of sticker set, to be used in `t.me/addstickers/` URLs
+	 *     title       = Sticker set title
+	 *     png_sticker = Png image with a sticker, Pass `file_id` or an HTTP URL to get a file from the Internet
+	 *     emojis      = One or more emoji corresponding to the sticker
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `CreateNewStickerSetMethod`, $(LINK https://core.telegram.org/bots/api#createnewstickerset)
+	 */
 	bool createNewStickerSet(int user_id,
 		string name,
 		string title,
-		string pngSticker,
+		string png_sticker,
 		string emojis) {
 			CreateNewStickerSetMethod m = {
 				user_id: user_id,
 				name: name,
 				title: title,
-				png_sticker: pngSticker,
+				png_sticker: png_sticker,
 				emojis: emojis,
 			};
 
 			return createNewStickerSet(m);
 	}
-
+	/// ditto
 	bool createNewStickerSet(CreateNewStickerSetMethod m) {
 		return callMethod!bool(m);
 	}
