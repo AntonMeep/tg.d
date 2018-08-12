@@ -1688,15 +1688,27 @@ struct TelegramBot {
 		return callMethod!StickerSet(m);
 	}
 
-	File uploadStickerFile(int user_id, InputFile pngSticker) {
+	/**
+	 * Upload a .png file to create a new sticker set or add to an existing one
+	 *
+	 * Params:
+	 *     user_id     = User identifier of sticker file owner
+	 *     png_sticker = Png image with the sticker
+	 * Returns: Uploaded `File` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `UploadStickerFileMethod`, $(LINK https://core.telegram.org/bots/api#uploadstickerfile)
+	 * Deprecated: `InputFile` isn't supported yet
+	 */
+	deprecated("InputFile and every method that uses it aren't supported yet")
+	File uploadStickerFile(int user_id, InputFile png_sticker) {
 		UploadStickerFileMethod m = {
 			user_id: user_id,
-			png_sticker: pngSticker,
+			png_sticker: png_sticker,
 		};
 
 		return uploadStickerFile(m);
 	}
-
+	/// ditto
 	File uploadStickerFile(UploadStickerFileMethod m) {
 		return callMethod!File(m);
 	}
