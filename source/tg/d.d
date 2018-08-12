@@ -2287,19 +2287,34 @@ struct Document {
 	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Represents a video file
+ * See_Also: $(LINK https://core.telegram.org/bots/api#video)
+ */
 struct Video {
+	/// Unique identifier for this file
 	string file_id;
-	int width,
-		height,
-		duration;
+
+	/// Video width as defined by sender
+	int width;
+
+	/// Video height as defined by sender
+	int height;
+
+	/// Duration of the video in seconds as defined by sender
+	int duration;
 
 @optional:
+	/// Video thumbnail
 	PhotoSize thumb;
+
+	/// Mime type of a file as defined by sender
 	string mime_type;
+
+	/// File size
 	int file_size;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@safe ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 struct Voice {
