@@ -1796,14 +1796,23 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
+	/**
+	 * Delete a sticker from a set
+	 *
+	 * Params:
+	 *     sticker = File identifier of the sticker
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `DeleteStickerFromSetMethod`, $(LINK https://core.telegram.org/bots/api#deletestickerfromset)
+	 */
 	bool deleteStickerFromSet(string sticker) {
-		SetStickerPositionInSetMethod m = {
+		DeleteStickerFromSetMethod m = {
 			sticker: sticker,
 		};
 
-		return setStickerPositionInSet(m);
+		return deleteStickerFromSet(m);
 	}
-
+	/// ditto
 	bool deleteStickerFromSet(DeleteStickerFromSetMethod m) {
 		return callMethod!bool(m);
 	}
