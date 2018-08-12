@@ -2212,16 +2212,25 @@ struct MessageEntity {
 	@ignore @property bool isNull() { return length == typeof(length).init; }
 }
 
+/**
+ * One size of a photo or a file/sticker thumbnail
+ * See_Also: $(LINK )
+ */
 struct PhotoSize {
+	/// Unique identifier for this file
 	string file_id;
+
+	/// Photo width
 	int width;
+
+	/// Photo height
 	int height;
 
 @optional:
+	/// File size
 	int file_size;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 struct Audio {
@@ -3186,7 +3195,7 @@ struct WebhookInfo {
 
 /*                        Telegram methods                        */
 
-mixin template TelegramMethod(string path) {
+private mixin template TelegramMethod(string path) {
 	package @ignore immutable string m_path = path;
 }
 
