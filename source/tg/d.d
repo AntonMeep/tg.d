@@ -1817,15 +1817,26 @@ struct TelegramBot {
 		return callMethod!bool(m);
 	}
 
-	bool answerInlineQuery(string inlineQueryId, InlineQueryResult[] results) {
+	/**
+	 * Send answers to an inline query 
+	 *
+	 * Params:
+	 *     inline_query_id = Unique identifier for the answered query
+	 *     results         = Results for the inline query
+	 * Returns: `true` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `AnswerInlineQueryMethod`, $(LINK https://core.telegram.org/bots/api#answerinlinequery)
+	 */
+	bool answerInlineQuery(string inline_query_id, InlineQueryResult[] results)
+	in(results.length <= 50) {
 		AnswerInlineQueryMethod m = {
-			inline_query_id: inlineQueryId,
+			inline_query_id: inline_query_id,
 			results: results,
 		};
 
 		return answerInlineQuery(m);
 	}
-
+	/// ditto
 	bool answerInlineQuery(AnswerInlineQueryMethod m) {
 		return callMethod!bool(m);
 	}
