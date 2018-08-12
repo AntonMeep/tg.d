@@ -2234,7 +2234,7 @@ struct PhotoSize {
 }
 
 /**
- * Represents an audio file to be treated as music by the Telegram clients
+ * Audio file to be treated as music by the Telegram clients
  * See_Also: $(LINK https://core.telegram.org/bots/api#audio)
  */
 struct Audio {
@@ -2264,7 +2264,7 @@ struct Audio {
 }
 
 /**
- * Represents a general file (as opposed to photos, voice messages and audio files).
+ * General file (as opposed to photos, voice messages and audio files).
  * See_Also: $(LINK https://core.telegram.org/bots/api#document)
  */
 struct Document {
@@ -2288,7 +2288,7 @@ struct Document {
 }
 
 /**
- * Represents a video file
+ * Video file
  * See_Also: $(LINK https://core.telegram.org/bots/api#video)
  */
 struct Video {
@@ -2314,11 +2314,11 @@ struct Video {
 	/// File size
 	int file_size;
 
-	@safe ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
- * Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound)
+ * Animation file (GIF or H.264/MPEG-4 AVC video without sound)
  * See_Also: $(LINK https://core.telegram.org/bots/api#animation)
  */
 struct Animation {
@@ -2350,16 +2350,25 @@ struct Animation {
 	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Voice note
+ * See_Also: $(LINK https://core.telegram.org/bots/api#voice)
+ */
 struct Voice {
+	/// Unique identifier for this file
 	string file_id;
+
+	/// Duration of the audio in seconds as defined by sender
 	int duration;
 
 @optional:
+	/// MIME type of the file as defined by sender
 	string mime_type;
+
+	/// File size
 	int file_size;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 struct VideoNote {
