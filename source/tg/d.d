@@ -179,8 +179,8 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `getUpdates`
 	 */
-	auto updateGetter(int timeout = 3, string[] allowed_updates = []) {
-		struct updateGetterImpl {
+	auto pollUpdates(int timeout = 3, string[] allowed_updates = []) {
+		struct pollUpdatesImpl {
 			private {
 				TelegramBot m_bot;
 				Update[] m_buffer;
@@ -221,18 +221,18 @@ struct TelegramBot {
 		}
 
 
-		return updateGetterImpl(this, timeout, allowed_updates);
+		return pollUpdatesImpl(this, timeout, allowed_updates);
 	}
 
-	@("TelegramBot.updateGetter() returns valid input range")
+	@("TelegramBot.pollUpdates() returns valid input range")
 	unittest {
 		import std.range : ElementType, isInputRange;
 		import std.traits: ReturnType;
-		static assert(isInputRange!(ReturnType!(TelegramBot.updateGetter)) == true);
-		static assert(is(ElementType!(ReturnType!(TelegramBot.updateGetter)) == Update));
+		static assert(isInputRange!(ReturnType!(TelegramBot.pollUpdates)) == true);
+		static assert(is(ElementType!(ReturnType!(TelegramBot.pollUpdates)) == Update));
 	}
 
-	@("TelegramBot.updateGetter()")
+	@("TelegramBot.pollUpdates()")
 	unittest {
 		import std.range : generate, take, drop;
 		import std.array : array;
@@ -267,7 +267,7 @@ struct TelegramBot {
 			]);
 		};
 
-		TelegramBot("TOKEN", fake).updateGetter()
+		TelegramBot("TOKEN", fake).pollUpdates()
 			.map!(a => a.update_id).array.should.be.equal(updates.map!(a => a.update_id).array);
 	}
 
