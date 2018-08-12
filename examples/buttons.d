@@ -14,7 +14,7 @@ dub.json:
 import core.time      : seconds;
 import tg.d;
 import vibe.core.args : readRequiredOption;
-import vibe.core.core : runApplication, setTimer;
+import vibe.core.core : runApplication, runTask;
 import vibe.core.log  : logInfo;
 
 int main() {
@@ -31,10 +31,9 @@ int main() {
 	"\tUsername: %s"     .logInfo(me.username);
 	"\tLanguage code: %s".logInfo(me.language_code);
 
-	"Setting up the timer".logInfo;
-	1.seconds.setTimer(
-		() {
-			foreach(update; Bot.updateGetter) {
+	runTask({
+		while(true) {
+			foreach(update; Bot.pollUpdates) {
 				if(!update.callback_query.isNull) {
 					"Answering callback query".logInfo;
 					Bot.answerCallbackQuery(update.callback_query.id);
@@ -60,9 +59,8 @@ int main() {
 					Bot.sendMessage(m);
 				}
 			}
-		},
-		true); // To run this timer not just once, but every second
+		}
+	});
 
-	"Running the bot".logInfo;
 	return runApplication();
 }
