@@ -2209,12 +2209,12 @@ struct MessageEntity {
 	/// For “text_mention” only, the mentioned user
 	User user;
 
-	@ignore @property bool isNull() { return length == typeof(length).init; }
+	@safe @ignore @property bool isNull() { return length == typeof(length).init; }
 }
 
 /**
  * One size of a photo or a file/sticker thumbnail
- * See_Also: $(LINK )
+ * See_Also: $(LINK https://core.telegram.org/bots/api#photosize)
  */
 struct PhotoSize {
 	/// Unique identifier for this file
@@ -2230,22 +2230,37 @@ struct PhotoSize {
 	/// File size
 	int file_size;
 
-	@ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Represents an audio file to be treated as music by the Telegram clients
+ * See_Also: $(LINK https://core.telegram.org/bots/api#audio)
+ */
 struct Audio {
+	/// Unique identifier for this file
 	string file_id;
+
+	/// Duration of the audio in seconds as defined by sender
 	int duration;
 
 @optional:
-	string performer,
-			title,
-			mime_type;
+	/// Performer of the audio as defined by sender or by audio tags
+	string performer;
+
+	/// Title of the audio as defined by sender or by audio tags
+	string title;
+
+	/// MIME type of the file as defined by sender
+	string mime_type;
+
+	/// File size
 	int file_size;
+
+	/// Thumbnail of the album cover to which the music file belongs
 	PhotoSize thumb;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 struct Document {
