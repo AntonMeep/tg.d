@@ -1846,10 +1846,10 @@ struct TelegramBot {
 
 /// Type of chat
 enum ChatType : string {
-	private_   = "private",
-	group      = "group",
-	supergroup = "supergroup",
-	channel    = "channel"
+	private_   = "private",    /// Private chats
+	group      = "group",      /// Group chats
+	supergroup = "supergroup", /// SuperGroup. Just like a group, but *super*
+	channel    = "channel"     /// Channel
 }
 
 /// Formatting options
