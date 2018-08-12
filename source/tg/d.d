@@ -1872,24 +1872,54 @@ enum ParseMode : string {
 	html     = "HTML",
 }
 
+/**
+ * Represents the contents of a file to be uploaded
+ * Deprecated: Not yet implemented.
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputfile)
+ */
 struct InputFile {}
 
+/**
+ * An incoming update
+ * See_Also: $(LINK https://core.telegram.org/bots/api#update)
+ */
 struct Update {
+	/// Unique identifier of the update
 	int update_id;
 
+	/// Shorthand for `update_id`;
+	alias id = update_id;
+
 @optional:
-	Message message,
-			edited_message,
-			channel_post,
-			edited_channel_post;
+	/// New incoming message
+	Message message;
+
+	/// New version of an old message
+	Message edited_message;
+
+	/// New channel post
+	Message channel_post;
+
+	/// New version of a channel post
+	Message edited_channel_post;
+
+	/// New incoming inline query
 	InlineQuery inline_query;
+
+	/// Result of an inline query
 	ChosenInlineResult chosen_inline_result;
+
+	/// New incoming callback query
 	CallbackQuery callback_query;
+
+	/// New incoming shipping query
 	ShippingQuery shipping_query;
+
+	/// New incoming pre-checkout query
 	PreCheckoutQuery pre_checkout_query;
 
-@ignore @property:
-	bool isNull() { return update_id == typeof(update_id).init; }
+	/// This method can be used to check if update is empty
+	@ignore @property bool isNull() { return update_id == typeof(update_id).init; }
 }
 
 struct User {
