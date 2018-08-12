@@ -1667,6 +1667,15 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
+	/**
+	 * Get a sticker set
+	 *
+	 * Params:
+	 *     name = Name of the sticker set
+	 * Returns: `StickerSet` on success
+	 * Throws: `TelegramBotException` on errors
+	 * See_Also: `GetStickerMethod`, $(LINK https://core.telegram.org/bots/api#getstickerset)
+	 */
 	StickerSet getStickerSet(string name) {
 		GetStickerSetMethod m = {
 			name: name,
@@ -1674,7 +1683,7 @@ struct TelegramBot {
 
 		return getStickerSet(m);
 	}
-
+	/// ditto
 	StickerSet getStickerSet(GetStickerSetMethod m) {
 		return callMethod!StickerSet(m);
 	}
