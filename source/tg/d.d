@@ -147,7 +147,7 @@ struct TelegramBot {
 		return callMethod!(Update[])(m);
 	}
 
-	@("TelegramBot.getUpdates()")
+	@("getUpdates()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -226,7 +226,7 @@ struct TelegramBot {
 		return pollUpdatesImpl(this, timeout, allowed_updates);
 	}
 
-	@("TelegramBot.pollUpdates() returns valid input range")
+	@("pollUpdates() returns valid input range")
 	unittest {
 		import std.range : ElementType, isInputRange;
 		import std.traits: ReturnType;
@@ -234,7 +234,7 @@ struct TelegramBot {
 		static assert(is(ElementType!(ReturnType!(TelegramBot.pollUpdates)) == Update));
 	}
 
-	@("TelegramBot.pollUpdates()")
+	@("pollUpdates()")
 	unittest {
 		import std.range : generate, take, drop;
 		import std.array : array;
@@ -335,7 +335,7 @@ struct TelegramBot {
 		return callMethod!User(GetMeMethod());
 	}
 
-	@("TelegramBot.getMe()")
+	@("getMe()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -413,7 +413,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.sendMessage()")
+	@("sendMessage()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -479,7 +479,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.forwardMessage()")
+	@("forwardMessage()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -524,7 +524,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.sendPhoto()")
+	@("sendPhoto()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -570,7 +570,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.sendAudio()")
+	@("sendAudio()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -614,7 +614,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.sendDocument()")
+	@("sendDocument()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -660,7 +660,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.sendVideo()")
+	@("sendVideo()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -706,7 +706,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.sendAnimation()")
+	@("sendAnimation()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
@@ -752,7 +752,7 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
-	@("TelegramBot.sendVoice()")
+	@("sendVoice()")
 	unittest {
 		TelegramBot(
 			"TOKEN",
