@@ -45,6 +45,7 @@ class TelegramBotException : Exception {
  * Main structure representing one bot
  */
 struct TelegramBot {
+@trusted:
 	private {
 		string m_url;
 
@@ -181,6 +182,7 @@ struct TelegramBot {
 	 */
 	auto pollUpdates(int timeout = 3, string[] allowed_updates = []) {
 		struct pollUpdatesImpl {
+		@safe:
 			private {
 				TelegramBot m_bot;
 				Update[] m_buffer;
@@ -3612,7 +3614,7 @@ import std.variant : Algebraic, VariantN;
 	}
 }
 
-bool shouldSerialize(T)(T value) {
+@trusted bool shouldSerialize(T)(T value) {
 	static if(__traits(compiles, value.isNull)) {
 		return !value.isNull;
 	} else static if(__traits(compiles, value.hasValue)) {
@@ -3742,7 +3744,7 @@ unittest {
 	data["chat"]["id"].should.be.equal(Json(1337));
 }
 
-T deserializeJson(T)(Json value) {
+@trusted T deserializeJson(T)(Json value) {
 	import std.traits;
 	import std.exception;
 	static if(is(T : Json)) {
