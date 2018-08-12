@@ -2317,6 +2317,39 @@ struct Video {
 	@safe ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound)
+ * See_Also: $(LINK https://core.telegram.org/bots/api#animation)
+ */
+struct Animation {
+	/// Unique file identifier
+	string file_id;
+
+	/// Video width as defined by sender
+	int width;
+
+	/// Video height as defined by sender
+	int height;
+
+	/// Duration of the video in seconds as defined by sender
+	int duration;
+
+@optional:
+	/// Animation thumbnail as defined by sender
+	PhotoSize thumb;
+
+	/// Original animation filename as defined by sender
+	string file_name;
+
+	/// MIME type of the file as defined by sender
+	string mime_type;
+
+	/// File size
+	int file_size;
+
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+}
+
 struct Voice {
 	string file_id;
 	int duration;
@@ -2645,19 +2678,6 @@ struct Game {
 
 @ignore @property:
 	bool isNull() { return title == typeof(title).init; }
-}
-
-struct Animation {
-	string file_id;
-
-@optional:
-	PhotoSize thumb;
-	string file_name,
-			mime_type;
-	int file_size;
-
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 struct CallbackGame {
