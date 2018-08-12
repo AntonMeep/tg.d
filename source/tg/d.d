@@ -2263,17 +2263,28 @@ struct Audio {
 	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Represents a general file (as opposed to photos, voice messages and audio files).
+ * See_Also: $(LINK https://core.telegram.org/bots/api#document)
+ */
 struct Document {
+	/// Unique file identifier
 	string file_id;
 
 @optional:
+	/// Document thumbnail as defined by sender
 	PhotoSize thumb;
-	string file_name,
-			mime_type;
+
+	/// Original filename as defined by sender
+	string file_name;
+
+	/// MIME type of the file as defined by sender
+	string mime_type;
+
+	/// File size
 	int file_size;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 struct Video {
