@@ -1758,11 +1758,11 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `AddStickerToSetMethod`, $(LINK https://core.telegram.org/bots/api#addstickertoset)
 	 */
-	bool addStickerToSet(int user_id, string name, string pngSticker, string emojis) {
+	bool addStickerToSet(int user_id, string name, string png_sticker, string emojis) {
 		AddStickerToSetMethod m = {
 			user_id: user_id,
 			name : name,
-			png_sticker: pngSticker,
+			png_sticker: png_sticker,
 			emojis: emojis,
 		};
 
