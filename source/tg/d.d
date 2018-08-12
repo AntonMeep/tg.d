@@ -13,7 +13,7 @@ import std.math : isNaN;
 import vibe.core.log;
 import vibe.data.json : Json;
 
-import std.meta : AliasSeq, staticIndexOf;
+import std.meta : staticIndexOf;
 
 version(unittest) import fluent.asserts;
 
@@ -2235,15 +2235,9 @@ struct File {
 	bool isNull() { return file_id == typeof(file_id).init; }
 }
 
-private alias ReplyMarkupStructs = AliasSeq!(ReplyKeyboardMarkup, ReplyKeyboardRemove,
-		InlineKeyboardMarkup, ForceReply);
+alias ReplyMarkup = Algebraic!(ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, ForceReply);
 
-/**
- Abstract structure for unioining ReplyKeyboardMarkup, ReplyKeyboardRemove,
- InlineKeyboardMarkup and ForceReply
-*/
-alias ReplyMarkup = Algebraic!ReplyMarkupStructs;
-enum isReplyMarkup(T) = is(T == ReplyMarkup) || staticIndexOf!(T, ReplyMarkupStructs) >= 0;
+enum isReplyMarkup(T) = is(T == ReplyMarkup) || staticIndexOf!(T, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, ForceReply) >= 0;
 
 struct ReplyKeyboardMarkup {
 	KeyboardButton[][] keyboard;
@@ -2367,9 +2361,7 @@ struct ResponseParameters {
 	bool isNull() { return !migrate_to_chat_id && !retry_after; }
 }
 
-
-private alias InputMediaStructs = AliasSeq!(InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument);
-alias InputMedia = Algebraic!InputMediaStructs;
+alias InputMedia = Algebraic!(InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument);
 
 struct InputMediaPhoto {
 	string type = "photo";
@@ -2626,17 +2618,28 @@ struct InlineQuery {
 	bool isNull() { return id == typeof(id).init; }
 }
 
-private alias InlineQueryResultStructs = AliasSeq!(InlineQueryResultArticle, InlineQueryResultPhoto,
-		InlineQueryResultGif, InlineQueryResultMpeg4Gif, InlineQueryResultVideo,
-		InlineQueryResultAudio, InlineQueryResultVoice, InlineQueryResultDocument,
-		InlineQueryResultLocation,
-		InlineQueryResultVenue,
-		InlineQueryResultContact,
-		InlineQueryResultGame, InlineQueryResultCachedPhoto, InlineQueryResultCachedGif,
-		InlineQueryResultCachedMpeg4Gif, InlineQueryResultCachedSticker, InlineQueryResultCachedDocument,
-		InlineQueryResultCachedVideo, InlineQueryResultCachedVoice, InlineQueryResultCachedAudio);
-
-alias InlineQueryResult = Algebraic!InlineQueryResultStructs;
+alias InlineQueryResult = Algebraic!(
+	InlineQueryResultArticle,
+	InlineQueryResultPhoto,
+	InlineQueryResultGif,
+	InlineQueryResultMpeg4Gif,
+	InlineQueryResultVideo,
+	InlineQueryResultAudio,
+	InlineQueryResultVoice,
+	InlineQueryResultDocument,
+	InlineQueryResultLocation,
+	InlineQueryResultVenue,
+	InlineQueryResultContact,
+	InlineQueryResultGame,
+	InlineQueryResultCachedPhoto,
+	InlineQueryResultCachedGif,
+	InlineQueryResultCachedMpeg4Gif,
+	InlineQueryResultCachedSticker,
+	InlineQueryResultCachedDocument,
+	InlineQueryResultCachedVideo,
+	InlineQueryResultCachedVoice,
+	InlineQueryResultCachedAudio
+);
 
 struct InlineQueryResultArticle {
 	string type = "article";
@@ -2993,10 +2996,7 @@ struct InlineQueryResultCachedAudio {
 	bool isNull() { return id == typeof(id).init; }
 }
 
-private alias InputMessageContentStructs = AliasSeq!(InputTextMessageContent,
-		InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
-
-alias InputMessageContent = Algebraic!InputMessageContentStructs;
+alias InputMessageContent = Algebraic!(InputTextMessageContent, InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
 
 struct InputTextMessageContent {
 	string message_text;
