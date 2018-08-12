@@ -1844,6 +1844,7 @@ struct TelegramBot {
 
 /*                    Telegram types and enums                    */
 
+/// Type of chat
 enum ChatType : string {
 	private_   = "private",
 	group      = "group",
@@ -1851,9 +1852,23 @@ enum ChatType : string {
 	channel    = "channel"
 }
 
+/// Formatting options
 enum ParseMode : string {
+	/**
+	 * No formatting
+	 */
 	none     = "",
+
+	/**
+	 * Markdown formatting
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#markdown-style)
+	 */
 	markdown = "Markdown",
+
+	/**
+	 * HTML formatting
+	 * See_Also: $(LINK https://core.telegram.org/bots/api#html-style)
+	 */
 	html     = "HTML",
 }
 
