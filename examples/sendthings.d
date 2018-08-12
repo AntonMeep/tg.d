@@ -31,7 +31,7 @@ import std.format       : format;
 import std.random       : uniform, choice;
 import tg.d;
 import vibe.core.args   : readRequiredOption;
-import vibe.core.core   : runApplication, setTimer;
+import vibe.core.core   : runApplication, runTask;
 import vibe.core.log    : logInfo;
 import vibe.http.client : requestHTTP;
 
@@ -50,9 +50,9 @@ int main() {
 	"\tLanguage code: %s".logInfo(me.language_code);
 
 	"Setting up the timer".logInfo;
-	1.seconds.setTimer(
-		() {
-			foreach(update; Bot.updateGetter) {
+	runTask({
+		while(true) {
+			foreach(update; Bot.pollUpdates) {
 				if(update.message.isNull || !update.message.text.length) // We are only caring about text messages
 					continue;
 
@@ -129,10 +129,8 @@ int main() {
 					Bot.sendMessage(update.message.chat.id, "What do you mean by that?");
 				}
 			}
-		},
-		true); // To run this timer not just once, but every second
+		}
+	});
 
-	"Running the bot".logInfo;
 	return runApplication();
 }
-
