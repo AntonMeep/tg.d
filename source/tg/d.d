@@ -1793,7 +1793,7 @@ struct Update {
 	InlineQuery inline_query;
 	ChosenInlineResult chosen_inline_result;
 	CallbackQuery callback_query;
-	ShippingQuery shopping_query;
+	ShippingQuery shipping_query;
 	PreCheckoutQuery pre_checkout_query;
 
 @ignore @property:
