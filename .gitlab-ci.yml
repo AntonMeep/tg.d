@@ -3,27 +3,18 @@ image: docker:stable
 services:
 - docker:dind
 
-stages:
-  - test
-  - coverage
-
 dmd: &test
-  stage: test
+  coverage: '/Average: \d+\.\d+%/'
   variables:
     COMPILER: dmd
   script:
-    - docker run -v$(pwd):/source ohboi/mini$COMPILER dub test
+    - docker run -v$(pwd):/source ohboi/mini$COMPILER bash -c "
+        dub test &&
+        dub fetch covered &&
+        dub test -b unittest-cov &&
+        dub run covered -- -a source-tg-d.lst"
 
 ldc:
   <<: *test
   variables:
     COMPILER: ldc:beta
-
-coverage:
-  stage: coverage
-  coverage: '/Average: \d+\.\d+%/'
-  script:
-    - docker run -v$(pwd):/source ohboi/minidmd bash -c "
-        dub fetch covered        &&
-        dub test -b unittest-cov &&
-        dub run covered -- -a source-tg-d.lst"
