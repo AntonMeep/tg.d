@@ -1889,6 +1889,16 @@ enum EntityType : string {
 	text_mention = "text_mention", /// For users without usernames
 }
 
+/// Member's status in the chat
+enum UserStatus : string {
+	creator       = "creator",       /// Creator
+	administrator = "administrator", /// Administrator
+	member        = "member",        /// Member
+	restricted    = "restricted",    /// Restricted
+	left          = "left",          /// Left
+	kicked        = "kicked",        /// Kicked
+}
+
 /**
  * Represents the contents of a file to be uploaded
  * Deprecated: Not yet implemented.
@@ -2652,37 +2662,75 @@ struct ForceReply {
 	@safe @ignore @property bool isNull() { return force_reply == typeof(force_reply).init; }
 }
 
+/**
+ * Chat photo
+ * See_Also: $(LINK https://core.telegram.org/bots/api#chatphoto)
+ */
 struct ChatPhoto {
-	string small_file_id,
-			big_file_id;
+	/// Unique file identifier of small (160x160) chat photo
+	string small_file_id;
 
+	/// Unique file identifier of big (640x640) chat photo
+	string big_file_id;
 
-@ignore @property:
-	bool isNull() { return small_file_id == typeof(small_file_id).init; }
+	@safe @ignore @property bool isNull() { return small_file_id == typeof(small_file_id).init; }
 }
 
+/**
+ * Information about one member of a chat
+ * See_Also: $(LINK https://core.telegram.org/bots/api#chatmember)
+ */
 struct ChatMember {
+	/// Information about the user
 	User user;
-	string status;
+
+	/// Member's status in the chat
+	UserStatus status;
 
 @optional:
+	/// Restricted and kicked only. Date when restrictions will be lifted for this user, unix time
 	long until_date;
-	bool can_be_edited,
-			can_change_info,
-			can_post_messages,
-			can_edit_messages,
-			can_delete_messages,
-			can_invite_users,
-			can_restrict_members,
-			can_pin_messages,
-			can_promote_members,
-			can_send_messages,
-			can_send_media_messages,
-			can_send_other_messages,
-			can_add_web_page_previews;
 
-@ignore @property:
-	bool isNull() { return user.isNull; }
+	/// Administrators only. `true`, if the bot is allowed to edit administrator privileges of that user
+	bool can_be_edited,
+
+	/// Administrators only. `true`, if the administrator can change the chat title, photo and other settings
+	bool can_change_info;
+
+	/// Administrators only. `true`, if the administrator can post in the channel, channels only
+	bool can_post_messages;
+
+	/// Administrators only. `true`, if the administrator can edit messages of other users and can pin messages, channels only
+	bool can_edit_messages;
+
+	/// Administrators only. `true`, if the administrator can delete messages of other users
+	bool can_delete_messages;
+
+	/// Administrators only. `true`, if the administrator can invite new users to the chat
+	bool can_invite_users;
+
+	/// Administrators only. `true`, if the administrator can restrict, ban or unban chat members
+	bool can_restrict_members;
+
+	/// Administrators only. `true`, if the administrator can pin messages, supergroups only
+	bool can_pin_messages;
+
+	/// Administrators only. `true`, if the administrator can add new administrators with a subset of his own privileges or demote administrators that he has promoted, directly or indirectly
+	bool can_promote_members;
+
+	/// Restricted only. `true`, if the user can send text messages, contacts, locations and venues
+	bool can_send_messages;
+
+	/// Restricted only. `true`, if the user can send audios, documents, photos, videos, video notes and voice notes, implies can_send_messages
+	bool can_send_media_messages;
+
+	/// Restricted only. `true`, if the user can send animations, games, stickers and use inline bots, implies can_send_media_messages
+	bool can_send_other_messages;
+
+	/// Restricted only. `true`, if user may add web page previews to his messages, implies can_send_media_messages
+	bool can_add_web_page_previews;
+
+	@safe @ignore @property bool isNull() { return user.isNull; }
 }
 
 struct ResponseParameters {
