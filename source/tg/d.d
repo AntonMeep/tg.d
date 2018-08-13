@@ -2371,17 +2371,28 @@ struct Voice {
 	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Video message
+ * See_Also: $(LINK https://core.telegram.org/bots/api#videonote)
+ */
 struct VideoNote {
+	/// Unique identifier for this file
 	string file_id;
-	int length,
-		duration;
+
+	/// Video width and height as defined by sender
+	int length;
+
+	/// Duration of the video in seconds as defined by sender
+	int duration;
 
 @optional:
+	/// Video thumbnail
 	PhotoSize thumb;
+
+	/// File size
 	int file_size;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 struct Contact {
