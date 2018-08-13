@@ -2471,18 +2471,25 @@ struct UserProfilePhotos {
 	@safe @ignore @property bool isNull() { return total_count == typeof(total_count).init; }
 }
 
+/**
+ * File ready to be downloaded
+ * See_Also: $(LINK https://core.telegram.org/bots/api#file)
+ */
 struct File {
+	/// Unique identifier for this file
 	string file_id;
 
 @optional:
+	/// File size, if known
 	int file_size;
+
+	/// File path
 	string file_path;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
-alias ReplyMarkup = Algebraic!(ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, ForceReply);
+alias ReplyMarkup = Algebraic!(InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply);
 
 enum isReplyMarkup(T) = is(T == ReplyMarkup) || staticIndexOf!(T, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, ForceReply) >= 0;
 
