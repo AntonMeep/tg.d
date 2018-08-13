@@ -2457,12 +2457,18 @@ struct Venue {
 	@safe @ignore @property bool isNull() { return location.isNull; }
 }
 
+/**
+ * User's profile pictures
+ * See_Also: $(LINK https://core.telegram.org/bots/api#userprofilephotos)
+ */
 struct UserProfilePhotos {
+	/// Total number of profile pictures the target user has
 	int total_count;
-	PhotoSize[] photos;
 
-@ignore @property:
-	bool isNull() { return total_count == typeof(total_count).init; }
+	/// Requested profile pictures (in up to 4 sizes each)
+	PhotoSize[][] photos;
+
+	@safe @ignore @property bool isNull() { return total_count == typeof(total_count).init; }
 }
 
 struct File {
