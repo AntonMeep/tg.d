@@ -2530,7 +2530,7 @@ struct ReplyKeyboardMarkup {
 	/// Show the keyboard to specific users only
 	bool selective;
 
-	@safe @ignore @property bool isNull() { return keyboard == typeof(keyboard).init; }
+	@safe @ignore @property bool isNull() { return !keyboard.length; }
 }
 
 /**
@@ -2551,36 +2551,60 @@ struct KeyboardButton {
 	@safe @ignore @property bool isNull() { return text == typeof(text).init; }
 }
 
+/**
+ * Remove current custom keyboard
+ * See_Also: $(LINK https://core.telegram.org/bots/api#replykeyboardremove)
+ */
 struct ReplyKeyboardRemove {
+	/// `true` to remove the keyboard
 	bool remove_keyboard;
 
 @optional:
+	/// Remove for specific users only
 	bool selective;
 
-@ignore @property:
-	bool isNull() { return remove_keyboard == typeof(remove_keyboard).init; }
+	@safe @ignore @property bool isNull() { return remove_keyboard == typeof(remove_keyboard).init; }
 }
 
+/**
+ * Inline keyboard that appears right next to the message
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinekeyboardmarkup)
+ */
 struct InlineKeyboardMarkup {
+	/// Keyboard layout
 	InlineKeyboardButton[][] inline_keyboard;
 
-@ignore @property:
-	bool isNull() { return inline_keyboard == typeof(inline_keyboard).init; }
+	@safe @ignore @property bool isNull() { return !inline_keyboard.length; }
 }
 
+/**
+ * One button of an inline keyboard
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinekeyboardbutton)
+ */
 struct InlineKeyboardButton {
+	/// Label text on the button
 	string text;
 
 @optional:
-	string url,
-		   callback_data,
-		   switch_inline_query,
-		   switch_inline_query_current_chat;
+	/// HTTP or `tg://` url to be opened when button is pressed
+	string url;
+
+	/// Data to be sent in a callback query to the bot when button is pressed
+	string callback_data;
+
+	/// Pressing the button will prompt the user to select one of their chats, open that chat and insert the bot‘s username and the specified inline query in the input field
+	string switch_inline_query;
+
+	/// Pressing the button will insert the bot‘s username and the specified inline query in the current chat's input field
+	string switch_inline_query_current_chat;
+
+	/// Description of the game that will be launched when the user presses the button
 	CallbackGame callback_game;
+
+	/// `true` to send a pay button
 	bool pay;
 
-@ignore @property:
-	bool isNull() { return text == typeof(text).init; }
+	@safe @ignore @property bool isNull() { return text == typeof(text).init; }
 }
 
 struct CallbackQuery {
