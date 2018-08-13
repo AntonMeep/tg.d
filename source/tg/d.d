@@ -2491,7 +2491,7 @@ struct File {
 
 alias ReplyMarkup = Algebraic!(InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply);
 
-enum isReplyMarkup(T) = is(T == ReplyMarkup) || staticIndexOf!(T, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardMarkup, ForceReply) >= 0;
+enum isReplyMarkup(T) = is(T == ReplyMarkup) || ReplyMarkup.allowed!T;
 
 struct ReplyKeyboardMarkup {
 	KeyboardButton[][] keyboard;
