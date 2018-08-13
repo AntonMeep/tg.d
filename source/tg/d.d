@@ -2692,7 +2692,7 @@ struct ChatMember {
 	long until_date;
 
 	/// Administrators only. `true`, if the bot is allowed to edit administrator privileges of that user
-	bool can_be_edited,
+	bool can_be_edited;
 
 	/// Administrators only. `true`, if the administrator can change the chat title, photo and other settings
 	bool can_change_info;
@@ -2733,16 +2733,43 @@ struct ChatMember {
 	@safe @ignore @property bool isNull() { return user.isNull; }
 }
 
+/**
+ * Information about why a request was unsuccessful
+ * See_Also: $(LINK https://core.telegram.org/bots/api#responseparameters)
+ */
 struct ResponseParameters {
 @optional:
+	/// The group has been migrated to a supergroup with the specified identifier
 	long migrate_to_chat_id;
+
+	/// In case of exceeding flood control, the number of seconds left to wait before the request can be repeated
 	int retry_after;
 
-@ignore @property:
-	bool isNull() { return !migrate_to_chat_id && !retry_after; }
+	@safe @ignore @property bool isNull() { return !migrate_to_chat_id && !retry_after; }
 }
 
-alias InputMedia = Algebraic!(InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument);
+/**
+ * Content of a media message to be sent
+ * See_Also: `InputMediaAnimation`, `InputMediaDocument`, `InputMediaAudio`, `InputMediaPhoto`, `InputMediaVideo`
+ */
+alias InputMedia = Algebraic!(InputMediaAnimation, InputMediaDocument, InputMediaAudio, InputMediaPhoto, InputMediaVideo);
+
+/// Checks if `T` is one of the `InputMedia` types
+enum isInputMedia(T) = is(T == InputMedia) || InputMedia.allowed!T;
+
+///
+@("isInputMedia")
+unittest {
+	static assert(isInputMedia!InputMedia);
+	static assert(isInputMedia!InputMediaAnimation);
+	static assert(isInputMedia!InputMediaDocument);
+	static assert(isInputMedia!InputMediaAudio);
+	static assert(isInputMedia!InputMediaPhoto);
+	static assert(isInputMedia!InputMediaVideo);
+	static assert(!isInputMedia!string);
+	static assert(!isInputMedia!bool);
+	static assert(!isInputMedia!int);
+}
 
 struct InputMediaPhoto {
 	string type = "photo";
