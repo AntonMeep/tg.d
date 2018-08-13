@@ -2395,17 +2395,28 @@ struct VideoNote {
 	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Phone contact
+ * See_Also: $(LINK https://core.telegram.org/bots/api#contact)
+ */
 struct Contact {
-	string phone_number,
-		   first_name;
+	/// Contact's phone number
+	string phone_number;
+
+	/// Contact's first name
+	string first_name;
 
 @optional:
+	/// Contact's last name
 	string last_name;
+
+	/// Contact's user identifier in Telegram
 	int user_id;
+
+	/// Additional data about the contact in the form of a vCard
 	string vcard;
 
-@ignore @property:
-	bool isNull() { return phone_number == typeof(phone_number).init; }
+	@safe @ignore @property bool isNull() { return phone_number == typeof(phone_number).init; }
 }
 
 struct Location {
