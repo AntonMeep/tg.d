@@ -2607,29 +2607,49 @@ struct InlineKeyboardButton {
 	@safe @ignore @property bool isNull() { return text == typeof(text).init; }
 }
 
+/**
+ * Incoming callback query
+ * See_Also: $(LINK https://core.telegram.org/bots/api#callbackquery)
+ */
 struct CallbackQuery {
+	/// Unique identifier for this query
 	string id;
+
+	/// Sender
 	User from;
+
+	/// Global identifier, uniquely corresponding to the chat to which the message with the callback button was sent
 	string chat_instance;
 
 @optional:
+	/// Message with the callback button that originated the query
 	Message message;
-	string inline_message_id,
-			data,
-			game_short_name;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	/// Identifier of the message sent via the bot in inline mode, that originated the query
+	string inline_message_id;
+
+	/// Data associated with the callback button
+	string data;
+
+	/// Short name of a `Game` to be returned
+	string game_short_name;
+
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Force user reply
+ * See_Also: $(LINK https://core.telegram.org/bots/api#forcereply)
+ */
 struct ForceReply {
+	/// Show reply iterface to a user
 	bool force_reply;
 
 @optional:
+	/// Only for specific users
 	bool selective;
 
-@ignore @property:
-	bool isNull() { return force_reply == typeof(force_reply).init; }
+	@safe @ignore @property bool isNull() { return force_reply == typeof(force_reply).init; }
 }
 
 struct ChatPhoto {
