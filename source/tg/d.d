@@ -2419,25 +2419,42 @@ struct Contact {
 	@safe @ignore @property bool isNull() { return phone_number == typeof(phone_number).init; }
 }
 
+/**
+ * Point on the map
+ * See_Also: $(LINK https://core.telegram.org/bots/api#location)
+ */
 struct Location {
-	float longitude,
-		  latitude;
+	/// Longitude as defined by sender
+	float longitude;
 
-@ignore @property:
-	bool isNull() { return longitude.isNaN; }
+	/// Latitude as defined by sender
+	float latitude;
+
+	@safe @ignore @property bool isNull() { return longitude.isNaN; }
 }
 
+/**
+ * Venue
+ * See_Also: $(LINK https://core.telegram.org/bots/api#venue)
+ */
 struct Venue {
+	/// Venue location
 	Location location;
-	string title,
-		   address;
+
+	/// Name of the venue
+	string title;
+
+	/// Address of the venue
+	string address;
 
 @optional:
+	/// Foursquare identifier of the venue
 	string foursquare_id;
+
+	/// Foursquare type of the venue
 	string foursquare_type;
 
-@ignore @property:
-	bool isNull() { return location.isNull; }
+	@safe @ignore @property bool isNull() { return location.isNull; }
 }
 
 struct UserProfilePhotos {
