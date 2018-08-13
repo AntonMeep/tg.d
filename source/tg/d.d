@@ -2512,27 +2512,43 @@ unittest {
 	static assert(!isReplyMarkup!(Algebraic!(InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove)));
 }
 
+/**
+ * Custom keyboard with reply options
+ * See_Also: $(LINK https://core.telegram.org/bots/api#replykeyboardmarkup)
+ */
 struct ReplyKeyboardMarkup {
+	/// Keyboard layout
 	KeyboardButton[][] keyboard;
 
 @optional:
-	bool resize_keyboard,
-			one_time_keyboard,
-			selective;
+	/// Request clients to resize the keyboard vertically for optimal fit
+	bool resize_keyboard;
 
-@ignore @property:
-	bool isNull() { return keyboard == typeof(keyboard).init; }
+	/// Request clients to hide the keyboard as soon as it's been used
+	bool one_time_keyboard;
+
+	/// Show the keyboard to specific users only
+	bool selective;
+
+	@safe @ignore @property bool isNull() { return keyboard == typeof(keyboard).init; }
 }
 
+/**
+ * One button of the reply keyboard
+ * See_Also: $(LINK https://core.telegram.org/bots/api#keyboardbutton)
+ */
 struct KeyboardButton {
+	/// Text of the button
 	string text;
 
 @optional:
-	bool request_contact,
-			request_location;
+	/// If `true`, the user's phone number will be sent as a contact when the button is pressed
+	bool request_contact;
 
-@ignore @property:
-	bool isNull() { return text == typeof(text).init; }
+	/// If `true`, the user's current location will be sent when the button is pressed
+	bool request_location;
+
+	@safe @ignore @property bool isNull() { return text == typeof(text).init; }
 }
 
 struct ReplyKeyboardRemove {
