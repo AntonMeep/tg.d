@@ -2489,9 +2489,28 @@ struct File {
 	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user
+ * See_Also: `InlineKeyboardMarkup`, `ReplyKeyboardMarkup`, `ReplyKeyboardRemove`, `ForceReply`
+ */
 alias ReplyMarkup = Algebraic!(InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, ForceReply);
 
+/// Checks if `T` is one of the `ReplyMarkup` types
 enum isReplyMarkup(T) = is(T == ReplyMarkup) || ReplyMarkup.allowed!T;
+
+///
+@("isReplyMarkup")
+unittest {
+	static assert(isReplyMarkup!ReplyMarkup);
+	static assert(isReplyMarkup!InlineKeyboardMarkup);
+	static assert(isReplyMarkup!ReplyKeyboardMarkup);
+	static assert(isReplyMarkup!ReplyKeyboardRemove);
+	static assert(isReplyMarkup!ForceReply);
+	static assert(!isReplyMarkup!string);
+	static assert(!isReplyMarkup!int);
+	static assert(!isReplyMarkup!bool);
+	static assert(!isReplyMarkup!(Algebraic!(InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove)));
+}
 
 struct ReplyKeyboardMarkup {
 	KeyboardButton[][] keyboard;
