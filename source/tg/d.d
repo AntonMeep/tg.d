@@ -3523,35 +3523,67 @@ struct InlineQueryResultVenue {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Contact with a phone number
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcontact)
+ */
 struct InlineQueryResultContact {
+	/// Type of the result, must be `"contact"`
 	string type = "contact";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// Contact's phone number
 	string phone_number;
+
+	/// Contact's first name
 	string first_name;
 
 @optional:
+	/// Contact's last name
 	string last_name;
+
+	/// Additional data about the contact in the form of a vCard
 	string vcard;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the contact
 	InputMessageContent input_message_content;
+
+	/// Url of the thumbnail for the result
 	string thumb_url;
+
+	/// Thumbnail width
 	int thumb_width;
+
+	/// Thumbnail height
 	int thumb_height;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Game
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultgame)
+ */
 struct InlineQueryResultGame {
+	/// Type of the result, must be `"game"`
 	string type = "game";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// Short name of the game
 	string game_short_name;
 
 @optional:
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultCachedPhoto {
