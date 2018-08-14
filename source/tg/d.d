@@ -3433,44 +3433,94 @@ struct InlineQueryResultDocument {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Location on a map
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultlocation)
+ */
 struct InlineQueryResultLocation {
+	/// Type of the result, must be `"location"`
 	string type = "location";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// Location latitude in degrees
 	float latitude;
+
+	/// Location longitude in degrees
 	float longitude;
+
+	/// Location title
 	string title;
 
 @optional:
+	/// Period in seconds for which the location can be updated
 	int live_period;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the location
 	InputMessageContent input_message_content;
+
+	/// Url of the thumbnail for the result
 	string thumb_url;
+
+	/// Thumbnail width
 	int thumb_width;
+
+	/// Thumbnail height
 	int thumb_height;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Venue
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultvenue)
+ */
 struct InlineQueryResultVenue {
+	/// Type of the result, must be `"venue"`
 	string type = "venue";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// Latitude of the venue location in degrees
 	float latitude;
+
+	/// Longitude of the venue location in degrees
 	float longitude;
+
+	/// Title of the venue
 	string title;
+
+	/// Address of the venue
 	string address;
 
 @optional:
+	/// Foursquare identifier of the venue if known
 	string foursquare_id;
+
+	/// Foursquare type of the venue, if known
 	string foursquare_type;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the venue
 	InputMessageContent input_message_content;
+
+	/// Url of the thumbnail for the result
 	string thumb_url;
+
+	/// Thumbnail width
 	int thumb_width;
+
+	/// Thumbnail height
 	int thumb_height;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultContact {
