@@ -3124,44 +3124,94 @@ struct InlineQueryResultArticle {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a photo
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultphoto)
+ */
 struct InlineQueryResultPhoto {
+	/// Type of the result, must be `"photo"`
 	string type = "photo";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid URL of the photo. Photo must be in jpeg format. Photo size must not exceed 5MB
 	string photo_url;
+
+	/// URL of the thumbnail for the photo
 	string thumb_url;
 
 @optional:
+	/// Width of the photo
 	int photo_width;
+
+	/// Height of the photo
 	int photo_height;
+
+	/// Title for the result
 	string title;
+
+	/// Short description of the result
 	string description;
+
+	/// Caption of the photo to be sent
 	string caption;
+
+	/// Parse mode for the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the photo
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to an animated GIF file
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultgif)
+ */
 struct InlineQueryResultGif {
+	/// Type of the result, must be `"gif"`
 	string type = "gif";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid URL for the GIF file. File size must not exceed 1MB
 	string gif_url;
+
+	/// URL of the static thumbnail for the result (jpeg or gif)
 	string thumb_url;
 
 @optional:
+	/// Width of the GIF
 	int gif_width;
+
+	/// Height of the GIF
 	int gif_height;
+
+	/// Duration of the GIF
 	int gif_duration;
+
+	/// Title for the result
 	string title;
+
+	///  Caption of the GIF file to be sent
 	string caption;
+
+	/// Parse mode for the caption
 	ParseMode parse_mode;
-	InputMessageContent input_message_content;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	/// Content of the message to be sent instead of the GIF animation
+	InputMessageContent input_message_content;
+
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultMpeg4Gif{
