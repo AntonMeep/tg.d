@@ -3218,7 +3218,7 @@ struct InlineQueryResultGif {
  * Link to a vide animation (H.264/MPEG-4 AVC video without sound)
  * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultmpeg4gif)
  */
-struct InlineQueryResultMpeg4Gif{
+struct InlineQueryResultMpeg4Gif {
 	/// Type of the result, must be `"mpeg4_gif"`
 	string type = "mpeg4_gif";
 
@@ -3244,7 +3244,7 @@ struct InlineQueryResultMpeg4Gif{
 	/// Title for the result
 	string title;
 
-	/// Caption of the MPEG-4 file to be sent, 0-200 characters
+	/// Caption of the MPEG-4 file to be sent
 	string caption;
 
 	/// Parse mode of the caption
@@ -3259,26 +3259,55 @@ struct InlineQueryResultMpeg4Gif{
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a page containing an embedded video player or a video file
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultvideo)
+ */
 struct InlineQueryResultVideo {
+	/// Type of the result, must be `"video"`
 	string type = "video";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid URL for the embedded video player or video file
 	string video_url;
+
+	/// Mime type of the content of video url, “text/html” or “video/mp4”
 	string mime_type;
+
+	/// URL of the thumbnail (jpeg only) for the video
 	string thumb_url;
+
+	/// Title for the result
 	string title;
 
 @optional:
+	/// Caption of the video to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Video width
 	int video_width;
+
+	/// Video height
 	int video_height;
+
+	/// Video duration in seconds
 	int video_duration;
+
+	/// Short description of the result
 	string description;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the video
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultAudio {
