@@ -3157,7 +3157,7 @@ struct InlineQueryResultPhoto {
 	/// Caption of the photo to be sent
 	string caption;
 
-	/// Parse mode for the caption
+	/// Parse mode of the caption
 	ParseMode parse_mode;
 
 	/// Inline keyboard attached to the message
@@ -3202,7 +3202,7 @@ struct InlineQueryResultGif {
 	///  Caption of the GIF file to be sent
 	string caption;
 
-	/// Parse mode for the caption
+	/// Parse mode of the caption
 	ParseMode parse_mode;
 
 	/// Inline keyboard attached to the message
@@ -3214,24 +3214,49 @@ struct InlineQueryResultGif {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a vide animation (H.264/MPEG-4 AVC video without sound)
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultmpeg4gif)
+ */
 struct InlineQueryResultMpeg4Gif{
+	/// Type of the result, must be `"mpeg4_gif"`
 	string type = "mpeg4_gif";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid URL for the MP4 file. File size must not exceed 1MB
 	string mpeg4_url;
+
+	/// Video width
 	int mpeg4_width;
+
+	/// Video height
 	int mpeg4_height;
+
+	/// Video duration
 	int mpeg4_duration;
+
+	/// URL of the static thumbnail (jpeg or gif) for the result
 	string thumb_url;
 
 @optional:
+	/// Title for the result
 	string title;
+
+	/// Caption of the MPEG-4 file to be sent, 0-200 characters
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the video animation
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultVideo {
