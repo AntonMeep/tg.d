@@ -3655,33 +3655,61 @@ struct InlineQueryResultCachedGif {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a video animation (H.264/MPEG-4 AVC video without sound) stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcachedmpeg4gif)
+ */
 struct InlineQueryResultCachedMpeg4Gif {
+	/// Type of the result, must be `"mpeg4_gif"`
 	string type = "mpeg4_gif";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid file identifier for the MP4 file
 	string mpeg4_file_id;
 
 @optional:
+	/// Title for the result
 	string title;
+
+	/// Caption of the MPEG-4 file to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the video animation
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a sticker stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcachedsticker)
+ */
 struct InlineQueryResultCachedSticker {
+	/// Type of the result, must be `"sticker"`
 	string type = "sticker";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid file identifier of the sticker
 	string sticker_file_id;
 
 @optional:
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the sticker
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultCachedDocument {
