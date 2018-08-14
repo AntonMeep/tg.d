@@ -3586,40 +3586,76 @@ struct InlineQueryResultGame {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a photo stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcachedphoto)
+ */
 struct InlineQueryResultCachedPhoto {
+	/// Type of the result, must be `"photo"`
 	string type = "photo";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid file identifier of the photo
 	string photo_file_id;
 
 @optional:
+	/// Title for the result
 	string title;
+
+	/// Short description of the result
 	string description;
+
+	/// Caption of the photo to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the photo
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
-struct InlineQueryResultCachedGif{
+/**
+ * Link to an animated GIF file stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcachedgif)
+ */
+struct InlineQueryResultCachedGif {
+	/// Type of the result, must be `"gif"`
 	string type = "gif";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid file identifier for the GIF file
 	string gif_file_id;
 
 @optional:
+	/// Title for the result
 	string title;
+
+	/// Caption of the GIF file to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the GIF animation
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
-struct InlineQueryResultCachedMpeg4Gif{
+struct InlineQueryResultCachedMpeg4Gif {
 	string type = "mpeg4_gif";
 	string id;
 	string mpeg4_file_id;
