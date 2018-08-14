@@ -3784,35 +3784,67 @@ struct InlineQueryResultCachedVideo {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a voice message stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcachedvoice)
+ */
 struct InlineQueryResultCachedVoice {
+	/// Type of the result, must be `"voice"`
 	string type = "voice";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid file identifier for the voice message
 	string voice_file_id;
+
+	/// Voice message title
 	string title;
 
 @optional:
+	/// Caption of the voice message to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the voice message
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to an mp3 audio file stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcachedaudio)
+ */
 struct InlineQueryResultCachedAudio {
+	/// Type of the result, must be `"audio"`
 	string type = "audio";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid file identifier for the audio file
 	string audio_file_id;
 
 @optional:
+	/// Caption of the audio to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the audio
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 alias InputMessageContent = Algebraic!(InputTextMessageContent, InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
