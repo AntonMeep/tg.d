@@ -3328,7 +3328,7 @@ struct InlineQueryResultAudio {
 	string title;
 
 @optional:
-	/// Caption of the audio
+	/// Caption of the audio to be sent
 	string caption;
 
 	/// Parse mode of the caption
@@ -3349,42 +3349,88 @@ struct InlineQueryResultAudio {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a voice recording in an .ogg container encoded with OPUS
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultvoice
+ */
 struct InlineQueryResultVoice {
+	/// Type of the result, must be `"voice"`
 	string type = "voice";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid URL for the voice recording
 	string voice_url;
+
+	/// Recording title
 	string title;
 
 @optional:
+	/// Caption of the recording to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Recording duration in seconds
 	int voice_duration;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the voice recording
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a file
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultdocument)
+ */
 struct InlineQueryResultDocument {
+	/// Type of the result, must be `"document"`
 	string type = "document";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// Title for the result
 	string title;
+
+	/// A valid URL for the file
 	string document_url;
+
+	/// Mime type of the content of the file, either `"application/pdf"` or `"application/zip"`
 	string mime_type;
 
 @optional:
+	/// Caption of the document to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	///  Short description of the result
 	string description;
-	InlineKeyboardMarkup reply_markup;
+
+	/// Inline keyboard attached to the message
+	InlineKeyboardMarkup reply_markup; 
+
+	/// Content of the message to be sent instead of the file
 	InputMessageContent input_message_content;
+
+	/// URL of the thumbnail (jpeg only) for the file
 	string thumb_url;
+
+	/// Thumbnail width
 	int thumb_width;
+
+	/// Thumbnail height
 	int thumb_height;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultLocation {
