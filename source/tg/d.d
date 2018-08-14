@@ -3712,38 +3712,76 @@ struct InlineQueryResultCachedSticker {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a file stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcacheddocument)
+ */
 struct InlineQueryResultCachedDocument {
+	/// Type of the result, must be `"document"`
 	string type = "document";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// Title for the result
 	string title;
+
+	/// A valid file identifier for the file
 	string document_file_id;
 
 @optional:
+	/// Short description of the result
 	string description;
+
+	/// Caption of the document to be sent
 	string caption;
+
+	/// Parse mode of the document
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the file
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to a video file stored on the Telegram servers
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultcachedvideo)
+ */
 struct InlineQueryResultCachedVideo {
+	/// Type of the result, must be `"video"`
 	string type = "video";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid file identifier for the video file
 	string video_file_id;
+
+	/// Title for the result
 	string title;
 
 @optional:
+	/// Short description of the result
 	string description;
+
+	/// Caption of the video to be sent
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the video
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultCachedVoice {
