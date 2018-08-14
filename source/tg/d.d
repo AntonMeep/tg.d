@@ -1900,13 +1900,6 @@ enum UserStatus : string {
 }
 
 /**
- * Represents the contents of a file to be uploaded
- * Deprecated: Not yet implemented.
- * See_Also: $(LINK https://core.telegram.org/bots/api#inputfile)
- */
-struct InputFile {}
-
-/**
  * An incoming update
  * See_Also: $(LINK https://core.telegram.org/bots/api#update)
  */
@@ -2915,6 +2908,14 @@ struct InputMediaDocument {
 
 	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
 }
+
+/**
+ * Represents the contents of a file to be uploaded
+ * 
+ * Not yet implemented.
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputfile)
+ */
+struct InputFile {}
 
 struct Sticker {
 	string file_id;
