@@ -230,8 +230,8 @@ struct TelegramBot {
 	unittest {
 		import std.range : ElementType, isInputRange;
 		import std.traits: ReturnType;
-		static assert(isInputRange!(ReturnType!(TelegramBot.pollUpdates)) == true);
-		static assert(is(ElementType!(ReturnType!(TelegramBot.pollUpdates)) == Update));
+		isInputRange!(ReturnType!(TelegramBot.pollUpdates)).should.be.equal(true);
+		is(ElementType!(ReturnType!(TelegramBot.pollUpdates)) == Update).should.be.equal(true);
 	}
 
 	@("pollUpdates()")
@@ -2512,15 +2512,15 @@ enum isReplyMarkup(T) = is(T == ReplyMarkup) || ReplyMarkup.allowed!T;
 ///
 @("isReplyMarkup")
 unittest {
-	static assert(isReplyMarkup!ReplyMarkup);
-	static assert(isReplyMarkup!InlineKeyboardMarkup);
-	static assert(isReplyMarkup!ReplyKeyboardMarkup);
-	static assert(isReplyMarkup!ReplyKeyboardRemove);
-	static assert(isReplyMarkup!ForceReply);
-	static assert(!isReplyMarkup!string);
-	static assert(!isReplyMarkup!int);
-	static assert(!isReplyMarkup!bool);
-	static assert(!isReplyMarkup!(Algebraic!(InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove)));
+	isReplyMarkup!ReplyMarkup.should.be.equal(true);
+	isReplyMarkup!InlineKeyboardMarkup.should.be.equal(true);
+	isReplyMarkup!ReplyKeyboardMarkup.should.be.equal(true);
+	isReplyMarkup!ReplyKeyboardRemove.should.be.equal(true);
+	isReplyMarkup!ForceReply.should.be.equal(true);
+	isReplyMarkup!string.should.be.equal(false);
+	isReplyMarkup!int.should.be.equal(false);
+	isReplyMarkup!bool.should.be.equal(false);
+	isReplyMarkup!(Algebraic!(InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove)).should.be.equal(false);
 }
 
 /**
@@ -2761,15 +2761,15 @@ enum isInputMedia(T) = is(T == InputMedia) || InputMedia.allowed!T;
 ///
 @("isInputMedia")
 unittest {
-	static assert(isInputMedia!InputMedia);
-	static assert(isInputMedia!InputMediaAnimation);
-	static assert(isInputMedia!InputMediaDocument);
-	static assert(isInputMedia!InputMediaAudio);
-	static assert(isInputMedia!InputMediaPhoto);
-	static assert(isInputMedia!InputMediaVideo);
-	static assert(!isInputMedia!string);
-	static assert(!isInputMedia!bool);
-	static assert(!isInputMedia!int);
+	isInputMedia!InputMedia.should.be.equal(true);
+	isInputMedia!InputMediaAnimation.should.be.equal(true);
+	isInputMedia!InputMediaDocument.should.be.equal(true);
+	isInputMedia!InputMediaAudio.should.be.equal(true);
+	isInputMedia!InputMediaPhoto.should.be.equal(true);
+	isInputMedia!InputMediaVideo.should.be.equal(true);
+	isInputMedia!string.should.be.equal(false);
+	isInputMedia!bool.should.be.equal(false);
+	isInputMedia!int.should.be.equal(false);
 }
 
 /**
@@ -3055,31 +3055,31 @@ enum isInlineQueryResult(T) = is(T == InlineQueryResult) || InlineQueryResult.al
 ///
 @("isInlineQueryResult")
 unittest {
-	static assert(isInlineQueryResult!InlineQueryResult);
-	static assert(isInlineQueryResult!InlineQueryResultArticle);
-	static assert(isInlineQueryResult!InlineQueryResultPhoto);
-	static assert(isInlineQueryResult!InlineQueryResultGif);
-	static assert(isInlineQueryResult!InlineQueryResultMpeg4Gif);
-	static assert(isInlineQueryResult!InlineQueryResultVideo);
-	static assert(isInlineQueryResult!InlineQueryResultAudio);
-	static assert(isInlineQueryResult!InlineQueryResultVoice);
-	static assert(isInlineQueryResult!InlineQueryResultDocument);
-	static assert(isInlineQueryResult!InlineQueryResultLocation);
-	static assert(isInlineQueryResult!InlineQueryResultVenue);
-	static assert(isInlineQueryResult!InlineQueryResultContact);
-	static assert(isInlineQueryResult!InlineQueryResultGame);
-	static assert(isInlineQueryResult!InlineQueryResultCachedPhoto);
-	static assert(isInlineQueryResult!InlineQueryResultCachedGif);
-	static assert(isInlineQueryResult!InlineQueryResultCachedMpeg4Gif);
-	static assert(isInlineQueryResult!InlineQueryResultCachedSticker);
-	static assert(isInlineQueryResult!InlineQueryResultCachedDocument);
-	static assert(isInlineQueryResult!InlineQueryResultCachedVideo);
-	static assert(isInlineQueryResult!InlineQueryResultCachedVoice);
-	static assert(isInlineQueryResult!InlineQueryResultCachedAudio);
+	isInlineQueryResult!InlineQueryResult.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultArticle.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultPhoto.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultGif.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultMpeg4Gif.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultVideo.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultAudio.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultVoice.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultDocument.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultLocation.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultVenue.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultContact.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultGame.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedPhoto.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedGif.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedMpeg4Gif.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedSticker.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedDocument.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedVideo.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedVoice.should.be.equal(true);
+	isInlineQueryResult!InlineQueryResultCachedAudio.should.be.equal(true);
 
-	static assert(!isInlineQueryResult!int);
-	static assert(!isInlineQueryResult!string);
-	static assert(!isInlineQueryResult!bool);
+	isInlineQueryResult!int.should.be.equal(false);
+	isInlineQueryResult!string.should.be.equal(false);
+	isInlineQueryResult!bool.should.be.equal(false);
 }
 
 /**
