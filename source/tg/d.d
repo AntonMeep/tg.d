@@ -3849,6 +3849,20 @@ struct InlineQueryResultCachedAudio {
 
 alias InputMessageContent = Algebraic!(InputTextMessageContent, InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
 
+enum isInputMessageContent(T) = is(T == InputMessageContent) || InputMessageContent.allowed!T;
+
+///
+@("isInputMessageContent")
+unittest {
+	isInputMessageContent!InputMessageContent.should.be.equal(true);
+	isInputMessageContent!InputTextMessageContent.should.be.equal(true);
+	isInputMessageContent!InputVenueMessageContent.should.be.equal(true);
+	isInputMessageContent!InputContactMessageContent.should.be.equal(true);
+	isInputMessageContent!string.should.be.equal(false);
+	isInputMessageContent!int.should.be.equal(false);
+	isInputMessageContent!bool.should.be.equal(false);
+}
+
 struct InputTextMessageContent {
 	string message_text;
 
