@@ -2998,19 +2998,34 @@ struct MaskPosition {
 	@safe @ignore @property bool isNull() { return point == typeof(point).init; }
 }
 
+/**
+ * Incoming inline query 
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequery)
+ */
 struct InlineQuery {
+	/// Unique identifier for this query
 	string id;
+
+	/// Sender
 	User from;
-	string query,
-		   offset;
+
+	/// Text of the query
+	string query;
+
+	/// Offset of the results to be returned
+	string offset;
 
 @optional:
+	/// Sender location
 	Location location;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * One result of an inline query
+ * See_Also: `InlineQueryResultArticle`, `InlineQueryResultPhoto`, `InlineQueryResultGif`, `InlineQueryResultMpeg4Gif`, `InlineQueryResultVideo`, `InlineQueryResultAudio`, `InlineQueryResultVoice`, `InlineQueryResultDocument`, `InlineQueryResultLocation`, `InlineQueryResultVenue`, `InlineQueryResultContact`, `InlineQueryResultGame`, `InlineQueryResultCachedPhoto`, `InlineQueryResultCachedGif`, `InlineQueryResultCachedMpeg4Gif`, `InlineQueryResultCachedSticker`, `InlineQueryResultCachedDocument`, `InlineQueryResultCachedVideo`, `InlineQueryResultCachedVoice`, `InlineQueryResultCachedAudio`
+ */ 
 alias InlineQueryResult = Algebraic!(
 	InlineQueryResultArticle,
 	InlineQueryResultPhoto,
@@ -3033,6 +3048,39 @@ alias InlineQueryResult = Algebraic!(
 	InlineQueryResultCachedVoice,
 	InlineQueryResultCachedAudio
 );
+
+/// Checks if `T` is one of the `InlineQueryResult` types
+enum isInlineQueryResult(T) = is(T == InlineQueryResult) || InlineQueryResult.allowed!T;
+
+///
+@("isInlineQueryResult")
+unittest {
+	static assert(isInlineQueryResult!InlineQueryResult);
+	static assert(isInlineQueryResult!InlineQueryResultArticle);
+	static assert(isInlineQueryResult!InlineQueryResultPhoto);
+	static assert(isInlineQueryResult!InlineQueryResultGif);
+	static assert(isInlineQueryResult!InlineQueryResultMpeg4Gif);
+	static assert(isInlineQueryResult!InlineQueryResultVideo);
+	static assert(isInlineQueryResult!InlineQueryResultAudio);
+	static assert(isInlineQueryResult!InlineQueryResultVoice);
+	static assert(isInlineQueryResult!InlineQueryResultDocument);
+	static assert(isInlineQueryResult!InlineQueryResultLocation);
+	static assert(isInlineQueryResult!InlineQueryResultVenue);
+	static assert(isInlineQueryResult!InlineQueryResultContact);
+	static assert(isInlineQueryResult!InlineQueryResultGame);
+	static assert(isInlineQueryResult!InlineQueryResultCachedPhoto);
+	static assert(isInlineQueryResult!InlineQueryResultCachedGif);
+	static assert(isInlineQueryResult!InlineQueryResultCachedMpeg4Gif);
+	static assert(isInlineQueryResult!InlineQueryResultCachedSticker);
+	static assert(isInlineQueryResult!InlineQueryResultCachedDocument);
+	static assert(isInlineQueryResult!InlineQueryResultCachedVideo);
+	static assert(isInlineQueryResult!InlineQueryResultCachedVoice);
+	static assert(isInlineQueryResult!InlineQueryResultCachedAudio);
+
+	static assert(!isInlineQueryResult!int);
+	static assert(!isInlineQueryResult!string);
+	static assert(!isInlineQueryResult!bool);
+}
 
 struct InlineQueryResultArticle {
 	string type = "article";
