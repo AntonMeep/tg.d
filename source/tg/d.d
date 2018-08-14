@@ -2998,125 +2998,6 @@ struct MaskPosition {
 	@safe @ignore @property bool isNull() { return point == typeof(point).init; }
 }
 
-struct Game {
-	string title,
-		   description;
-	PhotoSize[] photo;
-
-@optional:
-	string text;
-	MessageEntity[] text_entities;
-	Animation animation;
-
-@ignore @property:
-	bool isNull() { return title == typeof(title).init; }
-}
-
-struct CallbackGame {
-@ignore @property:
-	bool isNull() { return true; }
-}
-
-struct GameHighScore {
-	int position;
-	User user;
-	int score;
-
-@ignore @property:
-	bool isNull() { return position == typeof(position).init; }
-}
-
-struct LabeledPrice {
-	string label;
-	int amount;
-
-@ignore @property:
-	bool isNull() { return label == typeof(label).init; }
-}
-
-struct Invoice {
-	string title,
-		   description,
-		   start_parameter,
-		   currency;
-	int total_amount;
-
-@ignore @property:
-	bool isNull() { return title == typeof(title).init; }
-}
-
-struct ShippingAddress {
-	string country_code,
-		   state,
-		   city,
-		   street_line1,
-		   street_line2,
-		   post_code;
-
-@ignore @property:
-	bool isNull() { return country_code == typeof(country_code).init; }
-}
-
-struct OrderInfo {
-@optional:
-	string name,
-			phone_number,
-			email;
-	ShippingAddress shipping_address;
-
-@ignore @property:
-	bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
-}
-
-struct ShippingOption {
-	string id,
-		   title;
-	LabeledPrice[] prices;
-
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
-}
-
-struct SuccessfulPayment {
-	string currency;
-	int total_amount;
-	string invoice_payload,
-		   telegram_payment_charge_id,
-		   provider_payment_charge_id;
-
-@optional:
-	string shipping_option_id;
-	OrderInfo order_info;
-
-@ignore @property:
-	bool isNull() { return currency == typeof(currency).init; }
-}
-
-struct ShippingQuery {
-	string id;
-	User from;
-	string invoice_payload;
-	ShippingAddress shipping_address;
-
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
-}
-
-struct PreCheckoutQuery {
-	string id;
-	User from;
-	string currency;
-	int total_amount;
-	string invoice_payload;
-
-@optional:
-	string shipping_option_id;
-	OrderInfo order_info;
-
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
-}
-
 struct InlineQuery {
 	string id;
 	User from;
@@ -3569,6 +3450,125 @@ struct ChosenInlineResult {
 
 @ignore @property:
 	bool isNull() { return result_id == typeof(result_id).init; }
+}
+
+struct Game {
+	string title,
+		   description;
+	PhotoSize[] photo;
+
+@optional:
+	string text;
+	MessageEntity[] text_entities;
+	Animation animation;
+
+@ignore @property:
+	bool isNull() { return title == typeof(title).init; }
+}
+
+struct CallbackGame {
+@ignore @property:
+	bool isNull() { return true; }
+}
+
+struct GameHighScore {
+	int position;
+	User user;
+	int score;
+
+@ignore @property:
+	bool isNull() { return position == typeof(position).init; }
+}
+
+struct LabeledPrice {
+	string label;
+	int amount;
+
+@ignore @property:
+	bool isNull() { return label == typeof(label).init; }
+}
+
+struct Invoice {
+	string title,
+		   description,
+		   start_parameter,
+		   currency;
+	int total_amount;
+
+@ignore @property:
+	bool isNull() { return title == typeof(title).init; }
+}
+
+struct ShippingAddress {
+	string country_code,
+		   state,
+		   city,
+		   street_line1,
+		   street_line2,
+		   post_code;
+
+@ignore @property:
+	bool isNull() { return country_code == typeof(country_code).init; }
+}
+
+struct OrderInfo {
+@optional:
+	string name,
+			phone_number,
+			email;
+	ShippingAddress shipping_address;
+
+@ignore @property:
+	bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
+}
+
+struct ShippingOption {
+	string id,
+		   title;
+	LabeledPrice[] prices;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+}
+
+struct SuccessfulPayment {
+	string currency;
+	int total_amount;
+	string invoice_payload,
+		   telegram_payment_charge_id,
+		   provider_payment_charge_id;
+
+@optional:
+	string shipping_option_id;
+	OrderInfo order_info;
+
+@ignore @property:
+	bool isNull() { return currency == typeof(currency).init; }
+}
+
+struct ShippingQuery {
+	string id;
+	User from;
+	string invoice_payload;
+	ShippingAddress shipping_address;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
+}
+
+struct PreCheckoutQuery {
+	string id;
+	User from;
+	string currency;
+	int total_amount;
+	string invoice_payload;
+
+@optional:
+	string shipping_option_id;
+	OrderInfo order_info;
+
+@ignore @property:
+	bool isNull() { return id == typeof(id).init; }
 }
 
 struct WebhookInfo {
