@@ -3310,22 +3310,43 @@ struct InlineQueryResultVideo {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Link to an mp3 audio file
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultaudio)
+ */
 struct InlineQueryResultAudio {
+	/// Type of the result, must be `"audio"`
 	string type = "audio";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// A valid URL for the audio file
 	string audio_url;
+
+	/// Title
 	string title;
 
 @optional:
+	/// Caption of the audio
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Performer
 	string performer;
+
+	/// Audio duration in seconds
 	int audio_duration;
+
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// Content of the message to be sent instead of the audio
 	InputMessageContent input_message_content;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultVoice {
