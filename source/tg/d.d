@@ -3082,23 +3082,46 @@ unittest {
 	static assert(!isInlineQueryResult!bool);
 }
 
+/**
+ * Link to an article or web page
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultarticle)
+ */
 struct InlineQueryResultArticle {
+	/// Type of the result, must be `"article"`
 	string type = "article";
+
+	/// Unique identifier for this result
 	string id;
+
+	/// Title of the result
 	string title;
+
+	/// Content of the message to be sent
 	InputMessageContent input_message_content;
 
 @optional:
+	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
+
+	/// URL of the result
 	string url;
+
+	/// Pass `true`, if you don't want the URL to be shown in the message
 	bool hide_url;
+
+	/// Short description of the result
 	string description;
+
+	/// Url of the thumbnail for the result
 	string thumb_url;
+
+	/// Thumbnail width
 	int thumb_width;
+
+	/// Thumbnail height
 	int thumb_height;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct InlineQueryResultPhoto {
