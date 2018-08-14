@@ -1899,6 +1899,14 @@ enum UserStatus : string {
 	kicked        = "kicked",        /// Kicked
 }
 
+/// Represents parts of the face
+enum FacePart : string {
+	forehead = "forehead", /// Forehead
+	eyes     = "eyes",     /// Eyes
+	mouth    = "mouth",    /// Mouth
+	chin     = "chin",     /// Chin
+}
+
 /**
  * An incoming update
  * See_Also: $(LINK https://core.telegram.org/bots/api#update)
@@ -2917,40 +2925,77 @@ struct InputMediaDocument {
  */
 struct InputFile {}
 
+/**
+ * Sticker
+ * See_Also: $(LINK https://core.telegram.org/bots/api#sticker)
+ */
 struct Sticker {
+	/// Unique identifier for this file
 	string file_id;
-	int width,
-		height;
+
+	/// Sticker width
+	int width;
+
+	/// Sticker height
+	int height;
 
 @optional:
+	/// Sticker thumbnail in the .webp or .jpg format
 	PhotoSize thumb;
-	string emoji,
-			set_name;
+
+	/// Emoji associated with the sticker
+	string emoji;
+
+	/// Name of the sticker set to which the sticker belongs
+	string set_name;
+
+	/// For mask stickers, the position where the mask should be placed
 	MaskPosition mask_position;
+
+	/// File size
 	int file_size;
 
-@ignore @property:
-	bool isNull() { return file_id == typeof(file_id).init; }
+	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
 }
 
+/**
+ * Sticker set
+ * See_Also: $(LINK https://core.telegram.org/bots/api#stickerset)
+ */
 struct StickerSet {
-	string name,
-		   title;
+	/// Sticker set name
+	string name;
+
+	/// Sticker set title
+	string title;
+
+	/// `true`, if the sticker set contains masks
 	bool contains_masks;
+
+	/// List of all set stickers
 	Sticker[] stickers;
 
-@ignore @property:
-	bool isNull() { return name == typeof(name).init; }
+	@safe @ignore @property bool isNull() { return name == typeof(name).init; }
 }
 
+/**
+ * Describes position on faces where a mask should be placed by default
+ * See_Also: $(LINK https://core.telegram.org/bots/api#maskposition)
+ */
 struct MaskPosition {
-	string point;
-	float x_shift,
-		  y_shift,
-		  scale;
+	/// The part of the face relative to which the mask should be placed
+	FacePart point;
 
-@ignore @property:
-	bool isNull() { return point == typeof(point).init; }
+	/// Shift by X-axis measured in widths of the mask scaled to the face size, from left to right
+	float x_shift;
+
+	/// Shift by Y-axis measured in heights of the mask scaled to the face size, from top to bottom
+	float y_shift;
+
+	/// Mask scaling coefficient
+	float scale;
+
+	@safe @ignore @property bool isNull() { return point == typeof(point).init; }
 }
 
 struct Game {
