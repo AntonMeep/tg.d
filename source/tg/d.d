@@ -2771,78 +2771,149 @@ unittest {
 	static assert(!isInputMedia!int);
 }
 
+/**
+ * Photo to be sent
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputmediaphoto)
+ */
 struct InputMediaPhoto {
+	/// Type of the result, must be `"photo"`
 	string type = "photo";
+
+	/// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet
 	string media;
 
 @optional:
+	/// Caption of the photo to be sent
 	string caption;
+
+	/// Parse mode for the caption
 	ParseMode parse_mode;
 
-@ignore @property:
-	bool isNull() { return media == typeof(media).init; }
+	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
 }
 
+/**
+ * Video file to be sent
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputmediavideo)
+ */
 struct InputMediaVideo {
+	/// Type of the result, must be `"video"`
 	string type = "video";
+
+	/// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet
 	string media;
 
 @optional:
+	/// Thumbnail of the file
 	string thumb;
+
+	/// Caption of the video to be sent
 	string caption;
+
+	/// Parse mode for the caption
 	ParseMode parse_mode;
-	int width,
-		height,
-		duration;
+
+	/// Video width
+	int width;
+	
+	/// Video height
+	int height;
+
+	/// Video duration
+	int duration;
+
+	/// Pass `true`, if the uploaded video is suitable for streaming
 	bool supports_streaming;
 
-@ignore @property:
-	bool isNull() { return media == typeof(media).init; }
+	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
 }
 
+/**
+ * Animation file (GIF or H.264/MPEG-4 AVC video without sound) to be sent
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputmediaanimation)
+ */
 struct InputMediaAnimation {
+	/// Type of the result, must be `"animation"`
 	string type = "animation";
+
+	/// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet
 	string media;
 
 @optional:
+	/// Thumbnail of the file
 	string thumb;
-	string caption;
-	ParseMode parse_mode;
-	int width,
-		height,
-		duration;
 
-@ignore @property:
-	bool isNull() { return media == typeof(media).init; }
+	/// Caption of the animation to be sent
+	string caption;
+
+	/// Parse mode for the caption
+	ParseMode parse_mode;
+
+	/// Animation width
+	int width;
+
+	/// Animation height
+	int height;
+
+	/// Animation duration
+	int duration;
+
+	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
 }
 
+/**
+ * Audio file to be sent
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputmediaaudio)
+ */
 struct InputMediaAudio {
+	/// Type of the result, must be `"audio"`
 	string type = "audio";
+
+	/// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet
 	string media;
 
 @optional:
+	/// Thumbnail of the file
 	string thumb;
+
+	/// Caption of the audio to be sent
 	string caption;
+
+	/// Parse mode for the caption
 	ParseMode parse_mode;
+
+	/// Duration of the audio in seconds
 	int duration;
+
+	/// Performer of the audio
 	string performer;
+
+	/// Title of the audio
 	string title;
 
-@ignore @property:
-	bool isNull() { return media == typeof(media).init; }
+	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
 }
 
+/**
+ * General file to be sent
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputmediadocument)
+ */
 struct InputMediaDocument {
+	/// Type of the result, must be `"document"`
 	string type = "document";
+
+	/// File to send. Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet
 	string media;
 
 @optional:
+	/// Thumbnail of the file
 	string thumb;
+	/// Caption of the document to be sent
 	string caption;
+	/// Parse mode for the caption
 	ParseMode parse_mode;
 
-@ignore @property:
-	bool isNull() { return media == typeof(media).init; }
+	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
 }
 
 struct Sticker {
