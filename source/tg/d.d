@@ -3847,8 +3847,13 @@ struct InlineQueryResultCachedAudio {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Content of a message to be sent as a result of an inline query
+ * See_Also: `InputTextMessageContent`, `InputLocationMessageContent`, `InputVenueMessageContent`, `InputContactMessageContent`
+ */
 alias InputMessageContent = Algebraic!(InputTextMessageContent, InputLocationMessageContent, InputVenueMessageContent, InputContactMessageContent);
 
+/// Checks if `T` is one of the `InputMessageContent` types
 enum isInputMessageContent(T) = is(T == InputMessageContent) || InputMessageContent.allowed!T;
 
 ///
