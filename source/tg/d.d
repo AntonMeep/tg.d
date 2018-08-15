@@ -4998,39 +4998,68 @@ struct PromoteChatMemberMethod {
 	bool can_promote_members;
 }
 
+/**
+ * Method to generate a new invite link for a chat
+ * See_Also: `TelegramBot.exportChatInviteLink`, $(LINK https://core.telegram.org/bots/api#exportchatinvitelink)
+ */
 struct ExportChatInviteLinkMethod {
 	mixin TelegramMethod!"/exportChatInviteLink";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
+/**
+ * Method to set a new profile photo for the chat
+ * See_Also: `TelegramBot.setChatPhoto`, $(LINK https://core.telegram.org/bots/api#setchatphoto)
+ */
 struct SetChatPhotoMethod {
 	mixin TelegramMethod!"/setChatPhoto";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
-	InputFile photo;
 
+	/// New chat photo
+	InputFile photo;
 }
 
+/**
+ * Method to delete a chat photo
+ * See_Also: `TelegramBot.deleteChatPhoto`, $(LINK https://core.telegram.org/bots/api#deletechatphoto)
+ */
 struct DeleteChatPhotoMethod {
 	mixin TelegramMethod!"/deleteChatPhoto";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
+/**
+ * Method to change the title of a chat
+ * See_Also: `TelegramBot.setChatTitle`, $(LINK https://core.telegram.org/bots/api#setchattitle)
+ */
 struct SetChatTitleMethod {
 	mixin TelegramMethod!"/setChatTitle";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// New chat title
 	string title;
 }
 
+/**
+ * Method to change the description of a supergroup or a channel
+ * See_Also: `TelegramBot.setChatDescription`, $(LINK https://core.telegram.org/bots/api#setchatdescription)
+ */
 struct SetChatDescriptionMethod {
 	mixin TelegramMethod!"/setChatDescription";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 
 @optional:
+	/// New chat description
 	string description;
 }
 
