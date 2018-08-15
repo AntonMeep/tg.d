@@ -1949,19 +1949,34 @@ struct Update {
 	@safe @ignore @property bool isNull() { return update_id == typeof(update_id).init; }
 }
 
+/**
+ * Information about the current status of a webhook
+ * See_Also: $(LINK https://core.telegram.org/bots/api#webhookinfo)
+ */
 struct WebhookInfo {
+	/// Webhook URL, may be empty if webhook is not set up
 	string url;
+
+	/// `true`, if a custom certificate was provided for webhook certificate checks
 	bool has_custom_certificate;
+
+	/// Number of updates awaiting delivery
 	int pending_update_count;
 
 @optional:
+	/// Unix time for the most recent error that happened when trying to deliver an update via webhook
 	long last_error_date;
+
+	/// Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook
 	string last_error_message;
+
+	/// Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
 	int max_connections;
+
+	/// A list of update types the bot is subscribed to. Defaults to all update types
 	string[] allowed_updates;
 
-@ignore @property:
-	bool isNull() { return url == typeof(url).init; }
+	@safe @ignore @property bool isNull() { return url == typeof(url).init; }
 }
 
 /**
