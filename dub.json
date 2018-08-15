@@ -45,7 +45,7 @@
 			},
 			"dependencies": {
 				"fluent-asserts": "~>0.12.0",
-				"silly": "~>0.0.1"
+				"silly": "~>0.0.2"
 			}
 		}
 	],

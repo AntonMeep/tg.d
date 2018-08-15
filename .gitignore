@@ -26,3 +26,5 @@ docs/
 tg-d-test*
 tg-d
 trial*
+
+dub.selections.json
