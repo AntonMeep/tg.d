@@ -26,10 +26,7 @@ module tg.d;
 
 import std.math : isNaN;
 
-import vibe.core.log;
 import vibe.data.json : Json;
-
-import std.meta : staticIndexOf;
 
 version(unittest) import fluent.asserts;
 
@@ -71,7 +68,7 @@ struct TelegramBot {
 
 		struct MethodResult(T) {
 			bool ok;
-		@optional:
+
 		@optional:
 			T result;
 			ushort error_code;
@@ -107,7 +104,9 @@ struct TelegramBot {
 		}
 	} else {
 		private T callMethod(T, M)(M method) {
+			import vibe.core.log : logDebugV;
 			import vibe.http.client : requestHTTP, HTTPMethod;
+
 			T result;
 
 			debug "tg.d | Requesting %s".logDebugV(method.m_path);
