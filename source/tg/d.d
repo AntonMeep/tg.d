@@ -4090,28 +4090,51 @@ struct OrderInfo {
 	@safe @ignore @property bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
 }
 
+/**
+ * Shipping option
+ * See_Also: $(LINK https://core.telegram.org/bots/api#shippingoption)
+ */
 struct ShippingOption {
-	string id,
-		   title;
+	/// Shipping option identifier
+	string id;
+
+	/// Option title
+	string title;
+
+	/// List of price portions
 	LabeledPrice[] prices;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Basic information about a successful payment
+ * See_Also: $(LINK https://core.telegram.org/bots/api#successfulpayment)
+ */
 struct SuccessfulPayment {
+	/// Three-letter ISO 4217 currency code
 	string currency;
+
+	/// Total price in the smallest units of the currency
 	int total_amount;
-	string invoice_payload,
-		   telegram_payment_charge_id,
-		   provider_payment_charge_id;
+
+	/// Bot specified invoice payload
+	string invoice_payload;
+
+	/// Telegram payment identifier
+	string telegram_payment_charge_id;
+
+	/// Provider payment identifier
+	string provider_payment_charge_id;
 
 @optional:
+	/// Identifier of the shipping option chosen by the user
 	string shipping_option_id;
+
+	/// Order info provided by the user
 	OrderInfo order_info;
 
-@ignore @property:
-	bool isNull() { return currency == typeof(currency).init; }
+	@safe @ignore @property bool isNull() { return currency == typeof(currency).init; }
 }
 
 struct ShippingQuery {
