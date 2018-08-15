@@ -3868,26 +3868,40 @@ unittest {
 	isInputMessageContent!bool.should.be.equal(false);
 }
 
+/**
+ * Content of a text message to be sent as the result of an inline query
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputtextmessagecontent)
+ */
 struct InputTextMessageContent {
+	/// Text of the message to be sent
 	string message_text;
 
 @optional:
+	/// Parse mode of the text
 	ParseMode parse_mode;
+
+	/// Disable link previews for links in the sent message
 	bool disable_web_page_preview;
 
-@ignore @property:
-	bool isNull() { return message_text == typeof(message_text).init; }
+	@safe @ignore @property bool isNull() { return message_text == typeof(message_text).init; }
 }
 
+/**
+ * Content of a location message to be sent as the result of an inline query
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputlocationmessagecontent)
+ */
 struct InputLocationMessageContent {
+	/// Latitude of the location in degrees
 	float latitude;
+
+	/// Longitude of the location in degrees
 	float longitude;
 
 @optional:
+	/// Period in seconds for which the location can be updated
 	int live_period;
 
-@ignore @property:
-	bool isNull() { return latitude.isNaN; }
+	@safe @ignore @property bool isNull() { return latitude.isNaN; }
 }
 
 struct InputVenueMessageContent {
