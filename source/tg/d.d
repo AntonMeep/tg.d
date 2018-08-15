@@ -4320,22 +4320,41 @@ struct GetWebhookInfoMethod {
 	mixin TelegramMethod!"/getWebhookInfo";
 }
 
+/**
+ * Method to get basic information about the bot
+ * See_Also: `TelegramBot.getMe`, $(LINK https://core.telegram.org/bots/api#getme)
+ */
 struct GetMeMethod {
 	mixin TelegramMethod!"/getMe";
 }
 
+/**
+ * Method to send text messages
+ * See_Also: `TelegramBot.sendMessage`, $(LINK https://core.telegram.org/bots/api#sendmessage)
+ */
 struct SendMessageMethod {
 	mixin TelegramMethod!"/sendMessage";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Text of the message to be sent
 	string text;
 
 @optional:
+	/// Parse mode of the message
 	ParseMode parse_mode;
+
+	/// Disable link previews for links in this message
 	bool disable_web_page_preview;
+
+	/// Send message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
 
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
