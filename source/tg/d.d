@@ -1982,7 +1982,7 @@ struct Update {
 	/// New incoming pre-checkout query
 	PreCheckoutQuery pre_checkout_query;
 
-	@safe @ignore @property bool isNull() { return update_id == typeof(update_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return update_id == typeof(update_id).init; }
 }
 
 /**
@@ -2012,7 +2012,7 @@ struct WebhookInfo {
 	/// A list of update types the bot is subscribed to. Defaults to all update types
 	string[] allowed_updates;
 
-	@safe @ignore @property bool isNull() { return url == typeof(url).init; }
+	@safe pure nothrow @nogc bool isNull() { return url == typeof(url).init; }
 }
 
 /**
@@ -2039,7 +2039,7 @@ struct User {
 	/// IETF language tag of the user's language
 	string language_code;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -2286,7 +2286,7 @@ struct MessageEntity {
 	/// For “text_mention” only, the mentioned user
 	User user;
 
-	@safe @ignore @property bool isNull() { return length == typeof(length).init; }
+	@safe pure nothrow @nogc bool isNull() { return length == typeof(length).init; }
 }
 
 /**
@@ -2307,7 +2307,7 @@ struct PhotoSize {
 	/// File size
 	int file_size;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2337,7 +2337,7 @@ struct Audio {
 	/// Thumbnail of the album cover to which the music file belongs
 	PhotoSize thumb;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2361,7 +2361,7 @@ struct Document {
 	/// File size
 	int file_size;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2391,7 +2391,7 @@ struct Video {
 	/// File size
 	int file_size;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2424,7 +2424,7 @@ struct Animation {
 	/// File size
 	int file_size;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2445,7 +2445,7 @@ struct Voice {
 	/// File size
 	int file_size;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2469,7 +2469,7 @@ struct VideoNote {
 	/// File size
 	int file_size;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2493,7 +2493,7 @@ struct Contact {
 	/// Additional data about the contact in the form of a vCard
 	string vcard;
 
-	@safe @ignore @property bool isNull() { return phone_number == typeof(phone_number).init; }
+	@safe pure nothrow @nogc bool isNull() { return phone_number == typeof(phone_number).init; }
 }
 
 /**
@@ -2507,7 +2507,7 @@ struct Location {
 	/// Latitude as defined by sender
 	float latitude;
 
-	@safe @ignore @property bool isNull() { return longitude.isNaN; }
+	@safe pure nothrow @nogc bool isNull() { return longitude.isNaN; }
 }
 
 /**
@@ -2531,7 +2531,7 @@ struct Venue {
 	/// Foursquare type of the venue
 	string foursquare_type;
 
-	@safe @ignore @property bool isNull() { return location.isNull; }
+	@safe pure nothrow @nogc bool isNull() { return location.isNull; }
 }
 
 /**
@@ -2545,7 +2545,7 @@ struct UserProfilePhotos {
 	/// Requested profile pictures (in up to 4 sizes each)
 	PhotoSize[][] photos;
 
-	@safe @ignore @property bool isNull() { return total_count == typeof(total_count).init; }
+	@safe pure nothrow @nogc bool isNull() { return total_count == typeof(total_count).init; }
 }
 
 /**
@@ -2563,7 +2563,7 @@ struct File {
 	/// File path
 	string file_path;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -2607,7 +2607,7 @@ struct ReplyKeyboardMarkup {
 	/// Show the keyboard to specific users only
 	bool selective;
 
-	@safe @ignore @property bool isNull() { return !keyboard.length; }
+	@safe pure nothrow @nogc bool isNull() { return !keyboard.length; }
 }
 
 /**
@@ -2625,7 +2625,7 @@ struct KeyboardButton {
 	/// If `true`, the user's current location will be sent when the button is pressed
 	bool request_location;
 
-	@safe @ignore @property bool isNull() { return text == typeof(text).init; }
+	@safe pure nothrow @nogc bool isNull() { return text == typeof(text).init; }
 }
 
 /**
@@ -2640,7 +2640,7 @@ struct ReplyKeyboardRemove {
 	/// Remove for specific users only
 	bool selective;
 
-	@safe @ignore @property bool isNull() { return remove_keyboard == typeof(remove_keyboard).init; }
+	@safe pure nothrow @nogc bool isNull() { return remove_keyboard == typeof(remove_keyboard).init; }
 }
 
 /**
@@ -2651,7 +2651,7 @@ struct InlineKeyboardMarkup {
 	/// Keyboard layout
 	InlineKeyboardButton[][] inline_keyboard;
 
-	@safe @ignore @property bool isNull() { return !inline_keyboard.length; }
+	@safe pure nothrow @nogc bool isNull() { return !inline_keyboard.length; }
 }
 
 /**
@@ -2681,7 +2681,7 @@ struct InlineKeyboardButton {
 	/// `true` to send a pay button
 	bool pay;
 
-	@safe @ignore @property bool isNull() { return text == typeof(text).init; }
+	@safe pure nothrow @nogc bool isNull() { return text == typeof(text).init; }
 }
 
 /**
@@ -2711,7 +2711,7 @@ struct CallbackQuery {
 	/// Short name of a `Game` to be returned
 	string game_short_name;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -2726,7 +2726,7 @@ struct ForceReply {
 	/// Only for specific users
 	bool selective;
 
-	@safe @ignore @property bool isNull() { return force_reply == typeof(force_reply).init; }
+	@safe pure nothrow @nogc bool isNull() { return force_reply == typeof(force_reply).init; }
 }
 
 /**
@@ -2740,7 +2740,7 @@ struct ChatPhoto {
 	/// Unique file identifier of big (640x640) chat photo
 	string big_file_id;
 
-	@safe @ignore @property bool isNull() { return small_file_id == typeof(small_file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return small_file_id == typeof(small_file_id).init; }
 }
 
 /**
@@ -2797,7 +2797,7 @@ struct ChatMember {
 	/// Restricted only. `true`, if user may add web page previews to his messages, implies can_send_media_messages
 	bool can_add_web_page_previews;
 
-	@safe @ignore @property bool isNull() { return user.isNull; }
+	@safe pure nothrow @nogc bool isNull() { return user.isNull; }
 }
 
 /**
@@ -2812,7 +2812,7 @@ struct ResponseParameters {
 	/// In case of exceeding flood control, the number of seconds left to wait before the request can be repeated
 	int retry_after;
 
-	@safe @ignore @property bool isNull() { return !migrate_to_chat_id && !retry_after; }
+	@safe pure nothrow @nogc bool isNull() { return !migrate_to_chat_id && !retry_after; }
 }
 
 /**
@@ -2856,7 +2856,7 @@ struct InputMediaPhoto {
 	/// Parse mode for the caption
 	ParseMode parse_mode;
 
-	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
+	@safe pure nothrow @nogc bool isNull() { return media == typeof(media).init; }
 }
 
 /**
@@ -2892,7 +2892,7 @@ struct InputMediaVideo {
 	/// Pass `true`, if the uploaded video is suitable for streaming
 	bool supports_streaming;
 
-	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
+	@safe pure nothrow @nogc bool isNull() { return media == typeof(media).init; }
 }
 
 /**
@@ -2925,7 +2925,7 @@ struct InputMediaAnimation {
 	/// Animation duration
 	int duration;
 
-	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
+	@safe pure nothrow @nogc bool isNull() { return media == typeof(media).init; }
 }
 
 /**
@@ -2958,7 +2958,7 @@ struct InputMediaAudio {
 	/// Title of the audio
 	string title;
 
-	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
+	@safe pure nothrow @nogc bool isNull() { return media == typeof(media).init; }
 }
 
 /**
@@ -2980,7 +2980,7 @@ struct InputMediaDocument {
 	/// Parse mode for the caption
 	ParseMode parse_mode;
 
-	@safe @ignore @property bool isNull() { return media == typeof(media).init; }
+	@safe pure nothrow @nogc bool isNull() { return media == typeof(media).init; }
 }
 
 /**
@@ -3021,7 +3021,7 @@ struct Sticker {
 	/// File size
 	int file_size;
 
-	@safe @ignore @property bool isNull() { return file_id == typeof(file_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return file_id == typeof(file_id).init; }
 }
 
 /**
@@ -3041,7 +3041,7 @@ struct StickerSet {
 	/// List of all set stickers
 	Sticker[] stickers;
 
-	@safe @ignore @property bool isNull() { return name == typeof(name).init; }
+	@safe pure nothrow @nogc bool isNull() { return name == typeof(name).init; }
 }
 
 /**
@@ -3061,7 +3061,7 @@ struct MaskPosition {
 	/// Mask scaling coefficient
 	float scale;
 
-	@safe @ignore @property bool isNull() { return point == typeof(point).init; }
+	@safe pure nothrow @nogc bool isNull() { return point == typeof(point).init; }
 }
 
 /**
@@ -3085,7 +3085,7 @@ struct InlineQuery {
 	/// Sender location
 	Location location;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3187,7 +3187,7 @@ struct InlineQueryResultArticle {
 	/// Thumbnail height
 	int thumb_height;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3232,7 +3232,7 @@ struct InlineQueryResultPhoto {
 	/// Content of the message to be sent instead of the photo
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3277,7 +3277,7 @@ struct InlineQueryResultGif {
 	/// Content of the message to be sent instead of the GIF animation
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3322,7 +3322,7 @@ struct InlineQueryResultMpeg4Gif {
 	/// Content of the message to be sent instead of the video animation
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3373,7 +3373,7 @@ struct InlineQueryResultVideo {
 	/// Content of the message to be sent instead of the video
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3412,7 +3412,7 @@ struct InlineQueryResultAudio {
 	/// Content of the message to be sent instead of the audio
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3448,7 +3448,7 @@ struct InlineQueryResultVoice {
 	/// Content of the message to be sent instead of the voice recording
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3496,7 +3496,7 @@ struct InlineQueryResultDocument {
 	/// Thumbnail height
 	int thumb_height;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3538,7 +3538,7 @@ struct InlineQueryResultLocation {
 	/// Thumbnail height
 	int thumb_height;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3586,7 +3586,7 @@ struct InlineQueryResultVenue {
 	/// Thumbnail height
 	int thumb_height;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3628,7 +3628,7 @@ struct InlineQueryResultContact {
 	/// Thumbnail height
 	int thumb_height;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3649,7 +3649,7 @@ struct InlineQueryResultGame {
 	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3685,7 +3685,7 @@ struct InlineQueryResultCachedPhoto {
 	/// Content of the message to be sent instead of the photo
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3718,7 +3718,7 @@ struct InlineQueryResultCachedGif {
 	/// Content of the message to be sent instead of the GIF animation
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3751,7 +3751,7 @@ struct InlineQueryResultCachedMpeg4Gif {
 	/// Content of the message to be sent instead of the video animation
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3775,7 +3775,7 @@ struct InlineQueryResultCachedSticker {
 	/// Content of the message to be sent instead of the sticker
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3811,7 +3811,7 @@ struct InlineQueryResultCachedDocument {
 	/// Content of the message to be sent instead of the file
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3847,7 +3847,7 @@ struct InlineQueryResultCachedVideo {
 	/// Content of the message to be sent instead of the video
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3880,7 +3880,7 @@ struct InlineQueryResultCachedVoice {
 	/// Content of the message to be sent instead of the voice message
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3910,7 +3910,7 @@ struct InlineQueryResultCachedAudio {
 	/// Content of the message to be sent instead of the audio
 	InputMessageContent input_message_content;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -3949,7 +3949,7 @@ struct InputTextMessageContent {
 	/// Disable link previews for links in the sent message
 	bool disable_web_page_preview;
 
-	@safe @ignore @property bool isNull() { return message_text == typeof(message_text).init; }
+	@safe pure nothrow @nogc bool isNull() { return message_text == typeof(message_text).init; }
 }
 
 /**
@@ -3967,7 +3967,7 @@ struct InputLocationMessageContent {
 	/// Period in seconds for which the location can be updated
 	int live_period;
 
-	@safe @ignore @property bool isNull() { return latitude.isNaN; }
+	@safe pure nothrow @nogc bool isNull() { return latitude.isNaN; }
 }
 
 /**
@@ -3994,7 +3994,7 @@ struct InputVenueMessageContent {
 	/// Foursquare type of the venue, if known
 	string foursquare_type;
 
-	@safe @ignore @property bool isNull() { return latitude.isNaN; }
+	@safe pure nothrow @nogc bool isNull() { return latitude.isNaN; }
 }
 
 /**
@@ -4015,7 +4015,7 @@ struct InputContactMessageContent {
 	/// Additional data about the contact in the form of a vCard
 	string vcard;
 
-	@safe @ignore @property bool isNull() { return phone_number == typeof(phone_number).init; }
+	@safe pure nothrow @nogc bool isNull() { return phone_number == typeof(phone_number).init; }
 }
 
 /**
@@ -4039,7 +4039,7 @@ struct ChosenInlineResult {
 	/// Identifier of the sent inline message
 	string inline_message_id;
 
-	@safe @ignore @property bool isNull() { return result_id == typeof(result_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return result_id == typeof(result_id).init; }
 }
 
 /**
@@ -4053,7 +4053,7 @@ struct LabeledPrice {
 	/// Price of the product in the smallest units of the currency
 	int amount;
 
-	@safe @ignore @property bool isNull() { return label == typeof(label).init; }
+	@safe pure nothrow @nogc bool isNull() { return label == typeof(label).init; }
 }
 
 /**
@@ -4076,7 +4076,7 @@ struct Invoice {
 	/// Total price in the smallest units of the currency
 	int total_amount;
 
-	@safe @ignore @property bool isNull() { return title == typeof(title).init; }
+	@safe pure nothrow @nogc bool isNull() { return title == typeof(title).init; }
 }
 
 /**
@@ -4102,7 +4102,7 @@ struct ShippingAddress {
 	/// Address post code
 	string post_code;
 
-	@safe @ignore @property bool isNull() { return country_code == typeof(country_code).init; }
+	@safe pure nothrow @nogc bool isNull() { return country_code == typeof(country_code).init; }
 }
 
 /**
@@ -4123,7 +4123,7 @@ struct OrderInfo {
 	/// User shipping address
 	ShippingAddress shipping_address;
 
-	@safe @ignore @property bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
+	@safe pure nothrow @nogc bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
 }
 
 /**
@@ -4140,7 +4140,7 @@ struct ShippingOption {
 	/// List of price portions
 	LabeledPrice[] prices;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -4170,7 +4170,7 @@ struct SuccessfulPayment {
 	/// Order info provided by the user
 	OrderInfo order_info;
 
-	@safe @ignore @property bool isNull() { return currency == typeof(currency).init; }
+	@safe pure nothrow @nogc bool isNull() { return currency == typeof(currency).init; }
 }
 
 /**
@@ -4190,7 +4190,7 @@ struct ShippingQuery {
 	/// User specified shipping address
 	ShippingAddress shipping_address;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -4220,7 +4220,7 @@ struct PreCheckoutQuery {
 	/// Order info provided by the user
 	OrderInfo order_info;
 
-	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -4247,7 +4247,7 @@ struct Game {
 	/// Animation that will be displayed in the game message in chats
 	Animation animation;
 
-	@safe @ignore @property bool isNull() { return title == typeof(title).init; }
+	@safe pure nothrow @nogc bool isNull() { return title == typeof(title).init; }
 }
 
 /**
@@ -4255,7 +4255,7 @@ struct Game {
  * See_Also: $(LINK https://core.telegram.org/bots/api#callbackgame)
  */
 struct CallbackGame {
-	@safe @ignore @property bool isNull() { return true; }
+	@safe pure nothrow @nogc bool isNull() { return true; }
 }
 
 /**
@@ -4272,7 +4272,7 @@ struct GameHighScore {
 	/// Score
 	int score;
 
-	@safe @ignore @property bool isNull() { return position == typeof(position).init; }
+	@safe pure nothrow @nogc bool isNull() { return position == typeof(position).init; }
 }
 
 /// Unique identifier for the target chat or username of the target channel
