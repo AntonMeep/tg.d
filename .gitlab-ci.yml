@@ -3,7 +3,12 @@ image: docker:stable
 services:
 - docker:dind
 
+stages:
+  - test
+  - documentation
+
 dmd:
+  stage: test
   coverage: '/Average: \d+\.\d+%/'
   script:
     - docker run -v$(pwd):/source ohboi/minidmd bash -c "
@@ -13,5 +18,14 @@ dmd:
         dub run covered -- -a source-tg-d.lst"
 
 ldc:
+  stage: test
   script:
     - docker run -v$(pwd):/source ohboi/minildc:beta dub test
+
+pages:
+  stage: documentation
+  script:
+    - docker run -v$(pwd):/source ohboi/minidmd dub build -b ddox && cp -r docs public
+  artifacts:
+    paths:
+      - public
