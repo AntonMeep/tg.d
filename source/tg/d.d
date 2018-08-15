@@ -5256,8 +5256,10 @@ struct EditMessageCaptionMethod {
 	InlineKeyboardMarkup reply_markup;
 }
 
-struct EditMessageReplyMarkupMethod {
-	mixin TelegramMethod!"/editMessageReplyMarkup";
+struct EditMessageMediaMethod {
+	mixin TelegramMethod!"/editMessageMedia";
+
+	InputMedia media;
 
 @optional:
 	TelegramID chat_id;
@@ -5266,10 +5268,8 @@ struct EditMessageReplyMarkupMethod {
 	ReplyMarkup reply_markup;
 }
 
-struct EditMessageMediaMethod {
-	mixin TelegramMethod!"/editMessageMedia";
-
-	InputMedia media;
+struct EditMessageReplyMarkupMethod {
+	mixin TelegramMethod!"/editMessageReplyMarkup";
 
 @optional:
 	TelegramID chat_id;
