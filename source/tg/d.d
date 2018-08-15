@@ -4687,42 +4687,82 @@ struct SendMediaGroupMethod {
 	int reply_to_message_id;
 }
 
+/**
+ * Method to send point on the map
+ * See_Also: `TelegramBot.sendLocation`, $(LINK https://core.telegram.org/bots/api#sendlocation)
+ */
 struct SendLocationMethod {
 	mixin TelegramMethod!"/sendLocation";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Latitude of the location
 	float latitude;
+
+	/// Longitude of the location
 	float longitude;
 
 @optional:
+	/// Period in seconds for which the location will be updated
 	int live_period;
+
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to edit live location messages
+ * See_Also: `TelegramBot.editLiveLocation`, $(LINK https://core.telegram.org/bots/api#editmessagelivelocation)
+ */
 struct EditMessageLiveLocationMethod {
 	mixin TelegramMethod!"/editMessageLiveLocation";
 
+	/// Latitude of new location
 	float latitude;
+
+	/// Longitude of new location
 	float longitude;
 
 @optional:
+	/// Required if `inline_message_id` is not specified. Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Required if `inline_message_id` is not specified. Identifier of the sent message
 	int message_id;
+
+	/// Required if `chat_id` and `message_id` are not specified. Identifier of the inline message
 	string inline_message_id;
-	ReplyMarkup reply_markup;
+
+	/// Inline keyboard attached to a message
+	InlineKeyboardMarkup reply_markup;
 }
 
+/**
+ * Method to stop updating a live location message
+ * See_Also: `TelegramBot.stopMessageLiveLocation`, $(LINK https://core.telegram.org/bots/api#stopmessagelivelocation)
+ */
 struct StopMessageLiveLocationMethod {
 	mixin TelegramMethod!"/stopMessageLiveLocation";
 
 @optional:
-
+	/// Required if `inline_message_id` is not specified. Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Required if `inline_message_id` is not specified. Identifier of the sent message
 	int message_id;
+
+	/// Required if `chat_id` and `message_id` are not specified. Identifier of the inline message
 	string inline_message_id;
-	ReplyMarkup reply_markup;
+
+	/// Inline keyboard attached to a message
+	InlineKeyboardMarkup reply_markup;
 }
 
 struct SendVenueMethod {
