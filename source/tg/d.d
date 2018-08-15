@@ -4187,32 +4187,56 @@ struct PreCheckoutQuery {
 	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Game
+ * See_Also: $(LINK https://core.telegram.org/bots/api#game)
+ */
 struct Game {
-	string title,
-		   description;
+	/// Title of the game
+	string title;
+
+	/// Description of the game
+	string description;
+
+	/// Photo that will be displayed in the game message in chats
 	PhotoSize[] photo;
 
 @optional:
+	/// Brief description of the game or high scores included in the game message
 	string text;
+
+	/// Special entities that appear in `text`
 	MessageEntity[] text_entities;
+
+	/// Animation that will be displayed in the game message in chats
 	Animation animation;
 
-@ignore @property:
-	bool isNull() { return title == typeof(title).init; }
+	@safe @ignore @property bool isNull() { return title == typeof(title).init; }
 }
 
+/**
+ * A placeholder, currently holds no information
+ * See_Also: $(LINK https://core.telegram.org/bots/api#callbackgame)
+ */
 struct CallbackGame {
-@ignore @property:
-	bool isNull() { return true; }
+	@safe @ignore @property bool isNull() { return true; }
 }
 
+/**
+ * One row of the high scores table for a game
+ * See_Also: $(LINK https://core.telegram.org/bots/api#gamehighscore)
+ */
 struct GameHighScore {
+	/// Position in high score table for the game
 	int position;
+
+	/// User
 	User user;
+
+	/// Score
 	int score;
 
-@ignore @property:
-	bool isNull() { return position == typeof(position).init; }
+	@safe @ignore @property bool isNull() { return position == typeof(position).init; }
 }
 
 /*                        Telegram methods                        */
