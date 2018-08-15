@@ -4262,31 +4262,60 @@ private mixin template TelegramMethod(string path) {
 	package @ignore immutable string m_path = path;
 }
 
+/**
+ * Method to receive incoming updates using long polling
+ * See_Also: `TelegramBot.getUpdates`, $(LINK https://core.telegram.org/bots/api#getupdates)
+ */
 struct GetUpdatesMethod {
 	mixin TelegramMethod!"/getUpdates";
 
 @optional:
+	/// Identifier of the first update to be returned
 	int offset;
+
+	/// Limits the number of updates to be retrieved
 	int limit = 100;
+
+	/// Timeout in seconds for long polling
 	int timeout = 0;
+
+	/// List the types of updates you want your bot to receive
 	string[] allowed_updates = [];
 }
 
+/**
+ * Method to specify a url and receive incoming updates via an outgoing webhook
+ * See_Also: `TelegramBot.setWebhook`, $(LINK https://core.telegram.org/bots/api#setwebhook)
+ */
 struct SetWebhookMethod {
 	mixin TelegramMethod!"/setWebhook";
 
+	/// HTTPS url to send updates to
 	string url;
 
 @optional:
+	/// Public key certificate so that the root certificate in use can be checked
 	InputFile certificate;
+
+	/// Maximum allowed number of simultaneous HTTPS connections to the webhook for update delivery
 	int max_connections = 40;
+
+	/// List the types of updates you want your bot to receive
 	string[] allowed_updates = [];
 }
 
+/**
+ * Method to remove webhook integration
+ * See_Also: `TelegramBot.deleteWebhook`, $(LINK https://core.telegram.org/bots/api#deletewebhook)
+ */
 struct DeleteWebhookMethod {
 	mixin TelegramMethod!"/deleteWebhook";
 }
 
+/**
+ * Method to get current webhook status
+ * See_Also: `TelegramBot.getWebhookInfo`, $(LINK https://core.telegram.org/bots/api#getwebhookinfo)
+ */
 struct GetWebhookInfoMethod {
 	mixin TelegramMethod!"/getWebhookInfo";
 }
