@@ -5368,42 +5368,90 @@ struct UploadStickerFileMethod {
 	InputFile png_sticker;
 }
 
+/**
+ * Method to create new sticker set owned by a user
+ * See_Also: `TelegramBot.createNewStickerSet`, $(LINK https://core.telegram.org/bots/api#createnewstickerset)
+ */
 struct CreateNewStickerSetMethod {
 	mixin TelegramMethod!"/createNewStickerSet";
 
+	/// User identifier of created sticker set owner
 	int user_id;
+
+	/// Short name of sticker set, to be used in `t.me/addstickers/` URLs 
 	string name;
+
+	/// Sticker set title
 	string title;
-	string png_sticker; // TODO InputFile|string
+
+	/**
+	 * Png image with the sticker
+	 *
+	 * Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a .png file from the Internet
+	 */
+	string png_sticker;
+
+	/// One or more emoji corresponding to the sticker
 	string emojis;
 
 @optional:
+	/// Pass true`, if a set of mask stickers should be created
 	bool contains_masks;
+
+	/// Position where the mask should be placed on faces
 	MaskPosition mask_position;
 }
 
+/**
+ * Method to add a new sticker to a set created by the bot
+ * See_Also: `TelegramBot.addStickerToSet`, $(LINK https://core.telegram.org/bots/api#addstickertoset)
+ */
 struct AddStickerToSetMethod {
 	mixin TelegramMethod!"/addStickerToSet";
 
+	/// User identifier of sticker set owner
 	int user_id;
+
+	/// Sticker set name
 	string name;
-	string png_sticker; // TODO InputFile|string
+
+	/**
+	 * Png image with the sticker
+	 *
+	 * Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a .png file from the Internet
+	 */
+	string png_sticker;
+	
+	/// One or more emoji corresponding to the sticker
 	string emojis;
 
 @optional:
+	/// Position where the mask should be placed on faces
 	MaskPosition mask_position;
 }
 
+/**
+ * Method to move a sticker in a set created by the bot to a specific position
+ * See_Also: `TelegramBot.setStickerPositionInSet`, $(LINK https://core.telegram.org/bots/api#setstickerpositioninset)
+ */
 struct SetStickerPositionInSetMethod {
 	mixin TelegramMethod!"/setStickerPositionInSet";
 
+	/// File identifier of the sticker
 	string sticker;
+
+	/// New sticker position in the set, zero-based
 	int position;
 }
 
+/**
+ * Method to delete a sticker from a set created by the bot
+ * See_Also: `TelegramBot.deleteStickerFromSet`, $(LINK https://core.telegram.org/bots/api#deletestickerfromset)
+ */
 struct DeleteStickerFromSetMethod {
 	mixin TelegramMethod!"/deleteStickerFromSet";
 
+	/// File identifier of the sticker
 	string sticker;
 }
 
