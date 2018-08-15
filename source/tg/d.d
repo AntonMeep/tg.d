@@ -4043,27 +4043,51 @@ struct Invoice {
 	@safe @ignore @property bool isNull() { return title == typeof(title).init; }
 }
 
+/**
+ * Shipping address
+ * See_Also: $(LINK https://core.telegram.org/bots/api#shippingaddress)
+ */
 struct ShippingAddress {
-	string country_code,
-		   state,
-		   city,
-		   street_line1,
-		   street_line2,
-		   post_code;
+	/// ISO 3166-1 alpha-2 country code
+	string country_code;
 
-@ignore @property:
-	bool isNull() { return country_code == typeof(country_code).init; }
+	/// State, if applicable
+	string state;
+
+	/// City
+	string city;
+
+	/// First line for the address
+	string street_line1;
+
+	/// Second line for the address
+	string street_line2;
+
+	/// Address post code
+	string post_code;
+
+	@safe @ignore @property bool isNull() { return country_code == typeof(country_code).init; }
 }
 
+/**
+ * Information about an order
+ * See_Also: $(LINK https://core.telegram.org/bots/api#orderinfo)
+ */
 struct OrderInfo {
 @optional:
-	string name,
-			phone_number,
-			email;
+	/// User name
+	string name;
+
+	/// User's phone number
+	string phone_number;
+
+	/// User email
+	string email;
+
+	/// User shipping address
 	ShippingAddress shipping_address;
 
-@ignore @property:
-	bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
+	@safe @ignore @property bool isNull() { return !name.length && !phone_number.length && !email.length && shipping_address.isNull; }
 }
 
 struct ShippingOption {
