@@ -5256,32 +5256,62 @@ struct EditMessageCaptionMethod {
 	InlineKeyboardMarkup reply_markup;
 }
 
+/**
+ * Method to edit audio, document, photo, or video messages
+ * See_Also: `TelegramBot.editMessageMedia`, $(LINK https://core.telegram.org/bots/api#editmessagemedia)
+ */
 struct EditMessageMediaMethod {
 	mixin TelegramMethod!"/editMessageMedia";
 
+	/// New media content of the message
 	InputMedia media;
 
 @optional:
+	/// Required if `inline_message_id` is not specified. Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Required if `inline_message_id` is not specified. Identifier of the sent message
 	int message_id;
+
+	/// Required if `chat_id` and `message_id` are not specified. Identifier of the inline message
 	string inline_message_id;
-	ReplyMarkup reply_markup;
+
+	/// Inline keyboard attached to the message
+	InlineKeyboardMarkup reply_markup;
 }
 
+/**
+ * Method to edit only the reply markup of messages sent by the bot or via the bot
+ * See_Also: `TelegramBot.editMessageReplyMarkup`, $(LINK https://core.telegram.org/bots/api#editmessagereplymarkup)
+ */
 struct EditMessageReplyMarkupMethod {
 	mixin TelegramMethod!"/editMessageReplyMarkup";
 
 @optional:
+	/// Required if `inline_message_id` is not specified. Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Required if `inline_message_id` is not specified. Identifier of the sent message
 	int message_id;
+
+	/// Required if `chat_id` and `message_id` are not specified. Identifier of the inline message
 	string inline_message_id;
-	ReplyMarkup reply_markup;
+
+	/// Inline keyboard attached to the message
+	InlineKeyboardMarkup reply_markup;
 }
 
+/**
+ * Method to delete a message, including service messages
+ * See_Also: `TelegramBot.deleteMessage`, $(LINK https://core.telegram.org/bots/api#deletemessage)
+ */
 struct DeleteMessageMethod {
 	mixin TelegramMethod!"/deleteMessage";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Identifier of the message to delete
 	int message_id;
 }
 
