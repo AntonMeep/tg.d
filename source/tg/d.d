@@ -3952,17 +3952,28 @@ struct InputContactMessageContent {
 	@safe @ignore @property bool isNull() { return phone_number == typeof(phone_number).init; }
 }
 
+/**
+ * Result of an inline query that was chosen by the user and sent to their chat partner
+ * See_Also: $(LINK https://core.telegram.org/bots/api#choseninlineresult)
+ */
 struct ChosenInlineResult {
+	/// The unique identifier for the result that was chosen
 	string result_id;
+
+	/// The user that chose the result
 	User from;
+
+	/// The query that was used to obtain the result
 	string query;
 
 @optional:
+	/// Sender location, only for bots that require user location
 	Location location;
+
+	/// Identifier of the sent inline message
 	string inline_message_id;
 
-@ignore @property:
-	bool isNull() { return result_id == typeof(result_id).init; }
+	@safe @ignore @property bool isNull() { return result_id == typeof(result_id).init; }
 }
 
 struct Game {
