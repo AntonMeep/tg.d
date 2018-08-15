@@ -991,7 +991,7 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `SendChatActionMethod`, $(LINK https://core.telegram.org/bots/api#sendchataction)
 	 */
-	bool sendChatAction(T)(T chat_id, string action) if(isTelegramID!T) {
+	bool sendChatAction(T)(T chat_id, ChatAction action) if(isTelegramID!T) {
 		SendChatActionMethod m = {
 			action: action,
 			chat_id: chat_id,
@@ -1905,6 +1905,23 @@ enum FacePart : string {
 	eyes     = "eyes",     /// Eyes
 	mouth    = "mouth",    /// Mouth
 	chin     = "chin",     /// Chin
+}
+
+/**
+ * Chat action to be broadcast
+ * See_Also: `TelegramBot.sendChatAction`, $(LINK https://core.telegram.org/bots/api#sendchataction)
+ */
+enum ChatAction : string {
+	typing            = "typing",            /// "... typing"
+	upload_photo      = "upload_photo",      /// "... sending photo"
+	record_video      = "record_video",      /// "... recording video"
+	upload_video      = "upload_video",      /// "... sending video"
+	record_audio      = "record_audio",      /// "... recording voice"
+	upload_audio      = "upload_audio",      /// "... sending voice"
+	upload_document   = "upload_document",   /// "... sending file"
+	find_location     = "find_location",     /// "... choosing location"
+	record_video_note = "record_video_note", /// "... recording video"
+	upload_video_note = "upload_video_note", /// "... sending video message"
 }
 
 /**
@@ -4841,7 +4858,7 @@ struct SendChatActionMethod {
 	mixin TelegramMethod!"/sendChatAction";
 
 	TelegramID chat_id;
-	string action; // TODO enum
+	ChatAction action;
 }
 
 struct GetUserProfilePhotosMethod {
