@@ -5175,42 +5175,85 @@ struct DeleteChatStickerSetMethod {
 	TelegramID chat_id;
 }
 
+/**
+ * Method to send answers to callback queries sent from inline keyboards
+ * See_Also: `TelegramBot.answerCallbackQuery`, $(LINK https://core.telegram.org/bots/api#answercallbackquery)
+ */
 struct AnswerCallbackQueryMethod {
 	mixin TelegramMethod!"/answerCallbackQuery";
 
+	/// Unique identifier for the query to be answered
 	string callback_query_id;
 
 @optional:
+	/// Text of the notification
 	string text;
+
+	/// If `true`, an alert will be shown by the client instead of a notification at the top of the chat screen
 	bool show_alert;
+
+	/// URL that will be opened by the user's client
 	string url;
+
+	/// The maximum amount of time in seconds that the result of the callback query may be cached client-side
 	int cache_time;
 }
 
+/**
+ * Method to edit text and game messages sent by the bot or via the bot
+ * See_Also: `TelegramBot.editMessageText`, $(LINK https://core.telegram.org/bots/api#editmessagetext)
+ */
 struct EditMessageTextMethod {
 	mixin TelegramMethod!"/editMessageText";
 
+	/// New text of the message
 	string text;
 
 @optional:
+	/// Required if `inline_message_id` is not specified. Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Required if `inline_message_id` is not specified. Identifier of the sent message
 	int message_id;
+
+	/// Required if `chat_id` and `message_id` are not specified. Identifier of the inline message
 	string inline_message_id;
+
+	/// Parse mode of the text
 	ParseMode parse_mode;
+
+	/// Disable link previews for links in this message
 	bool disable_web_page_preview;
-	ReplyMarkup reply_markup;
+
+	/// Inline keyboard attached to the message
+	InlineKeyboardMarkup reply_markup;
 }
 
+/**
+ * Method to edit captions of messages sent by the bot or via the bot
+ * See_Also: `TelegramBot.editMessageCaption`, $(LINK https://core.telegram.org/bots/api#editmessagecaption)
+ */
 struct EditMessageCaptionMethod {
 	mixin TelegramMethod!"/editMessageCaption";
 
 @optional:
+	/// Required if `inline_message_id` is not specified. Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Required if `inline_message_id` is not specified. Identifier of the sent message
 	int message_id;
+
+	/// Required if `chat_id` and `message_id` are not specified. Identifier of the inline message
 	string inline_message_id;
+
+	/// New caption of the message
 	string caption;
+
+	/// Parse mode of the message 
 	ParseMode parse_mode;
-	ReplyMarkup reply_markup;
+
+	/// Inline keyboard attached to the message
+	InlineKeyboardMarkup reply_markup;
 }
 
 struct EditMessageReplyMarkupMethod {
