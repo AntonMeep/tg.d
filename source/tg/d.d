@@ -5063,25 +5063,43 @@ struct SetChatDescriptionMethod {
 	string description;
 }
 
+/**
+ * Method to pin a message in a supergroup or a channel
+ * See_Also: `TelegramBot.pinChatMessage`, $(LINK https://core.telegram.org/bots/api#pinchatmessage)
+ */
 struct PinChatMessageMethod {
 	mixin TelegramMethod!"/pinChatMessage";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Identifier of a message to pin
 	int message_id;
 
 @optional:
+	/// Pass `true`, if it is not necessary to send a notification to all chat members about the new pinned message
 	bool disable_notification;
 }
 
+/**
+ * Method to unpin a message in a supergroup or a channel
+ * See_Also: `TelegramBot.unpinChatMessage`, $(LINK https://core.telegram.org/bots/api#unpinchatmessage)
+ */
 struct UnpinChatMessageMethod {
 	mixin TelegramMethod!"/unpinChatMessage";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
+/**
+ * Method for your bot to leave a group, supergroup or channel
+ * See_Also: `TelegramBot.leaveChat`, $(LINK https://core.telegram.org/bots/api#leavechat)
+ */
 struct LeaveChatMethod {
 	mixin TelegramMethod!"/leaveChat";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
