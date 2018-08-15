@@ -4897,20 +4897,35 @@ struct GetFileMethod {
 	string file_id;
 }
 
+/**
+ * Method to kick a user from a group, a supergroup or a channel
+ * See_Also: `TelegramBot.kickChatMember`, $(LINK https://core.telegram.org/bots/api#kickchatmember)
+ */
 struct KickChatMemberMethod {
 	mixin TelegramMethod!"/kickChatMember";
 
+	/// Unique identifier for the target group or username of the target supergroup or channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Unique identifier of the target user
 	int user_id;
 
 @optional:
-	int until_date;
+	/// Date when the user will be unbanned, unix time
+	long until_date;
 }
 
+/**
+ * Method to unban a previously kicked user in a supergroup or channel
+ * See_Also: `TelegramBot.unbanChatMember`, $(LINK https://core.telegram.org/bots/api#unbanchatmember)
+ */
 struct UnbanChatMemberMethod {
 	mixin TelegramMethod!"/unbanChatMember";
 
+	/// Unique identifier for the target group or username of the target supergroup or channel (in the format `"@username"`)
 	TelegramID chat_id;
+
+	/// Unique identifier of the target user
 	int user_id;
 }
 
