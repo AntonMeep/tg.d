@@ -4239,14 +4239,28 @@ struct GameHighScore {
 	@safe @ignore @property bool isNull() { return position == typeof(position).init; }
 }
 
+/// Unique identifier for the target chat or username of the target channel
+alias TelegramID = Algebraic!(long, string);
+
+/// Check if `T` is a valid `TelegramID`
+enum isTelegramID(T) = is(T == TelegramID) || is(T == long) || is(T == string);
+
+/// 
+@("isTelegramID")
+unittest {
+	isTelegramID!TelegramID.should.be.equal(true);
+	isTelegramID!long.should.be.equal(true);
+	isTelegramID!string.should.be.equal(true);
+
+	isTelegramID!bool.should.be.equal(false);
+	isTelegramID!float.should.be.equal(false);
+}
+
 /*                        Telegram methods                        */
 
 private mixin template TelegramMethod(string path) {
 	package @ignore immutable string m_path = path;
 }
-
-alias TelegramID = Algebraic!(long, string);
-enum isTelegramID(T) = is(T : long) || is(T == string);
 
 struct GetUpdatesMethod {
 	mixin TelegramMethod!"/getUpdates";
