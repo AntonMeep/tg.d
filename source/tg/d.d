@@ -4854,26 +4854,46 @@ struct SendContactMethod {
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send chat action
+ * See_Also: `TelegramBot.sendChatAction`, $(LINK https://core.telegram.org/bots/api#sendchataction)
+ */
 struct SendChatActionMethod {
 	mixin TelegramMethod!"/sendChatAction";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Type of action to broadcast
 	ChatAction action;
 }
 
+/**
+ * Method to get a list of profile pictures for a user
+ * See_Also: `TelegramBot.getUserProfilePhotos`, $(LINK https://core.telegram.org/bots/api#getuserprofilephotos)
+ */
 struct GetUserProfilePhotosMethod {
 	mixin TelegramMethod!"/getUserProfilePhotos";
 
+	/// Unique identifier of the target user
 	int user_id;
 
 @optional:
+	/// Sequential number of the first photo to be returned. By default, all photos are returned.
 	int offset;
-	int limit;
+
+	/// Limits the number of photos to be retrieved
+	int limit = 100;
 }
 
+/**
+ * Method to get basic info about a file and prepare it for downloading
+ * See_Also: `TelegramBot.getFile`, $(LINK https://core.telegram.org/bots/api#getfile)
+ */
 struct GetFileMethod {
 	mixin TelegramMethod!"/getFile";
 
+	/// File identifier to get info about
 	string file_id;
 }
 
