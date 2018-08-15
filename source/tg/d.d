@@ -5315,28 +5315,56 @@ struct DeleteMessageMethod {
 	int message_id;
 }
 
+/**
+ * Method to send .webp stickers
+ * See_Also: `TelegramBot.sendSticker`, $(LINK https://core.telegram.org/bots/api#sendsticker)
+ */
 struct SendStickerMethod {
 	mixin TelegramMethod!"/sendSticker";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
-	string sticker; // TODO InputFile|string
+
+	/**
+	 * Sticker to send
+	 *
+	 * Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a .webp file from the Internet
+	 */
+	string sticker;
 
 @optional:
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to get a sticker set
+ * See_Also: `TelegramBot.getStickerSet`, $(LINK https://core.telegram.org/bots/api#getstickerset)
+ */
 struct GetStickerSetMethod {
 	mixin TelegramMethod!"/getStickerSet";
 
+	/// Name of the sticker set
 	string name;
 }
 
+/**
+ * Method to upload a .png file with a sticker
+ * See_Also: `TelegramBot.uploadStickerFile`, $(LINK https://core.telegram.org/bots/api#uploadstickerfile)
+ */
 struct UploadStickerFileMethod {
 	mixin TelegramMethod!"/uploadStickerFile";
 
+	/// User identifier of sticker file owner
 	int user_id;
+
+	/// Png image with the sticker
 	InputFile png_sticker;
 }
 
