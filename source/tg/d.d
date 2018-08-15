@@ -4546,36 +4546,86 @@ struct SendVideoMethod {
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send animation files
+ * See_Also: `TelegramBot.sendAnimation`, $(LINK https://core.telegram.org/bots/api#sendanimation)
+ */
 struct SendAnimationMethod {
 	mixin TelegramMethod!"/sendAnimation";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/**
+	 * Animation file to send
+	 *
+	 * Pass a file_id to send an animation file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get an animation file from the Internet
+	 */
 	string animation;
 
 @optional:
-	int duration,
-		width,
-		height;
+	/// Duration of sent animation in seconds
+	int duration;
+
+	/// Animation width
+	int width;
+
+	/// Animation height
+	int height;
+
+	/// Thumbnail of the file sent
 	string thumb;
+
+	/// Animation caption
 	string caption;
+
+	/// Parse mode of the animation
 	ParseMode parse_mode;
+
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send audio files that are treated as a playable voice messages
+ * See_Also: `TelegramBot.sendVoice`, $(LINK https://core.telegram.org/bots/api#sendvoice)
+ */
 struct SendVoiceMethod {
 	mixin TelegramMethod!"/sendVoice";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/**
+	 * Audio ile to send
+	 *
+	 * Pass a file_id to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get an audio file from the Internet
+	 */
 	string voice;
 
 @optional:
+	/// Voice message caption
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Duration of the voice message in seconds
 	int duration;
+
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
