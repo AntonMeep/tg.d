@@ -124,7 +124,7 @@ int main() {
 				} else if(update.message.text.startsWith("/action")) {
 					"Got /action command, pretending to be typing something".logInfo;
 
-					Bot.sendChatAction(update.message.chat.id, "typing");
+					Bot.sendChatAction(update.message.chat.id, ChatAction.typing);
 				} else {
 					Bot.sendMessage(update.message.chat.id, "What do you mean by that?");
 				}
