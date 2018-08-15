@@ -1949,6 +1949,21 @@ struct Update {
 	@safe @ignore @property bool isNull() { return update_id == typeof(update_id).init; }
 }
 
+struct WebhookInfo {
+	string url;
+	bool has_custom_certificate;
+	int pending_update_count;
+
+@optional:
+	long last_error_date;
+	string last_error_message;
+	int max_connections;
+	string[] allowed_updates;
+
+@ignore @property:
+	bool isNull() { return url == typeof(url).init; }
+}
+
 /**
  * Telegram user or a bot
  * See_Also: $(LINK https://core.telegram.org/bots/api#user)
@@ -4093,21 +4108,6 @@ struct GameHighScore {
 
 @ignore @property:
 	bool isNull() { return position == typeof(position).init; }
-}
-
-struct WebhookInfo {
-	string url;
-	bool has_custom_certificate;
-	int pending_update_count;
-
-@optional:
-	long last_error_date;
-	string last_error_message;
-	int max_connections;
-	string[] allowed_updates;
-
-@ignore @property:
-	bool isNull() { return url == typeof(url).init; }
 }
 
 /*                        Telegram methods                        */
