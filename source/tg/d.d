@@ -4603,7 +4603,7 @@ struct SendVoiceMethod {
 	TelegramID chat_id;
 
 	/**
-	 * Audio ile to send
+	 * Audio file to send
 	 *
 	 * Pass a file_id to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get an audio file from the Internet
 	 */
@@ -4629,30 +4629,61 @@ struct SendVoiceMethod {
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send video messages
+ * See_Also: `TelegramBot.sendVideoNote`, $(LINK https://core.telegram.org/bots/api#sendvideonote)
+ */
 struct SendVideoNoteMethod {
 	mixin TelegramMethod!"/sendVideoNote";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/**
+	 * Video note to send
+	 *
+	 * Pass a file_id to send a video note that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a video note from the Internet
+	 */
 	string video_note;
 
 @optional:
+	/// Duration of sent video in seconds
 	int duration;
-	int length;
-	string thumb;
-	bool disable_notification;
-	int reply_to_message_id;
-	ReplyMarkup reply_markup;
 
+	/// Video width and height, i.e. diameter of the video message
+	int length;
+
+	/// Thumbnail of the file sent
+	string thumb;
+
+	/// Send the message silently
+	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
+	int reply_to_message_id;
+
+	/// Additional interface options
+	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send a group of photos or audios as an album
+ * See_Also: `TelegramBot.sendMediaGroup`, $(LINK https://core.telegram.org/bots/api#sendmediagroup)
+ */
 struct SendMediaGroupMethod {
 	mixin TelegramMethod!"/sendMediaGroup";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Photos and videos to be sent
 	Algebraic!(InputMediaPhoto, InputMediaVideo)[] media;
 
 @optional:
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the messages are a reply, ID of the original message
 	int reply_to_message_id;
 }
 
