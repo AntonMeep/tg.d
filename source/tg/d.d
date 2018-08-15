@@ -4460,24 +4460,6 @@ struct SendAudioMethod {
 	ReplyMarkup reply_markup;
 }
 
-struct SendAnimationMethod {
-	mixin TelegramMethod!"/sendAnimation";
-
-	TelegramID chat_id;
-	string animation;
-
-@optional:
-	int duration,
-		width,
-		height;
-	string thumb;
-	string caption;
-	ParseMode parse_mode;
-	bool disable_notification;
-	int reply_to_message_id;
-	ReplyMarkup reply_markup;
-}
-
 struct SendDocumentMethod {
 	mixin TelegramMethod!"/sendDocument";
 
@@ -4507,6 +4489,24 @@ struct SendVideoMethod {
 	string caption;
 	ParseMode parse_mode;
 	bool supports_streaming;
+	bool disable_notification;
+	int reply_to_message_id;
+	ReplyMarkup reply_markup;
+}
+
+struct SendAnimationMethod {
+	mixin TelegramMethod!"/sendAnimation";
+
+	TelegramID chat_id;
+	string animation;
+
+@optional:
+	int duration,
+		width,
+		height;
+	string thumb;
+	string caption;
+	ParseMode parse_mode;
 	bool disable_notification;
 	int reply_to_message_id;
 	ReplyMarkup reply_markup;
