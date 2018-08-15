@@ -4765,35 +4765,75 @@ struct StopMessageLiveLocationMethod {
 	InlineKeyboardMarkup reply_markup;
 }
 
+/**
+ * Method to send information about a venue
+ * See_Also: `TelegramBot.sendVenue`, $(LINK https://core.telegram.org/bots/api#sendvenue)
+ */
 struct SendVenueMethod {
 	mixin TelegramMethod!"/sendVenue";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Latitude of the venue
 	float latitude;
+
+	/// Longitude of the venue
 	float longitude;
+
+	/// Name of the venue
 	string title;
+
+	/// Address of the venue
 	string address;
 
 @optional:
+	/// Foursquare identifier of the venue
 	string foursquare_id;
+
+	/// Foursquare type of the venue, if known
 	string foursquare_type;
+
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send phone contacts
+ * See_Also: `TelegramBot.sendContact`, $(LINK https://core.telegram.org/bots/api#sendcontact)
+ */
 struct SendContactMethod {
 	mixin TelegramMethod!"/sendContact";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Contact's phone number
 	string phone_number;
+
+	/// Contact's first name
 	string first_name;
 
 @optional:
+	/// Contact's last name
 	string last_name;
+	
+	/// Additional data about the contact in the form of a vCard
 	string vcard;
+
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
