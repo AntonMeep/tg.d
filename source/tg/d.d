@@ -3976,34 +3976,6 @@ struct ChosenInlineResult {
 	@safe @ignore @property bool isNull() { return result_id == typeof(result_id).init; }
 }
 
-struct Game {
-	string title,
-		   description;
-	PhotoSize[] photo;
-
-@optional:
-	string text;
-	MessageEntity[] text_entities;
-	Animation animation;
-
-@ignore @property:
-	bool isNull() { return title == typeof(title).init; }
-}
-
-struct CallbackGame {
-@ignore @property:
-	bool isNull() { return true; }
-}
-
-struct GameHighScore {
-	int position;
-	User user;
-	int score;
-
-@ignore @property:
-	bool isNull() { return position == typeof(position).init; }
-}
-
 struct LabeledPrice {
 	string label;
 	int amount;
@@ -4093,6 +4065,34 @@ struct PreCheckoutQuery {
 
 @ignore @property:
 	bool isNull() { return id == typeof(id).init; }
+}
+
+struct Game {
+	string title,
+		   description;
+	PhotoSize[] photo;
+
+@optional:
+	string text;
+	MessageEntity[] text_entities;
+	Animation animation;
+
+@ignore @property:
+	bool isNull() { return title == typeof(title).init; }
+}
+
+struct CallbackGame {
+@ignore @property:
+	bool isNull() { return true; }
+}
+
+struct GameHighScore {
+	int position;
+	User user;
+	int score;
+
+@ignore @property:
+	bool isNull() { return position == typeof(position).init; }
 }
 
 struct WebhookInfo {
