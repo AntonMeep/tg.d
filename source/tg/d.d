@@ -4137,29 +4137,54 @@ struct SuccessfulPayment {
 	@safe @ignore @property bool isNull() { return currency == typeof(currency).init; }
 }
 
+/**
+ * Information about an incoming shipping query
+ * See_Also: $(LINK https://core.telegram.org/bots/api#shippingquery)
+ */
 struct ShippingQuery {
+	/// Unique query identifier
 	string id;
+
+	/// User who sent the query
 	User from;
+
+	/// Bot specified invoice payload
 	string invoice_payload;
+
+	/// User specified shipping address
 	ShippingAddress shipping_address;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
+/**
+ * Information about an incoming pre-checkout query
+ * See_Also: $(LINK https://core.telegram.org/bots/api#precheckoutquery)
+ */
 struct PreCheckoutQuery {
+	/// Unique query identifier
 	string id;
+
+	/// User who sent the query
 	User from;
+
+	/// Three-letter ISO 4217 currency code
 	string currency;
+
+	/// Total price in the smallest units of the currency
 	int total_amount;
+
+	/// Bot specified invoice payload
 	string invoice_payload;
 
 @optional:
+	/// Identifier of the shipping option chosen by the user
 	string shipping_option_id;
+
+	/// Order info provided by the user
 	OrderInfo order_info;
 
-@ignore @property:
-	bool isNull() { return id == typeof(id).init; }
+	@safe @ignore @property bool isNull() { return id == typeof(id).init; }
 }
 
 struct Game {
