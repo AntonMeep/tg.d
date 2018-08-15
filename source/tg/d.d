@@ -4392,7 +4392,7 @@ struct SendPhotoMethod {
 	/**
 	 * Photo to send
 	 *
-	 * Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet
+	 * Pass a file_id to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a photo from the Internet
 	 */
 	string photo;
 
@@ -4425,9 +4425,9 @@ struct SendAudioMethod {
 
 	
 	/**
-	 * Audio file to send
+	 * Audio ile to send
 	 *
-	 * Pass a file_id as String to send an audio that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio from the Internet
+	 * Pass a file_id to send an audio file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get an audio file from the Internet
 	 */
 	string audio;
 
@@ -4460,37 +4460,89 @@ struct SendAudioMethod {
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send general files
+ * See_Also: `TelegramBot.sendDocument`, $(LINK https://core.telegram.org/bots/api#senddocument)
+ */
 struct SendDocumentMethod {
 	mixin TelegramMethod!"/sendDocument";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/**
+	 * File to send
+	 *
+	 * Pass a file_id to send a file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a file from the Internet
+	 */
 	string document;
 
 @optional:
+	/// Thumbnail of the file sent
 	string thumb;
+
+	/// Document caption
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send video files
+ * See_Also: `TelegramBot.sendVideo`, $(LINK https://core.telegram.org/bots/api#sendvideo)
+ */
 struct SendVideoMethod {
 	mixin TelegramMethod!"/sendVideo";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/**
+	 * Video file to send
+	 *
+	 * Pass a file_id to send a video file that exists on the Telegram servers (recommended), pass an HTTP URL for Telegram to get a video file from the Internet
+	 */
 	string video;
 
 @optional:
+	/// Duration of sent video in seconds
 	int duration;
+
+	/// Video width
 	int width;
+
+	/// Video height
 	int height;
+
+	/// Thumbnail of the file sent
 	string thumb;
+
+	/// Video caption
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+
+	/// Pass `true`, if the uploaded video is suitable for streaming
 	bool supports_streaming;
+
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
