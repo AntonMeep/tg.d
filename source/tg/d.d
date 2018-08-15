@@ -4929,34 +4929,72 @@ struct UnbanChatMemberMethod {
 	int user_id;
 }
 
+/**
+ * Method to restrict a user in a supergroup
+ * See_Also: `TelegramBot.restrictChatMember`, $(LINK https://core.telegram.org/bots/api#restrictchatmember)
+ */
 struct RestrictChatMemberMethod {
 	mixin TelegramMethod!"/restrictChatMember";
 
+	/// Unique identifier for the target chat or username of the target supergroup (in the format `"@supergroupusername"`)
 	TelegramID chat_id;
+
+	/// Unique identifier of the target user
 	int user_id;
 
 @optional:
-	int until_date;
+	/// Date when restrictions will be lifted for the user, unix time
+	long until_date;
+
+	/// Pass `true`, if the user can send text messages, contacts, locations and venues
 	bool can_send_messages;
+
+	//// Pass `true`, if the user can send audios, documents, photos, videos, video notes and voice notes, implies `can_send_messages`
 	bool can_send_media_messages;
+
+	/// Pass `true`, if the user can send animations, games, stickers and use inline bots, implies `can_send_media_messages`
 	bool can_send_other_messages;
+
+	/// Pass `true`, if the user may add web page previews to their messages, implies `can_send_media_messages`
 	bool can_add_web_page_previews;
 }
 
+/**
+ * Method to promote or demote a user in a supergroup or a channel
+ * See_Also: `TelegramBot.promoteChatMember`, $(LINK https://core.telegram.org/bots/api#promotechatmember)
+ */
 struct PromoteChatMemberMethod {
 	mixin TelegramMethod!"/promoteChatMember";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Unique identifier of the target user
 	int user_id;
 
 @optional:
+	/// Pass `true`, if the administrator can change chat title, photo and other settings
 	bool can_change_info;
+
+	/// Pass `true`, if the administrator can create channel posts, channels only
 	bool can_post_messages;
+
+	/// Pass `true`, if the administrator can edit messages of other users and can pin messages, channels only
 	bool can_edit_messages;
+
+	/// Pass `true`, if the administrator can delete messages of other users
 	bool can_delete_messages;
+
+	/// Pass `true`, if the administrator can invite new users to the chat
 	bool can_invite_users;
+
+	/// Pass `true`, if the administrator can restrict, ban or unban chat members
 	bool can_restrict_members;
+
+	/// Pass `true`, if the administrator can pin messages, supergroups only
 	bool can_pin_messages;
+
+	/// Pass `true`, if the administrator can add new administrators 
 	bool can_promote_members;
 }
 
