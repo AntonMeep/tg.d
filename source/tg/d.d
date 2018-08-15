@@ -3398,7 +3398,7 @@ struct InlineQueryResultAudio {
 
 /**
  * Link to a voice recording in an .ogg container encoded with OPUS
- * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultvoice
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inlinequeryresultvoice)
  */
 struct InlineQueryResultVoice {
 	/// Type of the result, must be `"voice"`
@@ -5395,7 +5395,7 @@ struct CreateNewStickerSetMethod {
 	string emojis;
 
 @optional:
-	/// Pass true`, if a set of mask stickers should be created
+	/// Pass `true`, if a set of mask stickers should be created
 	bool contains_masks;
 
 	/// Position where the mask should be placed on faces
