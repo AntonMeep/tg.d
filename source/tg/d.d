@@ -4006,23 +4006,41 @@ struct ChosenInlineResult {
 	@safe @ignore @property bool isNull() { return result_id == typeof(result_id).init; }
 }
 
+/**
+ * Portion of the price for goods or services
+ * See_Also: $(LINK https://core.telegram.org/bots/api#labeledprice)
+ */
 struct LabeledPrice {
+	/// Portion label
 	string label;
+
+	/// Price of the product in the smallest units of the currency
 	int amount;
 
-@ignore @property:
-	bool isNull() { return label == typeof(label).init; }
+	@safe @ignore @property bool isNull() { return label == typeof(label).init; }
 }
 
+/**
+ * Basic information about an invoice
+ * See_Also: $(LINK https://core.telegram.org/bots/api#invoice)
+ */
 struct Invoice {
-	string title,
-		   description,
-		   start_parameter,
-		   currency;
+	/// Product name
+	string title;
+
+	/// Product description
+	string description;
+
+	/// Unique bot deep-linking parameter that can be used to generate this invoice
+	string start_parameter;
+
+	/// Three-letter ISO 4217 currency code
+	string currency;
+
+	/// Total price in the smallest units of the currency
 	int total_amount;
 
-@ignore @property:
-	bool isNull() { return title == typeof(title).init; }
+	@safe @ignore @property bool isNull() { return title == typeof(title).init; }
 }
 
 struct ShippingAddress {
