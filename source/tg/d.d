@@ -4348,7 +4348,7 @@ struct SendMessageMethod {
 	/// Disable link previews for links in this message
 	bool disable_web_page_preview;
 
-	/// Send message silently
+	/// Send the message silently
 	bool disable_notification;
 
 	/// If the message is a reply, ID of the original message
@@ -4358,46 +4358,106 @@ struct SendMessageMethod {
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to forward messages
+ * See_Also: `TelegramBot.forwardMessage`, $(LINK https://core.telegram.org/bots/api#forwardmessage)
+ */
 struct ForwardMessageMethod {
 	mixin TelegramMethod!"/forwardMessage";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Unique identifier for the chat where the original message was sent (or channel username in the format `"@channelusername"`)
 	TelegramID from_chat_id;
-@optional bool disable_notification;
+
+	/// Message identifier in the chat specified in `from_chat_id`
 	int message_id;
+
+@optional:
+	/// Send the message silently
+	bool disable_notification;
 }
 
+/**
+ * Method to send photos
+ * See_Also: `TelegramBot.sendPhoto`, $(LINK https://core.telegram.org/bots/api#sendphoto)
+ */
 struct SendPhotoMethod {
 	mixin TelegramMethod!"/sendPhoto";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/**
+	 * Photo to send
+	 *
+	 * Pass a file_id as String to send a photo that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get a photo from the Internet
+	 */
 	string photo;
 
 @optional:
+	/// Photo caption
 	string caption;
+
+	/// Parse mode of the caption
 	ParseMode parse_mode;
+	
+	/// Send the message silently
 	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
 	int reply_to_message_id;
+
+	/// Additional interface options
 	ReplyMarkup reply_markup;
 }
 
+/**
+ * Method to send audio files
+ * See_Also: `TelegramBot.sendAudio`, $(LINK https://core.telegram.org/bots/api#sendaudio)
+ */
 struct SendAudioMethod {
 	mixin TelegramMethod!"/sendAudio";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	
+	/**
+	 * Audio file to send
+	 *
+	 * Pass a file_id as String to send an audio that exists on the Telegram servers (recommended), pass an HTTP URL as a String for Telegram to get an audio from the Internet
+	 */
 	string audio;
 
 @optional:
+	/// Audio caption
 	string caption;
-	ParseMode parse_mode;
-	int duration;
-	string performer;
-	string title;
-	string thumb;
-	bool disable_notification;
-	int reply_to_message_id;
-	ReplyMarkup reply_markup;
 
+	/// Parse mode of the caption
+	ParseMode parse_mode;
+
+	/// Duration of the audio in seconds
+	int duration;
+
+	/// Performer
+	string performer;
+
+	/// Track name
+	string title;
+
+	/// Thumbnail of the file sent
+	string thumb;
+
+	/// Send the message silently
+	bool disable_notification;
+
+	/// If the message is a reply, ID of the original message
+	int reply_to_message_id;
+
+	/// Additional interface options
+	ReplyMarkup reply_markup;
 }
 
 struct SendAnimationMethod {
