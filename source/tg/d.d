@@ -5455,17 +5455,33 @@ struct DeleteStickerFromSetMethod {
 	string sticker;
 }
 
+/**
+ * Method to send answers to an inline query
+ * See_Also: `TelegramBot.answerInlineQuery`, $(LINK https://core.telegram.org/bots/api#answerinlinequery)
+ */
 struct AnswerInlineQueryMethod {
 	mixin TelegramMethod!"/answerInlineQuery";
 
+	/// Unique identifier for the answered query
 	string inline_query_id;
+
+	/// Array of results for the inline query
 	InlineQueryResult[] results;
 
 @optional:
+	/// The maximum amount of time in seconds that the result of the inline query may be cached on the server
 	int cache_time;
+
+	/// Pass `true`, if results may be cached on the server side only for the user that sent the query
 	bool is_personal;
+
+	/// Pass the offset that a client should send in the next query with the same text to receive more results
 	string next_offset;
+
+	/// If passed, clients will display a button with specified text that switches the user to a private chat with the bot and sends the bot a start message with the parameter `switch_pm_parameter`
 	string switch_pm_text;
+
+	/// Deep-linking parameter for the `/start` message sent to the bot when user presses the switch button. 1-64 characters, only `A-Z`, `a-z`, `0-9`, `_` and `-` are allowed.
 	string switch_pm_parameter;
 }
 
