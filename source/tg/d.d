@@ -1,10 +1,26 @@
 /**
  * Tg.d is a D client library for Telegram Bot API
  *
+ * Take a look at `TelegramBot` which is the main structure representing a bot.
+ *
+ * ---
+ * import tg.d;
+ *
+ * int main() {
+ * 	auto Bot = TelegramBot("token");
+ * 	while(true) {
+ * 		foreach(update; Bot.pollUpdates) {
+ * 			Bot.sendMessage(update.message.chat.id, "Hello, world!");
+ * 		}
+ * 	 }
+ * }
+ * ---
+ *
+ * Examples: See $(LINK2 https://gitlab.com/ohboi/tg.d/tree/master/examples, "examples") directory
  * Authors: Anton Fediushin, Pavel Chebotarev
  * Licence: MIT, see LICENCE
  * Copyright: Copyright for portions of project tg.d are held by Pavel Chebotarev, 2018 as part of project telega (https://github.com/nexor/telega). All other copyright for project tg.d are held by Anton Fediushin, 2018.
- * See_Also: $(LINK https://gitlab.com/ohboi/tg.d)
+ * See_Also: $(LINK https://gitlab.com/ohboi/tg.d), $(LINK https://core.telegram.org/bots/api)
  */
 module tg.d;
 
@@ -43,6 +59,10 @@ class TelegramBotException : Exception {
 
 /**
  * Main structure representing one bot
+ *
+ * Every method has an overload which takes `<MethodName>Method` structure which can be used to
+ * pass arguments that were recently added or that are rarely used
+ * and thus doesn't have an appropriate overload.
  */
 struct TelegramBot {
 @trusted:
@@ -1227,7 +1247,7 @@ struct TelegramBot {
 
 		return setChatTitle(m);
 	}
-	/// title
+	/// ditto
 	bool setChatTitle(SetChatTitleMethod m) {
 		return callMethod!bool(m);
 	}
