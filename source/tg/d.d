@@ -5150,16 +5150,28 @@ struct GetChatMemberMethod {
 	int user_id;
 }
 
+/**
+ * Method to set a new group sticker set for a supergroup
+ * See_Also: `TelegramBot.setChatStickerSet`, $(LINK https://core.telegram.org/bots/api#setchatstickerset)
+ */
 struct SetChatStickerSetMethod {
 	mixin TelegramMethod!"/setChatStickerSet";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Name of the sticker set to be set as the group sticker set
 	string sticker_set_name;
 }
 
+/**
+ * Method to delete a group sticker set from a supergroup
+ * See_Also: `TelegramBot.deleteChatStickerSet`, $(LINK https://core.telegram.org/bots/api#deletechatstickerset)
+ */
 struct DeleteChatStickerSetMethod {
 	mixin TelegramMethod!"/deleteChatStickerSet";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
