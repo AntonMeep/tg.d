@@ -5103,28 +5103,50 @@ struct LeaveChatMethod {
 	TelegramID chat_id;
 }
 
+/**
+ * Method to get up to date information about the chat
+ * See_Also: `TelegramBot.getChat`, $(LINK https://core.telegram.org/bots/api#getchat)
+ */
 struct GetChatMethod {
 	mixin TelegramMethod!"/getChat";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
+/**
+ * Method to get a list of administrators in a chat
+ * See_Also: `TelegramBot.getChatAdministrators`, $(LINK https://core.telegram.org/bots/api#getchatadministrators)
+ */
 struct GetChatAdministratorsMethod {
 	mixin TelegramMethod!"/getChatAdministrators";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
+/**
+ * Method to get the number of members in a chat
+ * See_Also: `TelegramBot.getChatMembersCount`, $(LINK https://core.telegram.org/bots/api#getchatmemberscount)
+ */
 struct GetChatMembersCountMethod {
 	mixin TelegramMethod!"/getChatMembersCount";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
 }
 
+/**
+ * Method to get information about a member of a chat
+ * See_Also: `TelegramBot.getChatMember`, $(LINK https://core.telegram.org/bots/api#getchatmember)
+ */
 struct GetChatMemberMethod {
 	mixin TelegramMethod!"/getChatMember";
 
+	/// Unique identifier for the target chat or username of the target channel (in the format `"@channelusername"`)
 	TelegramID chat_id;
+
+	/// Unique identifier of the target user
 	int user_id;
 }
 
