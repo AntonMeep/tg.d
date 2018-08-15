@@ -3904,30 +3904,52 @@ struct InputLocationMessageContent {
 	@safe @ignore @property bool isNull() { return latitude.isNaN; }
 }
 
+/**
+ * Content of a venue message to be sent as the result of an inline query
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputvenuemessagecontent)
+ */
 struct InputVenueMessageContent {
+	/// Latitude of the venue in degrees
 	float latitude;
+
+	/// Longitude of the venue in degrees
 	float longitude;
+
+	/// Name of the venue
 	string title;
+
+	/// Address of the venue
 	string address;
 
 @optional:
+	/// Foursquare identifier of the venue, if known
 	string foursquare_id;
+
+	/// Foursquare type of the venue, if known
 	string foursquare_type;
 
-@ignore @property:
-	bool isNull() { return latitude.isNaN; }
+	@safe @ignore @property bool isNull() { return latitude.isNaN; }
 }
 
+/**
+ * Content of a contact message to be sent as the result of an inline query
+ * See_Also: $(LINK https://core.telegram.org/bots/api#inputcontactmessagecontent)
+ */
 struct InputContactMessageContent {
+	/// Contact's phone number
 	string phone_number;
+
+	/// Contact's first name
 	string first_name;
 
 @optional:
+	/// Contact's last name
 	string last_name;
+
+	/// Additional data about the contact in the form of a vCard
 	string vcard;
 
-@ignore @property:
-	bool isNull() { return phone_number == typeof(phone_number).init; }
+	@safe @ignore @property bool isNull() { return phone_number == typeof(phone_number).init; }
 }
 
 struct ChosenInlineResult {
