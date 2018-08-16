@@ -2002,8 +2002,8 @@ struct WebhookInfo {
 	int pending_update_count;
 
 @optional:
-	/// Unix time for the most recent error that happened when trying to deliver an update via webhook
-	long last_error_date;
+	/// Date of the most recent error that happened when trying to deliver an update via webhook
+	SysTime last_error_date;
 
 	/// Error message in human-readable format for the most recent error that happened when trying to deliver an update via webhook
 	string last_error_message;
@@ -2100,7 +2100,7 @@ struct Chat {
 	/// True, if the bot can change the group sticker set. Returned only in `getChat`
 	bool can_set_sticker_set;
 
-	@ignore @property bool isNull() { return id == typeof(id).init; }
+	@safe pure nothrow @nogc bool isNull() { return id == typeof(id).init; }
 }
 
 /**
@@ -2115,8 +2115,8 @@ struct Message {
 	/// Shorthand for `message_id`;
 	alias id = message_id;
 
-	/// Date the message was sent in Unix time
-	long date;
+	/// Date the message was sent
+	SysTime date;
 
 	/// Conversation the message belongs to
 	Chat chat;
@@ -2137,8 +2137,8 @@ struct Message {
 	/// For messages forwarded from channels, signature of the post author if present
 	string forward_signature;
 
-	/// For forwarded messages, date the original message was sent in Unix time
-	long forward_date;
+	/// For forwarded messages, date the original message was sent
+	SysTime forward_date;
 
 	private @name("reply_to_message") Json m_reply_to_message;
 	
@@ -2153,8 +2153,8 @@ struct Message {
 		m_reply_to_message = m.serializeToJson;
 	}
 
-	/// Date the message was last edited in Unix time
-	long edit_date;
+	/// Date the message was last edited
+	SysTime edit_date;
 
 	/// The unique identifier of a media message group this message belongs to
 	string media_group_id;
@@ -2264,7 +2264,7 @@ struct Message {
 
 	// TODO: Telegram Passport #10
 
-	@ignore @property bool isNull() { return message_id == typeof(message_id).init; }
+	@safe pure nothrow @nogc bool isNull() { return message_id == typeof(message_id).init; }
 }
 
 /**
@@ -2320,8 +2320,8 @@ struct Audio {
 	/// Unique identifier for this file
 	string file_id;
 
-	/// Duration of the audio in seconds as defined by sender
-	int duration;
+	/// Duration of the audio as defined by sender
+	Duration duration;
 
 @optional:
 	/// Performer of the audio as defined by sender or by audio tags
@@ -2380,8 +2380,8 @@ struct Video {
 	/// Video height as defined by sender
 	int height;
 
-	/// Duration of the video in seconds as defined by sender
-	int duration;
+	/// Duration of the video as defined by sender
+	Duration duration;
 
 @optional:
 	/// Video thumbnail
@@ -2410,8 +2410,8 @@ struct Animation {
 	/// Video height as defined by sender
 	int height;
 
-	/// Duration of the video in seconds as defined by sender
-	int duration;
+	/// Duration of the video as defined by sender
+	Duration duration;
 
 @optional:
 	/// Animation thumbnail as defined by sender
@@ -2437,8 +2437,8 @@ struct Voice {
 	/// Unique identifier for this file
 	string file_id;
 
-	/// Duration of the audio in seconds as defined by sender
-	int duration;
+	/// Duration of the audio as defined by sender
+	Duration duration;
 
 @optional:
 	/// MIME type of the file as defined by sender
@@ -2461,8 +2461,8 @@ struct VideoNote {
 	/// Video width and height as defined by sender
 	int length;
 
-	/// Duration of the video in seconds as defined by sender
-	int duration;
+	/// Duration of the video as defined by sender
+	Duration duration;
 
 @optional:
 	/// Video thumbnail
@@ -2757,8 +2757,8 @@ struct ChatMember {
 	UserStatus status;
 
 @optional:
-	/// Restricted and kicked only. Date when restrictions will be lifted for this user, unix time
-	long until_date;
+	/// Restricted and kicked only. Date when restrictions will be lifted for this user
+	SysTime until_date;
 
 	/// Administrators only. `true`, if the bot is allowed to edit administrator privileges of that user
 	bool can_be_edited;
@@ -2812,7 +2812,7 @@ struct ResponseParameters {
 	long migrate_to_chat_id;
 
 	/// In case of exceeding flood control, the number of seconds left to wait before the request can be repeated
-	int retry_after;
+	Duration retry_after;
 
 	@safe pure nothrow @nogc bool isNull() { return !migrate_to_chat_id && !retry_after; }
 }
@@ -2889,7 +2889,7 @@ struct InputMediaVideo {
 	int height;
 
 	/// Video duration
-	int duration;
+	Duration duration;
 
 	/// Pass `true`, if the uploaded video is suitable for streaming
 	bool supports_streaming;
@@ -2925,7 +2925,7 @@ struct InputMediaAnimation {
 	int height;
 
 	/// Animation duration
-	int duration;
+	Duration duration;
 
 	@safe pure nothrow @nogc bool isNull() { return media == typeof(media).init; }
 }
@@ -2951,8 +2951,8 @@ struct InputMediaAudio {
 	/// Parse mode for the caption
 	ParseMode parse_mode;
 
-	/// Duration of the audio in seconds
-	int duration;
+	/// Duration of the audio
+	Duration duration;
 
 	/// Performer of the audio
 	string performer;
@@ -3262,7 +3262,7 @@ struct InlineQueryResultGif {
 	int gif_height;
 
 	/// Duration of the GIF
-	int gif_duration;
+	Duration gif_duration;
 
 	/// Title for the result
 	string title;
@@ -3303,7 +3303,7 @@ struct InlineQueryResultMpeg4Gif {
 	int mpeg4_height;
 
 	/// Video duration
-	int mpeg4_duration;
+	Duration mpeg4_duration;
 
 	/// URL of the static thumbnail (jpeg or gif) for the result
 	string thumb_url;
@@ -3363,8 +3363,8 @@ struct InlineQueryResultVideo {
 	/// Video height
 	int video_height;
 
-	/// Video duration in seconds
-	int video_duration;
+	/// Video duration
+	Duration video_duration;
 
 	/// Short description of the result
 	string description;
@@ -3405,8 +3405,8 @@ struct InlineQueryResultAudio {
 	/// Performer
 	string performer;
 
-	/// Audio duration in seconds
-	int audio_duration;
+	/// Audio duration
+	Duration audio_duration;
 
 	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
@@ -3441,8 +3441,8 @@ struct InlineQueryResultVoice {
 	/// Parse mode of the caption
 	ParseMode parse_mode;
 
-	/// Recording duration in seconds
-	int voice_duration;
+	/// Recording duration
+	Duration voice_duration;
 
 	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
@@ -3522,8 +3522,8 @@ struct InlineQueryResultLocation {
 	string title;
 
 @optional:
-	/// Period in seconds for which the location can be updated
-	int live_period;
+	/// Period for which the location can be updated
+	Duration live_period;
 
 	/// Inline keyboard attached to the message
 	InlineKeyboardMarkup reply_markup;
@@ -3966,8 +3966,8 @@ struct InputLocationMessageContent {
 	float longitude;
 
 @optional:
-	/// Period in seconds for which the location can be updated
-	int live_period;
+	/// Period for which the location can be updated
+	Duration live_period;
 
 	@safe pure nothrow @nogc bool isNull() { return latitude.isNaN; }
 }
