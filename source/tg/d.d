@@ -5689,7 +5689,7 @@ unittest {
 	data["chat"]["id"].should.be.equal(Json(1337));
 }
 
-@("serializaToJson serializes Duration and SysTime")
+@("serializeToJson serializes Duration and SysTime")
 unittest {
 	3600.seconds.serializeToJson.should.be.equal(Json(3600));
 	SysTime.fromUnixTime(1514764800).serializeToJson.should.be.equal(Json(1514764800));
@@ -5712,6 +5712,10 @@ unittest {
 		return value;
 	} else static if(isInstanceOf!(VariantN, T)) {
 		return T.init;
+	} else static if(is(T : Duration)) {
+		return value.get!int.seconds;
+	} else static if(is(T : SysTime)) {
+		return SysTime.fromUnixTime(value.get!long);
 	} else static if(is(T == struct)) {
 		enforce(value.type == Json.Type.object);
 		T ret;
@@ -5784,4 +5788,20 @@ unittest {
 		"n": Json(42),
 		"t": Json("text"),
 	]).deserializeJson!S.should.be.equal(S(42, "text"));
+}
+
+@("deserializeJson deserializes Duration and SysTime")
+unittest {
+	Json(3600).deserializeJson!Duration.should.be.equal(3600.seconds);
+	Json(1514764800).deserializeJson!SysTime.should.be.equal(SysTime.fromUnixTime(1514764800));
+
+	struct S {
+		Duration d;
+		SysTime t;
+	}
+
+	Json([
+		"d": Json(3600),
+		"t": Json(1514764800),
+	]).deserializeJson!S.should.be.equal(S(3600.seconds, SysTime.fromUnixTime(1514764800)));
 }
