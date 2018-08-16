@@ -24,7 +24,9 @@
  */
 module tg.d;
 
+import core.time;
 import std.math : isNaN;
+import std.datetime.systime : SysTime;
 
 import vibe.data.json : Json;
 
@@ -5526,6 +5528,11 @@ import std.variant : Algebraic, VariantN;
 				return value.get!Type.serializeToJson;
 
 		return Json(null);
+	} else static if(is(T : SysTime)) {
+		return Json(value.toUnixTime!long);
+	} else static if(is(T : Duration)) {
+		import std.conv : to;
+		return Json(value.total!"seconds".to!int);
 	} else static if(is(T == struct)) {
 		auto ret = Json.emptyObject;
 		foreach(i, ref field; value.tupleof) {
@@ -5680,6 +5687,22 @@ unittest {
 	data["date"].should.be.equal(Json(0));
 	data["chat"]["type"].should.be.equal(Json("group"));
 	data["chat"]["id"].should.be.equal(Json(1337));
+}
+
+@("serializaToJson serializes Duration and SysTime")
+unittest {
+	3600.seconds.serializeToJson.should.be.equal(Json(3600));
+	SysTime.fromUnixTime(1514764800).serializeToJson.should.be.equal(Json(1514764800));
+
+	struct S {
+		Duration d;
+		SysTime t;
+	}
+
+	S(3600.seconds, SysTime.fromUnixTime(1514764800)).serializeToJson.should.be.equal(Json([
+			"d": Json(3600),
+			"t": Json(1514764800),
+		]));
 }
 
 @trusted T deserializeJson(T)(Json value) {
