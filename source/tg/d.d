@@ -145,14 +145,14 @@ struct TelegramBot {
 	 * Params:
 	 *     offset          = Identifier of the first update to be returned
 	 *     limit           = Limits the number of updates to be retrieved
-	 *     timeout         = Timeout in seconds for long polling
+	 *     timeout         = Timeout for long polling
 	 *                       Should be positive, short polling (timeout == 0) should be used for testing purposes only.
 	 *     allowed_updates = List the types of updates you want your bot to receive
 	 * Returns: An array of updates
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `GetUpdatesMethod`, $(LINK https://core.telegram.org/bots/api#getupdates)
 	 */
-	Update[] getUpdates(int offset = 0, int limit = 100, int timeout = 3, string[] allowed_updates = []) {
+	Update[] getUpdates(int offset = 0, int limit = 100, Duration timeout = 3.seconds, string[] allowed_updates = []) {
 		GetUpdatesMethod m = {
 			offset: offset,
 			limit: limit,
@@ -201,7 +201,7 @@ struct TelegramBot {
 	 * Throws: `TelegramBotException` on errors
 	 * See_Also: `getUpdates`
 	 */
-	auto pollUpdates(int timeout = 3, string[] allowed_updates = []) {
+	auto pollUpdates(Duration timeout = 3.seconds, string[] allowed_updates = []) {
 		struct pollUpdatesImpl {
 		@safe:
 			private {
@@ -210,11 +210,11 @@ struct TelegramBot {
 				size_t m_index;
 				bool m_empty;
 
-				int m_timeout;
+				Duration m_timeout;
 				string[] m_allowed_updates;
 			}
 
-			this(TelegramBot bot, int timeout, string[] allowed_updates) {
+			this(TelegramBot bot, Duration timeout, string[] allowed_updates) {
 				m_bot = bot;
 				m_buffer.reserve = 100;
 
@@ -4314,8 +4314,8 @@ struct GetUpdatesMethod {
 	/// Limits the number of updates to be retrieved
 	int limit = 100;
 
-	/// Timeout in seconds for long polling
-	int timeout = 0;
+	/// Timeout for long polling
+	Duration timeout = 0.seconds;
 
 	/// List the types of updates you want your bot to receive
 	string[] allowed_updates = [];
@@ -4476,8 +4476,8 @@ struct SendAudioMethod {
 	/// Parse mode of the caption
 	ParseMode parse_mode;
 
-	/// Duration of the audio in seconds
-	int duration;
+	/// Duration of the audio
+	Duration duration;
 
 	/// Performer
 	string performer;
@@ -4553,8 +4553,8 @@ struct SendVideoMethod {
 	string video;
 
 @optional:
-	/// Duration of sent video in seconds
-	int duration;
+	/// Duration of sent video
+	Duration duration;
 
 	/// Video width
 	int width;
@@ -4602,8 +4602,8 @@ struct SendAnimationMethod {
 	string animation;
 
 @optional:
-	/// Duration of sent animation in seconds
-	int duration;
+	/// Duration of sent animation
+	Duration duration;
 
 	/// Animation width
 	int width;
@@ -4654,8 +4654,8 @@ struct SendVoiceMethod {
 	/// Parse mode of the caption
 	ParseMode parse_mode;
 
-	/// Duration of the voice message in seconds
-	int duration;
+	/// Duration of the voice message
+	Duration duration;
 
 	/// Send the message silently
 	bool disable_notification;
@@ -4685,8 +4685,8 @@ struct SendVideoNoteMethod {
 	string video_note;
 
 @optional:
-	/// Duration of sent video in seconds
-	int duration;
+	/// Duration of sent video
+	Duration duration;
 
 	/// Video width and height, i.e. diameter of the video message
 	int length;
@@ -4742,8 +4742,8 @@ struct SendLocationMethod {
 	float longitude;
 
 @optional:
-	/// Period in seconds for which the location will be updated
-	int live_period;
+	/// Period for which the location will be updated
+	Duration live_period;
 
 	/// Send the message silently
 	bool disable_notification;
@@ -4932,8 +4932,8 @@ struct KickChatMemberMethod {
 	int user_id;
 
 @optional:
-	/// Date when the user will be unbanned, unix time
-	long until_date;
+	/// Date when the user will be unbanned
+	SysTime until_date;
 }
 
 /**
@@ -4964,8 +4964,8 @@ struct RestrictChatMemberMethod {
 	int user_id;
 
 @optional:
-	/// Date when restrictions will be lifted for the user, unix time
-	long until_date;
+	/// Date when restrictions will be lifted for the user
+	SysTime until_date;
 
 	/// Pass `true`, if the user can send text messages, contacts, locations and venues
 	bool can_send_messages;
@@ -5216,8 +5216,8 @@ struct AnswerCallbackQueryMethod {
 	/// URL that will be opened by the user's client
 	string url;
 
-	/// The maximum amount of time in seconds that the result of the callback query may be cached client-side
-	int cache_time;
+	/// The maximum amount of time that the result of the callback query may be cached client-side
+	Duration cache_time;
 }
 
 /**
@@ -5490,8 +5490,8 @@ struct AnswerInlineQueryMethod {
 	InlineQueryResult[] results;
 
 @optional:
-	/// The maximum amount of time in seconds that the result of the inline query may be cached on the server
-	int cache_time;
+	/// The maximum amount of time that the result of the inline query may be cached on the server
+	Duration cache_time;
 
 	/// Pass `true`, if results may be cached on the server side only for the user that sent the query
 	bool is_personal;
@@ -5681,7 +5681,7 @@ unittest {
 
 @("serializeToJson serializes complex structs")
 unittest {
-	auto data = Message(42, 0, Chat(1337, ChatType.group)).serializeToJson;
+	auto data = Message(42, SysTime.fromUnixTime(0), Chat(1337, ChatType.group)).serializeToJson;
 
 	data["message_id"].should.be.equal(Json(42));
 	data["date"].should.be.equal(Json(0));
