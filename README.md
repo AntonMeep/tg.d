@@ -1,4 +1,4 @@
-tg.d [![pipeline status](https://gitlab.com/ohboi/tg.d/badges/master/pipeline.svg)](https://gitlab.com/ohboi/tg.d/pipelines)[![coverage report](https://gitlab.com/ohboi/tg.d/badges/master/coverage.svg)](https://gitlab.com/ohboi/tg.d/pipelines)
+tg.d [![Repository](https://img.shields.io/badge/repository-on%20GitLab-orange.svg)](https://gitlab.com/ohboi/tg.d) [![pipeline status](https://gitlab.com/ohboi/tg.d/badges/master/pipeline.svg)](https://gitlab.com/ohboi/tg.d/pipelines)[![coverage report](https://gitlab.com/ohboi/tg.d/badges/master/coverage.svg)](https://gitlab.com/ohboi/tg.d/pipelines) [![MIT Licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://gitlab.com/ohboi/tg.d/blob/master/LICENSE) [![Package version](https://img.shields.io/dub/v/tg.d.svg)](https://gitlab.com/ohboi/tg.d/tags)
 ========
 
 **tg.d** is a Telegram Bot API client implementation built to make fast and safe bots with the help of the D programming language.
