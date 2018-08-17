@@ -3,6 +3,9 @@ tg.d [![Repository](https://img.shields.io/badge/repository-on%20GitLab-orange.s
 
 **tg.d** is a Telegram Bot API client implementation built to make fast and safe bots with the help of the D programming language.
 
+> Note that project's development happens on the [GitLab](https://gitlab.com/ohboi/tg.d).
+> GitHub repository is a mirror, it might *not* always be up-to-date.
+
 ## Documentation
 
 API reference is available [here](ohboi.gitlab.io/tg.d). Telegram Bot API documentation is available [here](https://core.telegram.org/bots/api).
