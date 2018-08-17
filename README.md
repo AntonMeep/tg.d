@@ -23,4 +23,25 @@ void main() {
 }
 ```
 
-Notice that everything is done in `while(true)` loop. It's possible because [`TelegramBot.pollUpdates`](https://ohboi.gitlab.io/tg.d/tg/d/TelegramBot.pollUpdates.html) defines timeout of 3 seconds by default which means that it'll block the running thread for 3-ish seconds.
+Data structures such as `Update`, `Message` and others have `isNull` property which can be used to check if field has a value:
+```D
+if(!update.message.isNull) {
+	// Update is a message
+} else if(!update.edited_message.isNull) {
+	// Update is a edited message
+} else ...
+```
+
+## Examples
+
+Are in the `examples` directory:
+
+| name | description |
+|------|-------------|
+| [action.d](examples/action.d) | Shows all kinds of actions that bot can broadcast to users (for example: `... typing`, `... sending photo`)
+| [buttons.d](examples/buttons.d) | Sends messages with attached inline keyboard |
+| [echo.d](examples/echo.d) | Sends user's messages back |
+| [edit.d](examples/edit.d) | Edits own messages |
+| [livelocation.d](examples/livelocation.d) | Sends location and updates it |
+| [reply.d](examples/reply.d) | Replies to user's messages |
+| [sendthings.d](examples/sendthings.d) | Sends photos, videos, audio files, locations, venues and other kinds of data |
