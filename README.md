@@ -5,7 +5,7 @@ tg.d [![pipeline status](https://gitlab.com/ohboi/tg.d/badges/master/pipeline.sv
 
 ## Documentation
 
-API reference is available [here](ohboi.gitlab.io/tg.d).
+API reference is available [here](ohboi.gitlab.io/tg.d). Telegram Bot API documentation is available [here](https://core.telegram.org/bots/api).
 
 ## Getting updates
 
