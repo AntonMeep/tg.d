@@ -819,6 +819,27 @@ struct TelegramBot {
 		return callMethod!Message(m);
 	}
 
+	@("sendVideoNote()")
+	unittest {
+		TelegramBot(
+			"TOKEN",
+			(string url, Json data) @trusted {
+				url.should.be.equal("https://api.telegram.org/botTOKEN/sendVideoNote");
+				data.should.be.equal(
+					Json([
+						"chat_id": Json(42),
+						"video_note": Json("https://example.com/note.mp4"),
+					]),
+				);
+
+				return Json([
+					"ok": Json(true),
+					"result": Message().serializeToJson,
+				]);
+			}
+		).sendVideoNote(42L, "https://example.com/note.mp4").isNull.should.be.equal(true);
+	}
+
 	/**
 	 * Send group of photos or videos as an album
 	 *
